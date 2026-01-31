@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Benjamin Tron's World</title>
+    <link rel="stylesheet" href="css/intro.css" />
+    <link rel="stylesheet" href="css/background.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header></header>
+
+    <!-- Matrix Background Canvas (läuft durchgehend) -->
+    <canvas id="matrixGlitch"></canvas>
+
+    <!-- Intro Overlay (wird nach YES entfernt) -->
+    <div id="portalOverlay">
+      <div
+        class="portalContent glitchEffect"
+        data-text="Are you really sure you want to enter the world of Benjamin Tron?"
+      >
+        <p class="portalQuestion">
+          Are you really sure you want to enter the world of Benjamin Tron?
+        </p>
+        <div class="portalButtons">
+          <button id="yesBtn"><span class="btnText">YES</span></button>
+          <button id="noBtn">NO</button>
+        </div>
+        <p class="portalWarning">
+          Warning: This site may trigger epileptic seizures. Enter at your own
+          risk.
+        </p>
+      </div>
+    </div>
+
+    <!-- Main Content (initially hidden) -->
+    <main id="mainContent">
+      <h1>Welcome to the Main Page</h1>
+      <p>You have entered the world of Benjamin Tron.</p>
+      <a href="/pages/subpage.html">Go to Subpage</a>
+    </main>
+
+    <!-- Sound Control Buttons (immer sichtbar, auch im Intro) -->
+    <button id="soundBtn" class="muteUnmuteBtn" aria-label="Toggle sound">
+      🔇
+    </button>
+    <button
+      id="ambientBtn"
+      class="ambientBtn"
+      aria-label="Ambient sound toggle"
+    >
+      🔊
+    </button>
+
+    <footer></footer>
+
+    <!-- Single Combined Script -->
+    <script src="js/app.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,210 @@
+@import "intro.css";
+canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0; /* ❗ nicht -1 */
+}
+
+main {
+  position: relative;
+  z-index: 1;
+}
+
+#mainContent {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+#mainContent.visible {
+  display: block !important;
+  opacity: 1 !important;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+@keyframes fallOut {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh);
+    opacity: 0;
+  }
+}
+
+@keyframes fallChar {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120vh) rotate(720deg);
+    opacity: 0.5;
+  }
+}
+
+@keyframes fallOutGlitch {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 1;
+    filter: none;
+    rotate: 180deg;
+  }
+  10% {
+    transform: translateY(10px) translateX(-2px) skewX(5deg);
+    filter: hue-rotate(30deg) brightness(1.2) blur(0.3px);
+    rotate: 360deg;
+  }
+  25% {
+    transform: translateY(40px) translateX(2px) scaleX(1.1);
+    filter: hue-rotate(-30deg) contrast(1.4);
+    rotate: 360deg;
+  }
+  45% {
+    transform: translateY(100px) translateX(-4px) rotateZ(2deg);
+    filter: brightness(1.5) hue-rotate(60deg) blur(1px);
+    rotate: 360deg;
+  }
+  65% {
+    transform: translateY(200px) translateX(3px);
+    filter: blur(1.2px) hue-rotate(-45deg);
+    rotate: 360deg;
+  }
+  80% {
+    transform: translateY(300px) translateX(-3px);
+    filter: hue-rotate(90deg) saturate(2) blur(0.5px);
+    opacity: 0.9;
+    rotate: 360deg;
+  }
+  100% {
+    transform: translateY(110vh);
+    opacity: 0.8;
+    filter: none;
+    rotate: 180deg;
+  }
+}
+
+.falling-char {
+  position: absolute;
+  font-family: "Orbitron", monospace;
+  font-size: 1.5rem;
+  color: #00ff88;
+  pointer-events: none;
+  animation: fallOutGlitch 1.4s ease-in forwards;
+  text-shadow:
+    -1px 0 red,
+    1px 0 blue,
+    0 0 4px #00ff88,
+    0 0 8px #00ff88;
+  z-index: 1001;
+}
+
+@keyframes shake {
+  0% {
+    transform: translate(0, 0);
+    filter: none;
+  }
+  20% {
+    transform: translate(-15px, 13px);
+    filter: blur(1.2px);
+  }
+  40% {
+    transform: translate(14px, -15px);
+    filter: blur(1.2px);
+  }
+  60% {
+    transform: translate(-13px, 14px);
+    filter: blur(1.2px);
+  }
+  80% {
+    transform: translate(15px, -12px);
+    filter: blur(1.2px);
+  }
+  100% {
+    transform: translate(0, 0);
+    filter: none;
+  }
+}
+
+canvas.shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+.glitchEffect::before,
+.glitchEffect::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.glitchEffect::before {
+  text-shadow: -2px 0 red;
+  animation: glitchTop 1s infinite linear alternate-reverse;
+}
+
+.glitchEffect::after {
+  text-shadow: 2px 0 blue;
+  animation: glitchBottom 1s infinite linear alternate-reverse;
+}
+
+@keyframes glitchTop {
+  0% {
+    clip-path: inset(0 0 90% 0);
+  }
+  50% {
+    clip-path: inset(20% 0 60% 0);
+  }
+  100% {
+    clip-path: inset(10% 0 70% 0);
+  }
+}
+
+@keyframes glitchBottom {
+  0% {
+    clip-path: inset(80% 0 0 0);
+  }
+  50% {
+    clip-path: inset(40% 0 20% 0);
+  }
+  100% {
+    clip-path: inset(70% 0 10% 0);
+  }
+}
+
+@keyframes shakeOut {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-5px);
+  }
+  40% {
+    transform: translateX(5px);
+  }
+  60% {
+    transform: translateX(-5px);
+  }
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes fallOut {
+  to {
+    transform: translateY(150vh);
+    opacity: 0;
+  }
+}
+
+@keyframes scanline {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100vh;
+  }
+}

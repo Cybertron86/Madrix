@@ -1,0 +1,198 @@
+body {
+  margin: 0;
+  background: black;
+  overflow: hidden;
+  font-family: "Orbitron", monospace;
+}
+
+#portalOverlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #002200 0%, #000000 100%);
+  color: #00ff88;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation:
+    portalPulse 2.5s infinite ease-in-out,
+    portalBrightness 4s infinite ease-in-out;
+  overflow: hidden;
+}
+
+@keyframes scanline {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100vh;
+  }
+}
+
+#portalOverlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 255, 136, 0.05) 0px,
+    rgba(0, 255, 136, 0.05) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  animation: scanline 1.2s linear infinite;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@keyframes portalPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.95;
+  }
+}
+
+@keyframes portalBrightness {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.4);
+  }
+}
+
+.portalContent {
+  text-align: center;
+  max-width: 90vw;
+}
+
+.portalQuestion {
+  font-size: 2rem;
+  text-shadow: 0 0 8px #00ff88;
+  margin-bottom: 2rem;
+}
+
+.portalWarning {
+  font-size: 1rem;
+  color: #ff4444;
+  text-shadow: 0 0 6px #ff4444;
+  margin-bottom: 2rem;
+}
+
+.portalButtons {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.portalButtons button {
+  background: black;
+  border: 2px solid #00ff88;
+  color: #00ff88;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  text-shadow: 0 0 6px #00ff88;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.portalButtons button:hover {
+  background: #00ff88;
+  color: black;
+  box-shadow:
+    0 0 12px #00ff88,
+    0 0 24px #00ff88;
+}
+
+.portalButtons button:disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+#yesBtn .btnText {
+  display: inline-block;
+}
+
+@keyframes portalFadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+#noBtn.shake {
+  animation: shakeOut 0.5s ease;
+}
+
+#noBtn.fall {
+  animation: fallOut 1s ease forwards;
+}
+
+/* === Lautsprecher‑Button rechts unten ============================ */
+.muteUnmuteBtn {
+  position: absolute;
+  bottom: 20px; /* Abstand zum unteren Rand des Overlays */
+  right: 20px; /* Abstand zum rechten Rand */
+  background: none;
+  border: 2px solid #0f0;
+  color: #0f0;
+  font-size: 1.6rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.25s;
+}
+.muteUnmuteBtn:hover {
+  background: #0f0;
+  color: #000;
+  box-shadow: 0 0 12px #0f0;
+}
+.muteUnmuteBtn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* --- Ambient‑Button (Haupt‑Phase) ------------------------------- */
+.ambientBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  background: none;
+  border: 2px solid #0f0;
+  color: #0f0;
+  font-size: 1.6rem;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.25s;
+  z-index: 2000;
+}
+.ambientBtn:hover {
+  background: #0f0;
+  color: #000;
+  box-shadow: 0 0 12px #0f0;
+}
+.ambientBtn:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
