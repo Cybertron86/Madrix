@@ -562,6 +562,7 @@
   width: 90%;
   max-width: 1200px;
   max-height: 90vh;
+  z-index: 4900;
   background: var(--holo-carousel-bg-darker);
   border: 2px solid var(--holo-carousel-matrix-green);
   box-shadow:
@@ -600,7 +601,6 @@
   z-index: 1;
 }
 
-/* Close button */
 .holo-carousel-close {
   position: absolute;
   top: 15px;
@@ -616,9 +616,17 @@
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  z-index: 2;
+  z-index: 5000;
   font-family: "Courier New", monospace;
   font-weight: bold;
+  padding: 0;
+  line-height: 1;
+  pointer-events: auto;
+}
+
+/* WICHTIG: Alle Kind-Elemente ignorieren Klicks */
+.holo-carousel-close * {
+  pointer-events: none;
 }
 
 .holo-carousel-close:hover {
@@ -877,6 +885,20 @@
     width: 35px;
     height: 35px;
     font-size: 20px;
+    top: 10px;
+    right: 10px;
+    /* Größerer Touch-Bereich */
+    padding: 6px;
+  }
+
+  /* Touch-freundlicher Bereich für besseres Targeting */
+  .holo-carousel-close::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    bottom: -10px;
+    left: -10px;
   }
 
   /* Reduced glitch effects for mobile performance */
@@ -888,15 +910,15 @@
 /* Mobile Landscape */
 @media (max-width: 768px) and (orientation: landscape) {
   :root {
-    --holo-carousel-container-height: 80vh;
+    --holo-carousel-container-height: 70vh;
   }
 
   .holo-carousel-content {
-    max-height: 85vh;
+    max-height: 80vh;
   }
 
   .holo-carousel-sphere {
-    margin-top: 100px;
+    margin-top: 150px;
   }
 }
 

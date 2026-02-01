@@ -27,6 +27,10 @@ class HologramCarousel {
     this.glitchInterval = null;
     this.touchStartX = 0;
     this.touchEndX = 0;
+    this.touchStartY = 0;
+    this.touchEndY = 0;
+    this.touchStartTime = 0;
+    this.hasMoved = false;
     this.isDragging = false;
     this.dragStartX = 0;
     this.dragDistance = 0;
@@ -172,8 +176,11 @@ class HologramCarousel {
 
     const closeBtn = document.createElement("button");
     closeBtn.className = "holo-carousel-close";
-    closeBtn.innerHTML = "×";
+    closeBtn.textContent = "×";
     closeBtn.setAttribute("aria-label", "Close");
+
+    // WICHTIG: Diese Zeile hinzufügen
+    closeBtn.style.lineHeight = "40px"; // Gleiche Höhe wie der Button
 
     const contentInner = document.createElement("div");
     contentInner.className = "holo-carousel-content-inner";
@@ -253,15 +260,49 @@ class HologramCarousel {
   // Touch handlers
   handleTouchStart(e) {
     this.touchStartX = e.changedTouches[0].screenX;
+    this.touchStartY = e.changedTouches[0].screenY;
+    this.touchEndX = this.touchStartX;
+    this.touchEndY = this.touchStartY;
+    this.touchStartTime = Date.now();
+    this.hasMoved = false;
     this.pauseAutoPlay();
   }
 
   handleTouchMove(e) {
     this.touchEndX = e.changedTouches[0].screenX;
+    this.touchEndY = e.changedTouches[0].screenY;
+
+    // Check if user has moved significantly (increased threshold)
+    const diffX = Math.abs(this.touchStartX - this.touchEndX);
+    const diffY = Math.abs(this.touchStartY - this.touchEndY);
+    if (diffX > 20 || diffY > 20) {
+      this.hasMoved = true;
+    }
   }
 
   handleTouchEnd(e) {
-    this.handleSwipe();
+    const touchDuration = Date.now() - this.touchStartTime;
+    const diffX = Math.abs(this.touchStartX - this.touchEndX);
+    const diffY = Math.abs(this.touchStartY - this.touchEndY);
+
+    // Quick tap with minimal movement = open overlay
+    // Max 300ms duration and max 15px movement
+    if (!this.hasMoved && touchDuration < 300 && diffX < 15 && diffY < 15) {
+      const touch = e.changedTouches[0];
+      const element = document.elementFromPoint(touch.clientX, touch.clientY);
+      const carouselItem = element?.closest(".holo-carousel-item");
+
+      if (carouselItem) {
+        const index = parseInt(carouselItem.dataset.index);
+        if (index === this.currentIndex) {
+          this.openOverlay(index);
+        }
+      }
+    } else if (this.hasMoved) {
+      // User swiped
+      this.handleSwipe();
+    }
+
     this.resumeAutoPlay();
   }
 
