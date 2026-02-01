@@ -6,6 +6,9 @@
     <title>Benjamin Tron's World</title>
     <link rel="stylesheet" href="css/intro.css" />
     <link rel="stylesheet" href="css/background.css" />
+    <link rel="stylesheet" href="css/hologram-carousel.css" />
+    <link rel="stylesheet" href="css/navigationbar.css" />
+
     <link
       href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap"
       rel="stylesheet"
@@ -16,6 +19,24 @@
 
     <!-- Matrix Background Canvas (läuft durchgehend) -->
     <canvas id="matrixGlitch"></canvas>
+
+    <!-- Navbar mit Homelink, Login und Menü -->
+
+    <section id="navigationbar" class="navigationbar">
+      <a href="index.html" class="nav-home">HOME</a>
+
+      <div class="nav-auth">
+        <button id="btn_menu" class="nav-menu">☰</button>
+        <button id="btn_login" class="nav-login">LOGIN</button>
+      </div>
+
+      <!-- Dropdown Menu -->
+      <div id="dropdown_menu" class="dropdown-menu">
+        <a href="index.html" class="dropdown-item">About me</a>
+        <a href="index.html" class="dropdown-item">Gallery</a>
+        <a href="index.html" class="dropdown-item">Profil</a>
+      </div>
+    </section>
 
     <!-- Intro Overlay (wird nach YES entfernt) -->
     <div id="portalOverlay">
@@ -39,9 +60,10 @@
 
     <!-- Main Content (initially hidden) -->
     <main id="mainContent">
-      <h1>Welcome to the Main Page</h1>
-      <p>You have entered the world of Benjamin Tron.</p>
-      <a href="/pages/subpage.html">Go to Subpage</a>
+      <!-- Holographic Carousel Section -->
+      <section class="carousel-section">
+        <div class="holo-carousel-wrapper"></div>
+      </section>
     </main>
 
     <!-- Sound Control Buttons (immer sichtbar, auch im Intro) -->
@@ -58,7 +80,7 @@
 
     <footer></footer>
 
-    <!-- Single Combined Script -->
     <script src="js/app.js" defer></script>
+    <script src="js/hologram-carousel.js"></script>
   </body>
 </html>

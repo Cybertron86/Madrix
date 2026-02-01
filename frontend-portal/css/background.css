@@ -2,7 +2,7 @@
 canvas {
   position: fixed;
   inset: 0;
-  z-index: 0; /* ❗ nicht -1 */
+  z-index: 0;
 }
 
 main {
@@ -20,6 +20,17 @@ main {
   display: block !important;
   opacity: 1 !important;
   animation: fadeIn 0.8s ease forwards;
+}
+
+/* Ensure Matrix rain stays in background */
+#matrix-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Behind carousel */
+  pointer-events: none;
 }
 
 @keyframes fallOut {

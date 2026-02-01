@@ -2,7 +2,19 @@
 // ====================================================================================================================================
 // 🎯 SINGLE PAGE APPLICATION - APP.JS
 // ====================================================================================================================================
+document.addEventListener("DOMContentLoaded", () => {
+  const navBar = document.getElementById("navigationbar");
 
+  if (!navBar) return;
+
+  const hasEntered = sessionStorage.getItem("portalEntered");
+
+  if (hasEntered === "true") {
+    navBar.style.visibility = "visible";
+    navBar.style.opacity = "1";
+    navBar.style.pointerEvents = "auto";
+  }
+});
 // ====================================================================================================================================
 // ====================================================================================================================================
 // 1️⃣ INITIALIZATION & STATE MANAGEMENT
@@ -57,7 +69,14 @@ let musicEnabled = false;
 // ====================================================================================================================================
 
 const isEdge = /Edg\//.test(navigator.userAgent);
+const isChrome =
+  /Chrome/.test(navigator.userAgent) && !/Edg\//.test(navigator.userAgent);
+const isBrave = navigator.brave !== undefined;
+const isFirefox = /Firefox/.test(navigator.userAgent);
+
 if (isEdge) document.body.classList.add("edge-browser");
+if (isChrome || isBrave) document.body.classList.add("chrome-browser");
+if (isFirefox) document.body.classList.add("firefox-browser");
 
 const canvas = document.getElementById("matrixGlitch");
 const ctx = canvas.getContext("2d", { willReadFrequently: true });
@@ -75,7 +94,13 @@ let columns;
 let drops;
 
 function initMatrix() {
-  columns = Math.floor(canvas.width / fontSize);
+  // Reduziere Spalten für bessere Performance auf Chrome/Brave
+  let effectiveFontSize = fontSize;
+  if ((isChrome || isBrave) && canvas.width > 1920) {
+    effectiveFontSize = fontSize * 1.5; // Weniger Spalten auf großen Displays
+  }
+
+  columns = Math.floor(canvas.width / effectiveFontSize);
   drops = Array(columns).fill(1);
 }
 
@@ -86,13 +111,17 @@ window.addEventListener("resize", () => {
 });
 
 let frame = 0;
-const frameSkip = 1.15;
+const frameSkip = isChrome || isBrave ? 2 : isEdge ? 1.5 : 1.15;
 let initialRowsDrawn = false;
 
 function drawInitialRows() {
   ctx.fillStyle = "rgba(0, 0, 0, 1)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.font = fontSize + "px monospace";
+
+  // Text-Rendering Optimierung
+  ctx.textBaseline = "top";
+  ctx.textRendering = "optimizeSpeed";
 
   for (let i = 0; i < columns; i++) {
     for (let row = 0; row < 2; row++) {
@@ -109,10 +138,10 @@ function drawInitialRows() {
 
 function drawMatrix() {
   const glitchSettings = {
-    frequency: isEdge ? 0.08 : 0.5, // Erhöht von 0.05/0.3
-    stripes: isEdge ? 2 : 5, // Erhöht von 1/3
-    offsetMax: isEdge ? 50 : 120, // Erhöht von 30/80
-    alpha: isEdge ? 0.4 : 0.9, // Erhöht von 0.25/0.8
+    frequency: isChrome || isBrave ? 0.05 : isEdge ? 0.08 : 0.3,
+    stripes: isChrome || isBrave ? 1 : isEdge ? 2 : 3,
+    offsetMax: isChrome || isBrave ? 40 : isEdge ? 50 : 80,
+    alpha: isChrome || isBrave ? 0.3 : isEdge ? 0.4 : 0.8,
   };
 
   if (!initialRowsDrawn) {
@@ -147,7 +176,8 @@ function drawMatrix() {
 
     ctx.fillText(char, x, y);
 
-    if (Math.random() < 0.1) {
+    // Weniger RGB-Split für Chrome/Brave
+    if (Math.random() < (isChrome || isBrave ? 0.03 : 0.1)) {
       const offset = 4 + Math.random() * 2;
       ctx.fillStyle = "rgba(255,0,0,0.3)";
       ctx.fillText(char, x - offset, y);
@@ -166,20 +196,48 @@ function drawMatrix() {
   requestAnimationFrame(drawMatrix);
 }
 
+// Cache für temporäre Canvas-Elemente (Performance)
+const glitchCanvasCache = [];
+function getGlitchCanvas(width, height) {
+  const cached = glitchCanvasCache.find(
+    (c) => c.width === width && c.height === height,
+  );
+  if (cached) return cached;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  glitchCanvasCache.push(canvas);
+
+  // Max 5 gecachte Canvas
+  if (glitchCanvasCache.length > 5) glitchCanvasCache.shift();
+
+  return canvas;
+}
+
 function applyGlitch({ stripes, offsetMax, alpha }) {
   for (let g = 0; g < stripes; g++) {
-    const sliceHeight = Math.floor(Math.random() * 80 + 30);
+    const sliceHeight = Math.floor(Math.random() * 5 + 2);
     const y = Math.floor(Math.random() * canvas.height);
     const offset = (Math.random() < 0.5 ? -1 : 1) * (Math.random() * offsetMax);
 
-    const slice = ctx.getImageData(0, y, canvas.width, sliceHeight);
+    // Verwende gecachtes Canvas
+    const tmpCanvas = getGlitchCanvas(canvas.width, sliceHeight);
+    const tmpCtx = tmpCanvas.getContext("2d", { willReadFrequently: true });
 
-    const tmpCanvas = document.createElement("canvas");
-    tmpCanvas.width = canvas.width;
-    tmpCanvas.height = sliceHeight;
-
-    const tmpCtx = tmpCanvas.getContext("2d");
-    tmpCtx.putImageData(slice, 0, 0);
+    // Kopiere Slice direkt ohne getImageData (schneller)
+    tmpCtx.clearRect(0, 0, tmpCanvas.width, tmpCanvas.height);
+    tmpCtx.drawImage(
+      canvas,
+      0,
+      y,
+      canvas.width,
+      sliceHeight,
+      0,
+      0,
+      canvas.width,
+      sliceHeight,
+    );
 
     ctx.clearRect(0, y, canvas.width, sliceHeight);
     ctx.globalAlpha = alpha;
@@ -325,6 +383,20 @@ if (yesBtn) {
 
     const totalDuration = text.length * 150 + 1200;
 
+    // Make Navigation Bar Visible
+    const navBar = document.getElementById("navigationbar");
+
+    setTimeout(() => {
+      if (!navBar) {
+        console.error("Navbar nicht gefunden");
+        return;
+      }
+
+      navBar.style.visibility = "visible";
+      navBar.style.opacity = "1";
+      navBar.style.pointerEvents = "auto";
+    }, totalDuration + 500);
+
     // Start Sounds
     startAllSounds();
 
@@ -383,3 +455,38 @@ triggerShake(); // ← Shake-Effekt starten
 // END OF APP.JS
 // ====================================================================================================================================
 // ====================================================================================================================================
+
+// ====================================================================================================================================
+// ====================================================================================================================================
+// 9️⃣ DROPDOWN MENU LOGIC
+// ====================================================================================================================================
+// ====================================================================================================================================
+
+const menuBtn = document.getElementById("btn_menu");
+const dropdownMenu = document.getElementById("dropdown_menu");
+
+if (menuBtn && dropdownMenu) {
+  // Toggle Menu on Button Click
+  menuBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    dropdownMenu.classList.toggle("open");
+    menuBtn.classList.toggle("active");
+  });
+
+  // Close Menu when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!menuBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+      dropdownMenu.classList.remove("open");
+      menuBtn.classList.remove("active");
+    }
+  });
+
+  // Close Menu when clicking on a menu item
+  const dropdownItems = dropdownMenu.querySelectorAll(".dropdown-item");
+  dropdownItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      dropdownMenu.classList.remove("open");
+      menuBtn.classList.remove("active");
+    });
+  });
+}

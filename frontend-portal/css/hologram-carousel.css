@@ -1,0 +1,967 @@
+/* ============================================
+   MATRIX HOLOGRAPHIC CAROUSEL - CSS
+   Extreme glitch effects and holographic styling
+   ============================================ */
+
+:root {
+  /* Matrix Color Palette */
+  --holo-carousel-matrix-green: #00ff88;
+  --holo-carousel-matrix-green-dark: #00aa55;
+  --holo-carousel-matrix-green-light: #88ffb8;
+  --holo-carousel-error-red: #ff0055;
+  --holo-carousel-baby-blue: #00d4ff;
+  --holo-carousel-neon-yellow: #ffff00;
+  --holo-carousel-bg-dark: #0a0e0a;
+  --holo-carousel-bg-darker: #050705;
+
+  /* Spacing & Dimensions */
+  --holo-carousel-container-height: 80vh;
+  --holo-carousel-image-width: 400px;
+  --holo-carousel-image-height: 300px;
+  --holo-carousel-reflection-height: 150px;
+
+  /* Mobile Dimensions */
+  --holo-carousel-mobile-image-width: 280px;
+  --holo-carousel-mobile-image-height: 210px;
+  --holo-carousel-mobile-reflection-height: 105px;
+}
+
+/* ============================================
+   CONTAINER & BASE STRUCTURE
+   ============================================ */
+
+.holo-carousel-wrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 100vw;
+  height: var(--holo-carousel-container-height);
+  overflow: visible;
+  perspective: 1200px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  cursor: grab;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.holo-carousel-wrapper:active {
+  cursor: grabbing;
+}
+
+.holo-carousel-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+}
+
+/* ============================================
+   HOLOGRAPHIC PROJECTION SPHERE
+   ============================================ */
+
+.holo-carousel-sphere {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.holo-carousel-sphere::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 255, 136, 0.15) 0%,
+    rgba(0, 255, 136, 0.08) 30%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 100;
+  animation: holo-carousel-pulse 4s ease-in-out infinite;
+}
+
+@keyframes holo-carousel-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+/* ============================================
+   3D VISIBLE SPHERE
+   ============================================ */
+
+/* ============================================
+   NEURAL NETWORK SPHERE
+   ============================================ */
+
+.holo-carousel-sphere::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 900px;
+  height: 900px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid rgba(0, 255, 136, 0.4);
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      rgba(0, 255, 136, 0.15) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 70% 60%,
+      rgba(0, 212, 255, 0.1) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at center,
+      transparent 0%,
+      rgba(0, 255, 136, 0.03) 100%
+    );
+  box-shadow:
+    inset 0 0 120px rgba(0, 255, 136, 0.25),
+    0 0 60px rgba(0, 255, 136, 0.3);
+  pointer-events: none;
+  z-index: -1;
+  animation: holo-carousel-neural-pulse 4s ease-in-out infinite;
+}
+
+@keyframes holo-carousel-neural-pulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+    filter: brightness(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.01);
+    opacity: 0.9;
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes holo-carousel-sphere-float {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.02);
+    opacity: 0.8;
+  }
+}
+
+/* Neural network nodes pattern */
+.holo-carousel-container::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 900px;
+  height: 900px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-image:
+    radial-gradient(circle, rgba(0, 255, 136, 0.8) 2px, transparent 2px),
+    radial-gradient(circle, rgba(0, 212, 255, 0.6) 2px, transparent 2px),
+    radial-gradient(circle, rgba(0, 255, 136, 0.8) 2px, transparent 2px),
+    radial-gradient(circle, rgba(0, 212, 255, 0.6) 2px, transparent 2px);
+  background-size:
+    150px 150px,
+    180px 180px,
+    200px 200px,
+    220px 220px;
+  background-position:
+    0 0,
+    40px 60px,
+    80px 20px,
+    120px 100px;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.4;
+  animation: holo-carousel-neural-drift 20s linear infinite;
+}
+
+@keyframes holo-carousel-neural-drift {
+  0% {
+    background-position:
+      0 0,
+      40px 60px,
+      80px 20px,
+      120px 100px;
+  }
+  100% {
+    background-position:
+      150px 150px,
+      190px 210px,
+      230px 170px,
+      270px 250px;
+  }
+}
+
+/* Neural connection lines */
+.holo-carousel-container::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 900px;
+  height: 900px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 48%,
+      rgba(0, 255, 136, 0.2) 49%,
+      rgba(0, 255, 136, 0.2) 51%,
+      transparent 52%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 48%,
+      rgba(0, 212, 255, 0.15) 49%,
+      rgba(0, 212, 255, 0.15) 51%,
+      transparent 52%
+    ),
+    linear-gradient(
+      90deg,
+      transparent 48%,
+      rgba(0, 255, 136, 0.1) 49%,
+      rgba(0, 255, 136, 0.1) 51%,
+      transparent 52%
+    ),
+    linear-gradient(
+      0deg,
+      transparent 48%,
+      rgba(0, 212, 255, 0.1) 49%,
+      rgba(0, 212, 255, 0.1) 51%,
+      transparent 52%
+    );
+  background-size:
+    800px 800px,
+    800px 800px,
+    800px 800px,
+    800px 800px;
+  background-position: center;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.5;
+  animation: holo-carousel-neural-lines-pulse 3s ease-in-out infinite;
+  -webkit-mask-image: radial-gradient(
+    circle,
+    black 0%,
+    black 70%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(circle, black 0%, black 70%, transparent 100%);
+}
+
+@keyframes holo-carousel-neural-lines-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Energy pulse rings */
+.holo-carousel-sphere {
+  position: relative;
+}
+
+.holo-carousel-sphere .holo-carousel-item:nth-child(1)::before,
+.holo-carousel-sphere .holo-carousel-item:nth-child(3)::before,
+.holo-carousel-sphere .holo-carousel-item:nth-child(5)::before {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 600px;
+  height: 600px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  pointer-events: none;
+  z-index: -2;
+  animation: holo-carousel-neural-ring-expand 4s ease-out infinite;
+}
+
+.holo-carousel-sphere .holo-carousel-item:nth-child(3)::before {
+  animation-delay: 1.3s;
+  border-color: rgba(0, 212, 255, 0.3);
+}
+
+.holo-carousel-sphere .holo-carousel-item:nth-child(5)::before {
+  animation-delay: 2.6s;
+}
+
+@keyframes holo-carousel-neural-ring-expand {
+  0% {
+    width: 400px;
+    height: 400px;
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  100% {
+    width: 1000px;
+    height: 1000px;
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   CAROUSEL ITEMS
+   ============================================ */
+
+.holo-carousel-item {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--holo-carousel-image-width);
+  height: calc(
+    var(--holo-carousel-image-height) + var(--holo-carousel-reflection-height)
+  );
+  transform-style: preserve-3d;
+  transition:
+    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.6s ease,
+    filter 0.6s ease;
+  will-change: transform, opacity;
+}
+
+.holo-carousel-item-inner {
+  position: relative;
+  width: 100%;
+  height: var(--holo-carousel-image-height);
+  transform-style: preserve-3d;
+  margin-bottom: 20px;
+}
+
+/* ============================================
+   IMAGE STYLING WITH HOLOGRAPHIC EFFECTS
+   ============================================ */
+
+.holo-carousel-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 2px solid var(--holo-carousel-matrix-green);
+  border-radius: 12px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 10px 30px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(0, 255, 136, 0.5),
+    0 0 40px rgba(0, 255, 136, 0.3),
+    inset 0 0 20px rgba(0, 255, 136, 0.1),
+    inset -5px -5px 15px rgba(0, 0, 0, 0.3),
+    inset 5px 5px 15px rgba(0, 255, 136, 0.1);
+  overflow: hidden;
+  background: var(--holo-carousel-bg-darker);
+  transform: translateZ(20px);
+}
+
+.holo-carousel-image-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 255, 136, 0.3) 50%,
+    transparent 100%
+  );
+  animation: holo-carousel-scan 3s linear infinite;
+  pointer-events: none;
+  z-index: 2;
+}
+
+@keyframes holo-carousel-scan {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 200%;
+  }
+}
+
+.holo-carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.9) contrast(1.1) saturate(1.2);
+  transition: filter 0.3s ease;
+}
+
+/* Scanlines overlay */
+.holo-carousel-image-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15) 0px,
+    transparent 1px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.15) 3px
+  );
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
+}
+
+/* Center item active state */
+.holo-carousel-item.holo-carousel-center .holo-carousel-image-wrapper {
+  border-color: var(--holo-carousel-baby-blue);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.6),
+    0 15px 40px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(0, 212, 255, 0.6),
+    0 0 60px rgba(0, 212, 255, 0.4),
+    inset 0 0 30px rgba(0, 212, 255, 0.2),
+    inset -8px -8px 20px rgba(0, 0, 0, 0.4),
+    inset 8px 8px 20px rgba(0, 212, 255, 0.15);
+  cursor: pointer;
+  transform: translateZ(40px);
+}
+
+.holo-carousel-item.holo-carousel-center .holo-carousel-image {
+  filter: brightness(1.1) contrast(1.2) saturate(1.3);
+}
+
+/* Hover effect for center item */
+.holo-carousel-item.holo-carousel-center:hover .holo-carousel-image-wrapper {
+  border-color: var(--holo-carousel-neon-yellow);
+  box-shadow:
+    0 40px 100px rgba(0, 0, 0, 0.7),
+    0 20px 50px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(255, 255, 0, 0.8),
+    0 0 80px rgba(255, 255, 0, 0.5),
+    inset 0 0 40px rgba(255, 255, 0, 0.3),
+    inset -10px -10px 25px rgba(0, 0, 0, 0.5),
+    inset 10px 10px 25px rgba(255, 255, 0, 0.2);
+  transform: translateZ(60px) scale(1.05);
+  transition: all 0.3s ease;
+}
+
+.holo-carousel-item.holo-carousel-center:hover .holo-carousel-image {
+  filter: brightness(1.2) contrast(1.3) saturate(1.4);
+}
+
+.holo-carousel-item.holo-carousel-center .holo-carousel-image-wrapper {
+  transition: all 0.3s ease;
+}
+
+/* ============================================
+   REFLECTION EFFECT
+   ============================================ */
+
+.holo-carousel-reflection {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: var(--holo-carousel-reflection-height);
+  overflow: hidden;
+  transform: translateY(calc(100% + 20px)) scaleY(-1);
+  opacity: 0.6;
+  border-radius: 12px;
+  box-shadow:
+    0 -10px 30px rgba(0, 255, 136, 0.2),
+    inset 0 0 20px rgba(0, 255, 136, 0.1);
+}
+
+.holo-carousel-reflection-image {
+  width: 100%;
+  height: var(--holo-carousel-image-height);
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.8) contrast(1.1);
+}
+
+.holo-carousel-reflection::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 14, 10, 0.1) 0%,
+    rgba(10, 14, 10, 0.85) 100%
+  );
+}
+
+/* ============================================
+   CONTENT OVERLAY (Modal)
+   ============================================ */
+
+.holo-carousel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 7, 5, 0.95);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.4s ease,
+    visibility 0.4s ease;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.holo-carousel-overlay.holo-carousel-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.holo-carousel-content {
+  position: relative;
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90vh;
+  background: var(--holo-carousel-bg-darker);
+  border: 2px solid var(--holo-carousel-matrix-green);
+  box-shadow:
+    0 0 40px rgba(0, 255, 136, 0.6),
+    inset 0 0 40px rgba(0, 255, 136, 0.1);
+  padding: 40px;
+  overflow-y: auto;
+  transform: scale(0.8) rotateX(10deg);
+  opacity: 0;
+  transition:
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s ease;
+}
+
+.holo-carousel-overlay.holo-carousel-active .holo-carousel-content {
+  transform: scale(1) rotateX(0deg);
+  opacity: 1;
+}
+
+/* Scanlines for content */
+.holo-carousel-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1) 0px,
+    transparent 1px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.1) 3px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Close button */
+.holo-carousel-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 2px solid var(--holo-carousel-error-red);
+  color: var(--holo-carousel-error-red);
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 2;
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+}
+
+.holo-carousel-close:hover {
+  background: var(--holo-carousel-error-red);
+  color: var(--holo-carousel-bg-darker);
+  box-shadow: 0 0 20px rgba(255, 0, 85, 0.8);
+  transform: rotate(90deg);
+}
+
+/* Content styling */
+.holo-carousel-content-inner {
+  position: relative;
+  z-index: 2;
+  font-family: "Courier New", monospace;
+  color: var(--holo-carousel-matrix-green);
+}
+
+.holo-carousel-content-title {
+  font-size: 2.5em;
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow:
+    0 0 10px var(--holo-carousel-matrix-green),
+    0 0 20px var(--holo-carousel-matrix-green);
+  animation: holo-carousel-flicker 3s infinite;
+}
+
+@keyframes holo-carousel-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.95;
+  }
+  51% {
+    opacity: 1;
+  }
+  52% {
+    opacity: 0.98;
+  }
+  55% {
+    opacity: 1;
+  }
+}
+
+.holo-carousel-content-date {
+  font-size: 1em;
+  color: var(--holo-carousel-baby-blue);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.holo-carousel-content-description {
+  font-size: 1.2em;
+  line-height: 1.8;
+  margin: 20px 0 30px 0;
+  color: var(--holo-carousel-matrix-green-light);
+}
+
+.holo-carousel-content-github {
+  display: inline-block;
+  padding: 12px 24px;
+  background: transparent;
+  border: 2px solid var(--holo-carousel-neon-yellow);
+  color: var(--holo-carousel-neon-yellow);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+  font-size: 1em;
+  margin: 20px 0;
+}
+
+.holo-carousel-content-github:hover {
+  background: var(--holo-carousel-neon-yellow);
+  color: var(--holo-carousel-bg-darker);
+  box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
+  transform: translateY(-2px);
+}
+
+.holo-carousel-content-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.holo-carousel-content-image {
+  width: 100%;
+  border: 2px solid var(--holo-carousel-matrix-green);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+  transition: all 0.3s ease;
+}
+
+.holo-carousel-content-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 255, 136, 0.6);
+}
+
+/* ============================================
+   GLITCH EFFECTS
+   ============================================ */
+
+@keyframes holo-carousel-glitch-rgb {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+@keyframes holo-carousel-glitch-scanline {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100%;
+  }
+}
+
+.holo-carousel-glitch-active .holo-carousel-image-wrapper::before {
+  animation: holo-carousel-scan 0.1s linear infinite;
+}
+
+.holo-carousel-glitch-active .holo-carousel-image {
+  animation: holo-carousel-glitch-rgb 0.2s infinite;
+}
+
+.holo-carousel-glitch-rgb-split {
+  position: relative;
+}
+
+.holo-carousel-glitch-rgb-split::before,
+.holo-carousel-glitch-rgb-split::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  opacity: 0.8;
+  mix-blend-mode: screen;
+}
+
+.holo-carousel-glitch-rgb-split::before {
+  animation: holo-carousel-glitch-rgb 0.3s infinite;
+  filter: hue-rotate(90deg);
+}
+
+.holo-carousel-glitch-rgb-split::after {
+  animation: holo-carousel-glitch-rgb 0.25s infinite reverse;
+  filter: hue-rotate(-90deg);
+}
+
+/* Pixelation effect */
+.holo-carousel-pixelate {
+  image-rendering: -moz-crisp-edges;
+  -webkit-image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+/* Brightness flicker */
+@keyframes holo-carousel-brightness-flicker {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  25% {
+    filter: brightness(0.3);
+  }
+  50% {
+    filter: brightness(1.5);
+  }
+  75% {
+    filter: brightness(0.5);
+  }
+}
+
+.holo-carousel-brightness-glitch {
+  animation: holo-carousel-brightness-flicker 0.3s infinite;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  :root {
+    --holo-carousel-image-width: 320px;
+    --holo-carousel-image-height: 240px;
+    --holo-carousel-reflection-height: 120px;
+  }
+
+  .holo-carousel-content {
+    padding: 30px;
+  }
+
+  .holo-carousel-content-title {
+    font-size: 2em;
+  }
+
+  .holo-carousel-content-description {
+    font-size: 1.1em;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  :root {
+    --holo-carousel-container-height: 60vh;
+    --holo-carousel-image-width: var(--holo-carousel-mobile-image-width);
+    --holo-carousel-image-height: var(--holo-carousel-mobile-image-height);
+    --holo-carousel-reflection-height: var(
+      --holo-carousel-mobile-reflection-height
+    );
+  }
+
+  .holo-carousel-content {
+    padding: 20px;
+    width: 95%;
+  }
+
+  .holo-carousel-content-title {
+    font-size: 1.5em;
+    letter-spacing: 2px;
+  }
+
+  .holo-carousel-content-description {
+    font-size: 1em;
+    line-height: 1.6;
+  }
+
+  .holo-carousel-content-images {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .holo-carousel-close {
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+  }
+
+  /* Reduced glitch effects for mobile performance */
+  .holo-carousel-glitch-active .holo-carousel-image {
+    animation-duration: 0.3s;
+  }
+}
+
+/* Mobile Landscape */
+@media (max-width: 768px) and (orientation: landscape) {
+  :root {
+    --holo-carousel-container-height: 80vh;
+  }
+
+  .holo-carousel-content {
+    max-height: 85vh;
+  }
+
+  .holo-carousel-sphere {
+    margin-top: 100px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  :root {
+    --holo-carousel-mobile-image-width: 220px;
+    --holo-carousel-mobile-image-height: 165px;
+    --holo-carousel-mobile-reflection-height: 82px;
+  }
+
+  .holo-carousel-content-title {
+    font-size: 1.3em;
+  }
+
+  .holo-carousel-content-github {
+    padding: 10px 20px;
+    font-size: 0.9em;
+  }
+}
+
+/* ============================================
+   SCROLLBAR STYLING (for content overlay)
+   ============================================ */
+
+.holo-carousel-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.holo-carousel-content::-webkit-scrollbar-track {
+  background: var(--holo-carousel-bg-darker);
+  border-left: 1px solid var(--holo-carousel-matrix-green);
+}
+
+.holo-carousel-content::-webkit-scrollbar-thumb {
+  background: var(--holo-carousel-matrix-green);
+  box-shadow: 0 0 10px var(--holo-carousel-matrix-green);
+}
+
+.holo-carousel-content::-webkit-scrollbar-thumb:hover {
+  background: var(--holo-carousel-baby-blue);
+  box-shadow: 0 0 15px var(--holo-carousel-baby-blue);
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.holo-carousel-no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.holo-carousel-hidden {
+  display: none !important;
+}
+
+/* Performance optimization */
+.holo-carousel-item,
+.holo-carousel-image,
+.holo-carousel-sphere {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
