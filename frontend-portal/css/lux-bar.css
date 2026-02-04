@@ -1,0 +1,89 @@
+/* === Edler, schmaler Streifen am oberen Rand === */
+.lux-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px; /* schmaler Streifen */
+  background: linear-gradient(
+    to bottom,
+    #88ffb8 0%,
+    #00ba3b 10%,
+    #009118 20%,
+    #88ffb8 30%,
+    #00ba3b 40%,
+    #88ffb8 50%,
+    #00ba3b 60%,
+    #88ffb8 70%,
+    #009118 80%,
+    #00ba3b 90%,
+    #88ffb8 100%
+  );
+  box-shadow: 0 2px 10px rgba(31, 31, 31, 0.224);
+  overflow: hidden;
+  z-index: 10001; /* über allen anderen Inhalten */
+}
+
+/* === Der gleitende „Funken“ / Lichtstreifen === */
+.lux-sparkle {
+  position: absolute;
+  top: 0;
+  right: -10%;
+  width: 22%;
+  height: 100%;
+  background: linear-gradient(
+    210deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(40, 142, 252, 0.25) 15%,
+    rgba(0, 225, 255, 0.75) 45%,
+    rgba(0, 212, 255, 0.9) 50%,
+    rgba(100, 206, 255, 0.75) 55%,
+    rgb(127, 197, 231) 80%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  filter: blur(2.4px) brightness(1.2);
+  transform: skewX(-60deg);
+  pointer-events: none;
+  opacity: 0.15;
+
+  .lux-sparkle {
+    /* dein bestehender Code */
+
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 20%,
+      black 80%,
+      transparent 100%
+    );
+
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 20%,
+      black 80%,
+      transparent 100%
+    );
+  }
+}
+
+/* === Animation: sanfter, gleitender Glanzeffekt === */
+@keyframes luxShine {
+  0% {
+    right: -70%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  85% {
+    opacity: 0.3;
+  }
+  100% {
+    right: 180%;
+    opacity: 0;
+  }
+}

@@ -4,7 +4,6 @@
 // ====================================================================================================================================
 document.addEventListener("DOMContentLoaded", () => {
   const navBar = document.getElementById("navigationbar");
-
   if (!navBar) return;
 
   const hasEntered = sessionStorage.getItem("portalEntered");
@@ -385,7 +384,6 @@ if (yesBtn) {
 
     // Make Navigation Bar Visible
     const navBar = document.getElementById("navigationbar");
-
     setTimeout(() => {
       if (!navBar) {
         console.error("Navbar nicht gefunden");
