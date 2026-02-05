@@ -120,8 +120,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 900px;
-  height: 900px;
+  width: 950px;
+  height: 950px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   border: 2px solid rgba(0, 255, 136, 0.4);
@@ -181,8 +181,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 900px;
-  height: 900px;
+  width: 950px;
+  height: 950px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background-image:
@@ -229,8 +229,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 900px;
-  height: 900px;
+  width: 950px;
+  height: 950px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background-image:

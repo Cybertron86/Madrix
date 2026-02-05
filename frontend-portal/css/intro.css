@@ -42,7 +42,7 @@ body {
   );
   animation: scanline 1.2s linear infinite;
   pointer-events: none;
-  z-index: 5;
+  z-index: 20000;
 }
 
 @keyframes portalPulse {
@@ -185,7 +185,7 @@ body {
   justify-content: center;
   cursor: pointer;
   transition: 0.25s;
-  z-index: 2000;
+  z-index: 20000;
 }
 .ambientBtn:hover {
   background: #0f0;
