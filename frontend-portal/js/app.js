@@ -213,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   let frame = 0;
-  const frameSkip = isChrome || isBrave ? 2 : isEdge ? 1.1 : 1.15;
+  const frameSkip = isChrome || isBrave ? 2 : isEdge ? 1.1 : 1.4;
 
   function drawMatrix() {
     frame++;
@@ -239,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
       drops[i]++;
     }
 
-    if (Math.random() < (isChrome || isBrave ? 0.05 : isEdge ? 0.08 : 0.3)) {
+    if (Math.random() < (isChrome || isBrave ? 0.05 : isEdge ? 0.15 : 0.1)) {
       applyGlitch({ stripes: 2, offsetMax: 60, alpha: 0.5 });
     }
 
