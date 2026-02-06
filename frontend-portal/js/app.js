@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const navBar = document.getElementById("navigationbar");
   const footerBar = document.getElementById("site-footer");
+  const luxBar = document.getElementById("lux-bar");
   const portalOverlay = document.getElementById("portalOverlay");
   const mainContent = document.getElementById("mainContent");
   const yesBtn = document.getElementById("yesBtn");
@@ -26,8 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const dropdownMenu = document.getElementById("dropdown_menu");
   const canvas = document.getElementById("matrixGlitch");
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
-
-  // LÖSCHE die Zeilen 31-48 KOMPLETT - sie gehören nicht hierhin!
 
   // Navbar, Footer & Buttons if already entered
   if (sessionStorage.getItem("portalEntered") === "true") {
@@ -44,6 +43,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (soundBtn) {
       soundBtn.style.visibility = "visible";
       soundBtn.style.opacity = "1";
+    }
+    if (luxBar) {
+      luxBar.style.visibility = "visible";
+      luxBar.style.opacity = "1";
     }
   }
 
@@ -339,6 +342,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (soundBtn) {
         soundBtn.style.visibility = "visible";
         soundBtn.style.opacity = "1";
+      }
+      if (luxBar) {
+        luxBar.style.visibility = "visible";
+        luxBar.style.opacity = "1";
       }
     }, totalDuration + 500);
 

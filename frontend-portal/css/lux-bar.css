@@ -5,6 +5,7 @@
   left: 0;
   width: 100%;
   height: 5px; /* schmaler Streifen */
+  visibility: hidden;
   background: linear-gradient(
     to bottom,
     #88ffb8 0%,
