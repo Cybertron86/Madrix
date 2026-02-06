@@ -152,11 +152,15 @@ body {
   width: 48px;
   height: 48px;
   border-radius: 50%;
+  margin-bottom: 50px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  visibility: hidden;
   transition: 0.25s;
+  transition: opacity 0.5s ease;
+  z-index: 10001;
 }
 .muteUnmuteBtn:hover {
   background: #0f0;
@@ -184,6 +188,7 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  visibility: hidden;
   transition: 0.25s;
   z-index: 20000;
 }

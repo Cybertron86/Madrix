@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/hologram-carousel.css" />
     <link rel="stylesheet" href="css/navigationbar.css" />
     <link rel="stylesheet" href="css/lux-bar.css" />
+    <link rel="stylesheet" href="css/footer.css" />
 
     <link
       href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap"
@@ -83,7 +84,24 @@
       🔊
     </button>
 
-    <footer></footer>
+    <footer
+      id="site-footer"
+      class="site-footer"
+      role="contentinfo"
+      aria-label="Footer"
+    >
+      <div class="footer-inner">
+        <p class="footer-copy">© <span id="year"></span> Madrix</p>
+        <nav class="footer-nav" aria-label="Rechtliche Navigation">
+          <ul>
+            <li><a href="/impressum" rel="legal">Impressum</a></li>
+            <li><a href="/datenschutz" rel="privacy-policy">Datenschutz</a></li>
+            <li><a href="/agb" rel="terms">AGB</a></li>
+            <li><a href="/kontakt">Kontakt</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
 
     <script src="js/app.js" defer></script>
     <script src="js/hologram-carousel.js"></script>

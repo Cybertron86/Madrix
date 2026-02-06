@@ -1,13 +1,21 @@
 // ====================================================================================================================================
 // 🎯 SINGLE PAGE APPLICATION - APP.JS
 // ====================================================================================================================================
-
 document.addEventListener("DOMContentLoaded", () => {
   // ====================================================================================================================================
   // 1️⃣ DOM CACHE
   // ====================================================================================================================================
 
+  try {
+    const el = document.getElementById("year");
+    if (!el) throw new Error("Year element missing");
+    el.textContent = new Date().getFullYear().toString();
+  } catch (err) {
+    console.error("Footer Year Error:", err);
+  }
+
   const navBar = document.getElementById("navigationbar");
+  const footerBar = document.getElementById("site-footer");
   const portalOverlay = document.getElementById("portalOverlay");
   const mainContent = document.getElementById("mainContent");
   const yesBtn = document.getElementById("yesBtn");
@@ -19,11 +27,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const canvas = document.getElementById("matrixGlitch");
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-  // Navbar if already entered
-  if (sessionStorage.getItem("portalEntered") === "true" && navBar) {
-    navBar.style.visibility = "visible";
-    navBar.style.opacity = "1";
-    navBar.style.pointerEvents = "auto";
+  // LÖSCHE die Zeilen 31-48 KOMPLETT - sie gehören nicht hierhin!
+
+  // Navbar, Footer & Buttons if already entered
+  if (sessionStorage.getItem("portalEntered") === "true") {
+    if (navBar) {
+      navBar.style.visibility = "visible";
+      navBar.style.opacity = "1";
+      navBar.style.pointerEvents = "auto";
+    }
+    if (footerBar) {
+      footerBar.style.visibility = "visible";
+      footerBar.style.opacity = "1";
+      footerBar.style.pointerEvents = "auto";
+    }
+    if (soundBtn) {
+      soundBtn.style.visibility = "visible";
+      soundBtn.style.opacity = "1";
+    }
   }
 
   // ====================================================================================================================================
@@ -310,6 +331,15 @@ document.addEventListener("DOMContentLoaded", () => {
         navBar.style.opacity = "1";
         navBar.style.pointerEvents = "auto";
       }
+      if (footerBar) {
+        footerBar.style.visibility = "visible";
+        footerBar.style.opacity = "1";
+        footerBar.style.pointerEvents = "auto";
+      }
+      if (soundBtn) {
+        soundBtn.style.visibility = "visible";
+        soundBtn.style.opacity = "1";
+      }
     }, totalDuration + 500);
 
     startAllSounds();
@@ -319,7 +349,11 @@ document.addEventListener("DOMContentLoaded", () => {
   if (hasVisited) {
     portalOverlay?.remove();
     mainContent.classList.add("visible");
-    if (soundBtn) soundBtn.textContent = "🔇";
+    if (soundBtn) {
+      soundBtn.textContent = "🔇";
+      soundBtn.style.visibility = "visible";
+      soundBtn.style.opacity = "1";
+    }
   }
 
   if (menuBtn && dropdownMenu) {
