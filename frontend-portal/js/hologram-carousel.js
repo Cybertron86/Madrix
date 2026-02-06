@@ -52,6 +52,14 @@ class HologramCarousel {
       // Setup DOM
       this.setupDOM();
 
+      // CREATE ULTIMATE MATRIX EYE - NEUE ZEILEN
+      const sphereContainer = this.container.querySelector(
+        ".holo-carousel-container",
+      );
+      if (sphereContainer) {
+        this.matrixEye = new UltimateMatrixEye(sphereContainer);
+      }
+
       // Setup events
       this.setupEvents();
 

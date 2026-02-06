@@ -1,0 +1,946 @@
+/* ============================================
+   ULTIMATE MATRIX EYE for HOLO CAROUSEL
+
+   Features:
+   Maximum detail, glitch effects, aggressive animations
+   ============================================ */
+
+.holo-carousel-matrix-eye {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 320px;
+  height: 180px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: -1; /* HINTER den Carousel-Bildern */
+  filter: drop-shadow(0 0 50px rgba(0, 255, 136, 0.9));
+  animation: holo-eye-main-glitch 8s ease-in-out infinite;
+}
+
+/* Main container glitch animation */
+@keyframes holo-eye-main-glitch {
+  0%,
+  90%,
+  100% {
+    filter: drop-shadow(0 0 50px rgba(0, 255, 136, 0.9));
+  }
+  92% {
+    filter: drop-shadow(0 0 50px rgba(0, 255, 136, 0.9))
+      drop-shadow(3px 0 rgba(255, 0, 100, 0.8))
+      drop-shadow(-3px 0 rgba(0, 212, 255, 0.8));
+  }
+  94% {
+    filter: drop-shadow(0 0 50px rgba(0, 255, 136, 0.9));
+  }
+  95% {
+    filter: drop-shadow(0 0 50px rgba(0, 255, 136, 0.9))
+      drop-shadow(2px 0 rgba(255, 0, 100, 0.6))
+      drop-shadow(-2px 0 rgba(0, 212, 255, 0.6));
+  }
+}
+
+/* Eye container with 3D perspective */
+.holo-carousel-eye-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+/* Multi-layer glow rings */
+.holo-carousel-eye-glow-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 110%;
+  height: 110%;
+  transform: translate(-50%, -50%);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  animation: holo-carousel-glow-ring-pulse 4s ease-in-out infinite;
+  z-index: -1;
+}
+
+.holo-carousel-eye-glow-ring:nth-child(2) {
+  width: 125%;
+  height: 125%;
+  animation-delay: 0.7s;
+  border-color: rgba(0, 212, 255, 0.2);
+}
+
+.holo-carousel-eye-glow-ring:nth-child(3) {
+  width: 140%;
+  height: 140%;
+  animation-delay: 1.4s;
+}
+
+@keyframes holo-carousel-glow-ring-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+/* Outer eye shape with enhanced effects */
+.holo-carousel-eye-outer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 25, 12, 0.98) 0%,
+    rgba(10, 35, 18, 0.92) 40%,
+    rgba(5, 18, 10, 0.8) 70%,
+    transparent 100%
+  );
+  border: 3px solid rgba(0, 255, 136, 0.8);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  box-shadow:
+    inset 0 0 50px rgba(0, 255, 136, 0.5),
+    inset 0 -25px 50px rgba(0, 0, 0, 0.7),
+    inset 0 25px 30px rgba(0, 255, 136, 0.2),
+    0 0 70px rgba(0, 255, 136, 0.7),
+    0 0 120px rgba(0, 255, 136, 0.4);
+  animation: holo-eye-outer-intense-glow 3s ease-in-out infinite;
+}
+
+@keyframes holo-eye-outer-intense-glow {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 0 50px rgba(0, 255, 136, 0.5),
+      inset 0 -25px 50px rgba(0, 0, 0, 0.7),
+      inset 0 25px 30px rgba(0, 255, 136, 0.2),
+      0 0 70px rgba(0, 255, 136, 0.7),
+      0 0 120px rgba(0, 255, 136, 0.4);
+    border-color: rgba(0, 255, 136, 0.8);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 60px rgba(0, 255, 136, 0.6),
+      inset 0 -25px 50px rgba(0, 0, 0, 0.7),
+      inset 0 25px 40px rgba(0, 255, 136, 0.3),
+      0 0 90px rgba(0, 255, 136, 0.9),
+      0 0 140px rgba(0, 255, 136, 0.5);
+    border-color: rgba(0, 255, 136, 1);
+  }
+}
+
+/* Sclera (eye white) with matrix rain */
+.holo-carousel-eye-sclera {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 92%;
+  height: 85%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(5, 28, 14, 0.98) 0%,
+    rgba(8, 22, 12, 0.99) 100%
+  );
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 40px rgba(0, 0, 0, 0.9),
+    inset 0 25px 50px rgba(0, 255, 136, 0.15);
+}
+
+/* INTENSE MATRIX RAIN - VERTICAL FROM TOP TO BOTTOM */
+.holo-carousel-eye-matrix-rain {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  line-height: 12px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Individual matrix column - vertical falling */
+.holo-carousel-matrix-column {
+  position: absolute;
+  top: -100%;
+  white-space: pre;
+  color: rgba(0, 255, 136, 0.8);
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.9);
+  font-weight: bold;
+  letter-spacing: 0;
+  animation: holo-matrix-fall-vertical linear infinite;
+}
+
+/* 20 columns for DENSE matrix rain */
+.holo-carousel-matrix-column:nth-child(1) {
+  left: 2%;
+  animation-duration: 3s;
+  animation-delay: 0s;
+}
+.holo-carousel-matrix-column:nth-child(2) {
+  left: 7%;
+  animation-duration: 2.8s;
+  animation-delay: 0.3s;
+}
+.holo-carousel-matrix-column:nth-child(3) {
+  left: 12%;
+  animation-duration: 3.2s;
+  animation-delay: 0.6s;
+}
+.holo-carousel-matrix-column:nth-child(4) {
+  left: 17%;
+  animation-duration: 2.9s;
+  animation-delay: 0.2s;
+}
+.holo-carousel-matrix-column:nth-child(5) {
+  left: 22%;
+  animation-duration: 3.1s;
+  animation-delay: 0.9s;
+}
+.holo-carousel-matrix-column:nth-child(6) {
+  left: 27%;
+  animation-duration: 2.7s;
+  animation-delay: 0.4s;
+}
+.holo-carousel-matrix-column:nth-child(7) {
+  left: 32%;
+  animation-duration: 3.3s;
+  animation-delay: 1.1s;
+}
+.holo-carousel-matrix-column:nth-child(8) {
+  left: 37%;
+  animation-duration: 2.85s;
+  animation-delay: 0.1s;
+}
+.holo-carousel-matrix-column:nth-child(9) {
+  left: 42%;
+  animation-duration: 3.05s;
+  animation-delay: 0.8s;
+}
+.holo-carousel-matrix-column:nth-child(10) {
+  left: 47%;
+  animation-duration: 2.95s;
+  animation-delay: 0.5s;
+}
+.holo-carousel-matrix-column:nth-child(11) {
+  left: 52%;
+  animation-duration: 3.15s;
+  animation-delay: 1.2s;
+}
+.holo-carousel-matrix-column:nth-child(12) {
+  left: 57%;
+  animation-duration: 2.75s;
+  animation-delay: 0.35s;
+}
+.holo-carousel-matrix-column:nth-child(13) {
+  left: 62%;
+  animation-duration: 3.25s;
+  animation-delay: 0.7s;
+}
+.holo-carousel-matrix-column:nth-child(14) {
+  left: 67%;
+  animation-duration: 2.88s;
+  animation-delay: 1s;
+}
+.holo-carousel-matrix-column:nth-child(15) {
+  left: 72%;
+  animation-duration: 3.08s;
+  animation-delay: 0.15s;
+}
+.holo-carousel-matrix-column:nth-child(16) {
+  left: 77%;
+  animation-duration: 2.92s;
+  animation-delay: 0.55s;
+}
+.holo-carousel-matrix-column:nth-child(17) {
+  left: 82%;
+  animation-duration: 3.18s;
+  animation-delay: 0.95s;
+}
+.holo-carousel-matrix-column:nth-child(18) {
+  left: 87%;
+  animation-duration: 2.78s;
+  animation-delay: 0.25s;
+}
+.holo-carousel-matrix-column:nth-child(19) {
+  left: 92%;
+  animation-duration: 3.12s;
+  animation-delay: 1.05s;
+}
+.holo-carousel-matrix-column:nth-child(20) {
+  left: 97%;
+  animation-duration: 2.98s;
+  animation-delay: 0.45s;
+}
+
+/* Brighter leading character in columns */
+.holo-carousel-matrix-column::first-line {
+  color: rgba(200, 255, 200, 1);
+  text-shadow: 0 0 12px rgba(200, 255, 200, 1);
+}
+
+@keyframes holo-matrix-fall-vertical {
+  0% {
+    top: -100%;
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+/* Glitch overlay on matrix rain */
+.holo-carousel-eye-matrix-glitch {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 2;
+  animation: holo-matrix-rain-glitch 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes holo-matrix-rain-glitch {
+  0%,
+  88%,
+  100% {
+    background: transparent;
+  }
+  90% {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 0, 100, 0.1) 0%,
+      transparent 5%,
+      transparent 95%,
+      rgba(0, 212, 255, 0.1) 100%
+    );
+  }
+  92% {
+    background: transparent;
+  }
+  94% {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 212, 255, 0.08) 0%,
+      transparent 5%,
+      transparent 95%,
+      rgba(255, 0, 100, 0.08) 100%
+    );
+  }
+}
+
+/* Scan lines over sclera */
+.holo-carousel-eye-scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 136, 0.05) 2px,
+    rgba(0, 255, 136, 0.05) 4px
+  );
+  z-index: 3;
+  animation: holo-scanlines-move 0.5s linear infinite;
+}
+
+@keyframes holo-scanlines-move {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(4px);
+  }
+}
+
+/* Vertical animated scanline */
+.holo-carousel-eye-scanline-vert {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(0, 255, 136, 0.5) 20%,
+    rgba(0, 255, 136, 1) 50%,
+    rgba(0, 255, 136, 0.5) 80%,
+    transparent
+  );
+  box-shadow:
+    0 0 15px rgba(0, 255, 136, 0.9),
+    0 0 30px rgba(0, 255, 136, 0.6);
+  animation: holo-eye-scan-vertical-intense 3s ease-in-out infinite;
+  z-index: 10;
+}
+
+@keyframes holo-eye-scan-vertical-intense {
+  0%,
+  100% {
+    top: 5%;
+  }
+  50% {
+    top: 90%;
+  }
+}
+
+/* Circuit veins in sclera */
+.holo-carousel-eye-veins {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(
+      ellipse at 15% 25%,
+      transparent 35%,
+      rgba(0, 255, 136, 0.12) 36%,
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at 85% 30%,
+      transparent 30%,
+      rgba(0, 212, 255, 0.1) 31%,
+      transparent 33%
+    ),
+    radial-gradient(
+      ellipse at 25% 75%,
+      transparent 40%,
+      rgba(0, 255, 136, 0.11) 41%,
+      transparent 43%
+    ),
+    radial-gradient(
+      ellipse at 75% 80%,
+      transparent 32%,
+      rgba(0, 212, 255, 0.09) 33%,
+      transparent 35%
+    ),
+    radial-gradient(
+      ellipse at 50% 20%,
+      transparent 25%,
+      rgba(0, 255, 136, 0.08) 26%,
+      transparent 28%
+    );
+  opacity: 0.8;
+  animation: holo-veins-pulse 6s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes holo-veins-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+/* Iris container - moves and scales */
+.holo-carousel-eye-iris-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  transform: translate(-50%, -50%);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 5;
+}
+
+/* ULTRA DETAILED IRIS */
+
+/* Outer iris ring with rotating segments */
+.holo-carousel-eye-iris-outer-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 115%;
+  height: 115%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid rgba(0, 255, 136, 0.7);
+  box-shadow:
+    0 0 25px rgba(0, 255, 136, 0.6),
+    inset 0 0 25px rgba(0, 255, 136, 0.4);
+  animation: holo-iris-ring-rotate 25s linear infinite;
+}
+
+/* Segmented ring pattern */
+.holo-carousel-eye-iris-outer-ring::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(0, 255, 136, 0.4) 15deg,
+    transparent 30deg,
+    transparent 60deg,
+    rgba(0, 212, 255, 0.3) 75deg,
+    transparent 90deg,
+    transparent 120deg,
+    rgba(0, 255, 136, 0.4) 135deg,
+    transparent 150deg,
+    transparent 180deg,
+    rgba(0, 212, 255, 0.3) 195deg,
+    transparent 210deg,
+    transparent 240deg,
+    rgba(0, 255, 136, 0.4) 255deg,
+    transparent 270deg,
+    transparent 300deg,
+    rgba(0, 212, 255, 0.3) 315deg,
+    transparent 330deg,
+    transparent 360deg
+  );
+  animation: holo-iris-segments-spin 20s linear infinite reverse;
+}
+
+@keyframes holo-iris-ring-rotate {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes holo-iris-segments-spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Main iris with multi-layer gradient */
+.holo-carousel-eye-iris {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  background: 
+    /* Bright highlight spot */
+    radial-gradient(
+      circle at 30% 25%,
+      rgba(220, 255, 220, 0.4) 0%,
+      rgba(180, 255, 180, 0.2) 8%,
+      transparent 18%
+    ),
+    /* Secondary highlight */
+    radial-gradient(
+        circle at 35% 32%,
+        rgba(0, 255, 136, 0.3) 0%,
+        transparent 15%
+      ),
+    /* Main iris gradient - rich layers */
+    radial-gradient(
+        circle at center,
+        rgba(0, 255, 136, 0.9) 0%,
+        rgba(0, 240, 125, 0.92) 12%,
+        rgba(0, 220, 115, 0.94) 22%,
+        rgba(0, 200, 105, 0.96) 32%,
+        rgba(0, 180, 95, 0.97) 42%,
+        rgba(0, 160, 85, 0.98) 52%,
+        rgba(0, 140, 75, 0.99) 62%,
+        rgba(0, 110, 60, 1) 75%,
+        rgba(0, 80, 45, 1) 88%,
+        rgba(0, 50, 30, 1) 100%
+      );
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 35px rgba(0, 0, 0, 0.7),
+    inset -12px -12px 35px rgba(0, 0, 0, 0.5),
+    inset 12px 12px 25px rgba(0, 255, 136, 0.25),
+    0 0 35px rgba(0, 255, 136, 0.8),
+    0 0 70px rgba(0, 255, 136, 0.5);
+  animation: holo-iris-intense-glow 4s ease-in-out infinite;
+}
+
+@keyframes holo-iris-intense-glow {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 0 35px rgba(0, 0, 0, 0.7),
+      inset -12px -12px 35px rgba(0, 0, 0, 0.5),
+      inset 12px 12px 25px rgba(0, 255, 136, 0.25),
+      0 0 35px rgba(0, 255, 136, 0.8),
+      0 0 70px rgba(0, 255, 136, 0.5);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 35px rgba(0, 0, 0, 0.7),
+      inset -12px -12px 35px rgba(0, 0, 0, 0.5),
+      inset 12px 12px 30px rgba(0, 255, 136, 0.35),
+      0 0 45px rgba(0, 255, 136, 1),
+      0 0 90px rgba(0, 255, 136, 0.7);
+  }
+}
+
+/* Detailed iris fiber texture - radial lines */
+.holo-carousel-eye-iris-fibers {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-image: repeating-conic-gradient(
+    from 0deg,
+    rgba(0, 255, 136, 0.15) 0deg,
+    transparent 1deg,
+    rgba(0, 255, 136, 0.15) 2deg,
+    transparent 3deg
+  );
+  opacity: 0.7;
+  animation: holo-iris-fibers-rotate 40s linear infinite;
+}
+
+@keyframes holo-iris-fibers-rotate {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Iris inner ring detail */
+.holo-carousel-eye-iris-inner-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 65%;
+  height: 65%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(0, 255, 136, 0.4);
+  box-shadow:
+    0 0 10px rgba(0, 255, 136, 0.5),
+    inset 0 0 10px rgba(0, 255, 136, 0.3);
+  animation: holo-inner-ring-pulse 3s ease-in-out infinite;
+}
+
+@keyframes holo-inner-ring-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+/* Pupil with extreme depth */
+.holo-carousel-eye-pupil {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 42px;
+  height: 42px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(5, 5, 5, 1) 50%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  border-radius: 50%;
+  border: 2px solid rgba(0, 255, 136, 1);
+  box-shadow:
+    inset 0 0 20px rgba(0, 0, 0, 1),
+    0 0 20px rgba(0, 255, 136, 0.8),
+    0 0 40px rgba(0, 255, 136, 0.4);
+  overflow: hidden;
+  z-index: 10;
+  animation: holo-pupil-glow 3s ease-in-out infinite;
+}
+
+@keyframes holo-pupil-glow {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 0 20px rgba(0, 0, 0, 1),
+      0 0 20px rgba(0, 255, 136, 0.8),
+      0 0 40px rgba(0, 255, 136, 0.4);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 20px rgba(0, 0, 0, 1),
+      0 0 25px rgba(0, 255, 136, 1),
+      0 0 50px rgba(0, 255, 136, 0.6);
+  }
+}
+
+/* Highlight in pupil */
+.holo-carousel-eye-pupil::before {
+  content: "";
+  position: absolute;
+  top: 20%;
+  left: 26%;
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 255, 136, 0.7) 0%,
+    rgba(0, 255, 136, 0.3) 50%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  filter: blur(1.5px);
+}
+
+/* Depth shadow in pupil */
+.holo-carousel-eye-pupil::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle at 75% 75%,
+    transparent 30%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  border-radius: 50%;
+}
+
+/* Data stream orbiting pupil */
+.holo-carousel-eye-data-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 78px;
+  height: 78px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px dashed rgba(0, 255, 136, 0.5);
+  animation: holo-data-orbit-rotate 10s linear infinite;
+  z-index: 8;
+}
+
+.holo-carousel-eye-data-orbit::before,
+.holo-carousel-eye-data-orbit::after {
+  content: "";
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: rgba(0, 255, 136, 1);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 1);
+}
+
+.holo-carousel-eye-data-orbit::before {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.holo-carousel-eye-data-orbit::after {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@keyframes holo-data-orbit-rotate {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* SMOOTH FADE-OUT - Eye blends into sphere background */
+.holo-carousel-eye-fade-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 30;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    transparent 45%,
+    rgba(10, 14, 10, 0.3) 65%,
+    rgba(10, 14, 10, 0.6) 80%,
+    rgba(10, 14, 10, 0.85) 92%,
+    rgba(10, 14, 10, 1) 100%
+  );
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+}
+
+/* Horizontal main scanline */
+.holo-carousel-eye-scanline-horiz {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(0, 255, 136, 0.4) 15%,
+    rgba(0, 255, 136, 0.9) 50%,
+    rgba(0, 255, 136, 0.4) 85%,
+    transparent
+  );
+  animation: holo-scan-horiz-sweep 6s ease-in-out infinite;
+  z-index: 15;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.7);
+}
+
+@keyframes holo-scan-horiz-sweep {
+  0%,
+  100% {
+    top: 15%;
+    opacity: 0.5;
+  }
+  25% {
+    top: 35%;
+    opacity: 0.9;
+  }
+  50% {
+    top: 55%;
+    opacity: 1;
+  }
+  75% {
+    top: 75%;
+    opacity: 0.9;
+  }
+}
+
+/* GLITCH EFFECT - Random distortion */
+.holo-carousel-eye-glitch-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  pointer-events: none;
+  z-index: 25;
+  animation: holo-eye-glitch-distort 7s ease-in-out infinite;
+}
+
+@keyframes holo-eye-glitch-distort {
+  0%,
+  85%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  87% {
+    opacity: 1;
+    transform: translate(3px, 0) scaleX(1.02);
+    filter: drop-shadow(5px 0 rgba(255, 0, 100, 0.8))
+      drop-shadow(-5px 0 rgba(0, 212, 255, 0.8));
+  }
+  89% {
+    opacity: 0.7;
+    transform: translate(-2px, 1px) scaleY(1.01);
+    filter: drop-shadow(-4px 0 rgba(0, 212, 255, 0.6))
+      drop-shadow(4px 0 rgba(255, 0, 100, 0.6));
+  }
+  91% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+}
+
+/* Focus states */
+.holo-carousel-eye-focused .holo-carousel-eye-iris-container {
+  transform: translate(-50%, -50%) scale(1.35);
+}
+
+.holo-carousel-eye-focused .holo-carousel-eye-pupil {
+  width: 30px;
+  height: 30px;
+}
+
+.holo-carousel-eye-unfocused .holo-carousel-eye-iris-container {
+  transform: translate(-50%, -50%) scale(0.8);
+}
+
+.holo-carousel-eye-unfocused .holo-carousel-eye-pupil {
+  width: 52px;
+  height: 52px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .holo-carousel-matrix-eye {
+    width: 280px;
+    height: 160px;
+  }
+  .holo-carousel-eye-iris-container {
+    width: 85px;
+    height: 85px;
+  }
+}
+
+@media (max-width: 768px) {
+  .holo-carousel-matrix-eye {
+    width: 240px;
+    height: 140px;
+  }
+  .holo-carousel-eye-iris-container {
+    width: 72px;
+    height: 72px;
+  }
+  .holo-carousel-eye-pupil {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+@media (max-width: 480px) {
+  .holo-carousel-matrix-eye {
+    width: 200px;
+    height: 120px;
+  }
+  .holo-carousel-eye-iris-container {
+    width: 60px;
+    height: 60px;
+  }
+  .holo-carousel-eye-pupil {
+    width: 28px;
+    height: 28px;
+  }
+}
