@@ -918,7 +918,21 @@
   }
 
   .holo-carousel-sphere {
-    margin-top: 150px;
+    margin-top: 110px;
+  }
+}
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  :root {
+    --holo-carousel-container-height: 70vh;
+  }
+
+  .holo-carousel-content {
+    max-height: 80vh;
+  }
+
+  .holo-carousel-sphere {
+    margin-top: 140px;
   }
 }
 

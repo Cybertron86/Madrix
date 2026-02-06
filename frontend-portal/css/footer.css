@@ -40,9 +40,27 @@
 .footer-nav ul {
   list-style: none;
   display: flex;
-  gap: 10px;
+  gap: 40px;
   margin: 0;
   padding: 0;
+}
+
+@media (max-width: 480px) {
+  .footer-nav ul {
+    gap: 5px;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-nav ul {
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .footer-nav ul {
+    gap: 20px;
+  }
 }
 
 .footer-nav a {
