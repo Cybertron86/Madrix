@@ -79,6 +79,11 @@ document.addEventListener("DOMContentLoaded", () => {
     "resources/sounds/glossy-fx-unique-crash-leak.mp3",
     "resources/sounds/rpg-sounds-wrong-game-buzz-fx.mp3",
     "resources/sounds/phone-glitch.mp3",
+    "resources/sounds/sound-effect-one-shot-beeping_F_.mp3",
+    "resources/sounds/turn-off-sfx-glitchy-electronic-sound.mp3",
+    "resources/sounds/light-switch-on-or-off-sfx.mp3",
+    "resources/sounds/electric-chippy-fx-clicky-error.mp3",
+    "resources/sounds/crash-synthetic-obscure-chip.mp3",
   ];
 
   const ambientPool = ambientSources.map((src) => {
