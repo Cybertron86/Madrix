@@ -237,7 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   let frame = 0;
-  const frameSkip = isChrome || isBrave ? 2 : isEdge ? 1.1 : 1.4;
+  const frameSkip = isChrome || isBrave ? 2 : isEdge ? 1.4 : 1.6;
 
   function drawMatrix() {
     frame++;

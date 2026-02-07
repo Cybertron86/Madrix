@@ -1,0 +1,93 @@
+[
+  {
+    "id": 1,
+    "title": "Neural Network Visualizer",
+    "description": "Real-time 3D visualization of neural network training processes with interactive layer manipulation and data flow animation. Built with WebGL and custom shaders for maximum performance.",
+    "date": "2024-12-15",
+    "githubUrl": "https://github.com/yourusername/neural-network-viz",
+    "mainImage": "https://picsum.photos/800/600?random=1",
+    "additionalImages": [
+      "https://picsum.photos/800/600?random=11",
+      "https://picsum.photos/800/600?random=12",
+      "https://picsum.photos/800/600?random=13"
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Quantum Data Processor",
+    "description": "Advanced data processing engine utilizing quantum-inspired algorithms for cryptographic operations. Features real-time encryption visualization and security monitoring dashboard.",
+    "date": "2024-11-22",
+    "githubUrl": "https://github.com/yourusername/quantum-processor",
+    "mainImage": "https://picsum.photos/800/600?random=2",
+    "additionalImages": [
+      "https://picsum.photos/800/600?random=21",
+      "https://picsum.photos/800/600?random=22",
+      "https://picsum.photos/800/600?random=23"
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Cyberpunk Terminal Interface",
+    "description": "Retro-futuristic command line interface with holographic elements and real-time system monitoring. Includes custom ASCII art generator and terminal emulation layer.",
+    "date": "2024-10-08",
+    "githubUrl": "https://github.com/yourusername/cyber-terminal",
+    "mainImage": "https://picsum.photos/800/600?random=3",
+    "additionalImages": [
+      "https://picsum.photos/800/600?random=31",
+      "https://picsum.photos/800/600?random=32",
+      "https://picsum.photos/800/600?random=33"
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Blockchain Explorer Matrix",
+    "description": "Immersive blockchain transaction visualization with 3D graph networks and real-time consensus monitoring. Navigate through blocks with gesture controls and VR support.",
+    "date": "2024-09-30",
+    "githubUrl": "https://github.com/yourusername/blockchain-matrix",
+    "mainImage": "https://picsum.photos/800/600?random=4",
+    "additionalImages": [
+      "https://picsum.photos/800/600?random=41",
+      "https://picsum.photos/800/600?random=42",
+      "https://picsum.photos/800/600?random=43"
+    ]
+  },
+  {
+    "id": 5,
+    "title": "AI Code Generator",
+    "description": "Machine learning powered code generation system with syntax prediction and auto-completion. Features collaborative editing and real-time performance optimization suggestions.",
+    "date": "2024-08-17",
+    "githubUrl": "https://github.com/yourusername/ai-codegen",
+    "mainImage": "https://picsum.photos/800/600?random=5",
+    "additionalImages": [
+      "https://picsum.photos/800/600?random=51",
+      "https://picsum.photos/800/600?random=52",
+      "https://picsum.photos/800/600?random=53"
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Holographic Data Grid",
+    "description": "Multi-dimensional data visualization platform with gesture-based navigation and AR integration. Process and analyze complex datasets with interactive 3D charts and graphs.",
+    "date": "2024-07-05",
+    "githubUrl": "https://github.com/yourusername/holo-datagrid",
+    "mainImage": "https://picsum.photos/800/600?random=6",
+    "additionalImages": [
+      "https://picsum.photos/800/600?random=61",
+      "https://picsum.photos/800/600?random=62",
+      "https://picsum.photos/800/600?random=63"
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Encrypted Messenger System",
+    "description": "End-to-end encrypted messaging platform with steganography support and quantum-resistant cryptography. Features disappearing messages and secure file sharing with zero-knowledge architecture.",
+    "date": "2024-06-12",
+    "githubUrl": "https://github.com/yourusername/encrypted-messenger",
+    "mainImage": "https://picsum.photos/800/600?random=7",
+    "additionalImages": [
+      "https://picsum.photos/800/600?random=71",
+      "https://picsum.photos/800/600?random=72",
+      "https://picsum.photos/800/600?random=73"
+    ]
+  }
+]

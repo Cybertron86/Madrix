@@ -1,13 +1,19 @@
 /**
- * MATRIX HOLOGRAPHIC CAROUSEL - JAVASCRIPT
+ * MATRIX HOLOGRAPHIC CAROUSEL - JAVASCRIPT (DIRECT JSON VERSION)
  * 3D carousel with extreme glitch effects and Matrix styling
+ * This version loads the JSON file directly without PHP
  */
 
 class HologramCarousel {
   constructor(options = {}) {
     // Configuration
     this.config = {
-      dataUrl: options.dataUrl || "carousel-data.json",
+      // OPTION 1: Direct JSON file path (recommended if no PHP server)
+      dataUrl: options.dataUrl || "./carousel-data.json",
+
+      // OPTION 2: PHP API endpoint (use if you have PHP server running)
+      // dataUrl: options.dataUrl || "/backend/api.php",
+
       containerSelector: options.containerSelector || ".holo-carousel-wrapper",
       autoPlayDelay: options.autoPlayDelay || 15000, // 15 seconds
       autoPlayMinInterval: options.autoPlayMinInterval || 10000, // 10 seconds
@@ -47,7 +53,7 @@ class HologramCarousel {
   async init() {
     try {
       // Load data
-      await this.loadData();
+      await this.loadDataJsonProjects();
 
       // Setup DOM
       this.setupDOM();
@@ -56,7 +62,7 @@ class HologramCarousel {
       const sphereContainer = this.container.querySelector(
         ".holo-carousel-container",
       );
-      if (sphereContainer) {
+      if (sphereContainer && typeof UltimateMatrixEye !== "undefined") {
         this.matrixEye = new UltimateMatrixEye(sphereContainer);
       }
 
@@ -69,23 +75,53 @@ class HologramCarousel {
       // Start glitch effects
       this.startGlitchEffects();
 
-      console.log("Hologram Carousel initialized successfully");
+      console.log("✅ Hologram Carousel initialized successfully");
+      console.log(`📦 Loaded ${this.items.length} projects`);
     } catch (error) {
-      console.error("Failed to initialize Hologram Carousel:", error);
+      console.error("❌ Failed to initialize Hologram Carousel:", error);
     }
   }
 
-  async loadData() {
-    try {
-      const response = await fetch(this.config.dataUrl);
-      if (!response.ok) throw new Error("Failed to load carousel data");
-      let items = await response.json();
+  async loadDataJsonProjects() {
+    console.log("🔍 Trying to load from:", this.config.dataUrl);
 
-      // Sort by ID to ensure consistent order
-      this.items = items.sort((a, b) => a.id - b.id);
+    try {
+      const response = await fetch(this.config.dataUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log("📡 Response status:", response.status);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("📦 Received data:", result);
+
+      // Check if it's API format (with success property)
+      if (result.success && result.data) {
+        this.items = result.data;
+        console.log(`✅ Loaded ${this.items.length} projects from API`);
+      }
+      // Or direct array format (JSON file)
+      else if (Array.isArray(result)) {
+        this.items = result;
+        console.log(`✅ Loaded ${this.items.length} projects from JSON`);
+      } else {
+        throw new Error("Invalid data format");
+      }
+
+      // Validate data structure
+      if (this.items.length === 0) {
+        throw new Error("No projects found in data");
+      }
     } catch (error) {
-      console.error("Error loading data:", error);
-      // Fallback to placeholder data if JSON fails to load
+      console.error("❌ Failed to load data:", error);
+      console.warn("⚠️ Using fallback data");
       this.items = this.getFallbackData();
     }
   }
@@ -187,7 +223,6 @@ class HologramCarousel {
     closeBtn.textContent = "×";
     closeBtn.setAttribute("aria-label", "Close");
 
-    // WICHTIG: Diese Zeile hinzufügen
     closeBtn.style.lineHeight = "40px"; // Gleiche Höhe wie der Button
 
     const contentInner = document.createElement("div");
@@ -257,9 +292,9 @@ class HologramCarousel {
         }
       } else {
         if (e.key === "ArrowLeft") {
-          this.navigate(1);
+          this.prev();
         } else if (e.key === "ArrowRight") {
-          this.navigate(-1);
+          this.next();
         }
       }
     });
@@ -267,110 +302,78 @@ class HologramCarousel {
 
   // Touch handlers
   handleTouchStart(e) {
-    this.touchStartX = e.changedTouches[0].screenX;
-    this.touchStartY = e.changedTouches[0].screenY;
-    this.touchEndX = this.touchStartX;
-    this.touchEndY = this.touchStartY;
+    this.touchStartX = e.touches[0].clientX;
+    this.touchStartY = e.touches[0].clientY;
     this.touchStartTime = Date.now();
     this.hasMoved = false;
     this.pauseAutoPlay();
   }
 
   handleTouchMove(e) {
-    this.touchEndX = e.changedTouches[0].screenX;
-    this.touchEndY = e.changedTouches[0].screenY;
-
-    // Check if user has moved significantly (increased threshold)
-    const diffX = Math.abs(this.touchStartX - this.touchEndX);
-    const diffY = Math.abs(this.touchStartY - this.touchEndY);
-    if (diffX > 20 || diffY > 20) {
-      this.hasMoved = true;
-    }
+    this.hasMoved = true;
   }
 
   handleTouchEnd(e) {
-    const touchDuration = Date.now() - this.touchStartTime;
-    const diffX = Math.abs(this.touchStartX - this.touchEndX);
-    const diffY = Math.abs(this.touchStartY - this.touchEndY);
+    if (!this.hasMoved) {
+      this.resumeAutoPlay();
+      return;
+    }
 
-    // Quick tap with minimal movement = open overlay
-    // Max 300ms duration and max 15px movement
-    if (!this.hasMoved && touchDuration < 300 && diffX < 15 && diffY < 15) {
-      const touch = e.changedTouches[0];
-      const element = document.elementFromPoint(touch.clientX, touch.clientY);
-      const carouselItem = element?.closest(".holo-carousel-item");
+    this.touchEndX = e.changedTouches[0].clientX;
+    this.touchEndY = e.changedTouches[0].clientY;
 
-      if (carouselItem) {
-        const index = parseInt(carouselItem.dataset.index);
-        if (index === this.currentIndex) {
-          this.openOverlay(index);
-        }
+    const deltaX = this.touchEndX - this.touchStartX;
+    const deltaY = this.touchEndY - this.touchStartY;
+    const deltaTime = Date.now() - this.touchStartTime;
+
+    // Check if horizontal swipe
+    if (
+      Math.abs(deltaX) > Math.abs(deltaY) &&
+      Math.abs(deltaX) > 50 &&
+      deltaTime < 500
+    ) {
+      if (deltaX > 0) {
+        this.prev();
+      } else {
+        this.next();
       }
-    } else if (this.hasMoved) {
-      // User swiped
-      this.handleSwipe();
     }
 
     this.resumeAutoPlay();
   }
 
-  handleSwipe() {
-    const diff = this.touchStartX - this.touchEndX;
-    const minSwipeDistance = 50;
-
-    if (Math.abs(diff) > minSwipeDistance) {
-      const velocity = Math.abs(diff) / 100;
-      const skipCount = 1; // Always 1 image for consistent order
-
-      if (diff > 0) {
-        // Swipe left - go forward
-        this.navigate(-skipCount);
-      } else {
-        // Swipe right - go backward
-        this.navigate(skipCount);
-      }
-    }
-
-    this.touchStartX = 0;
-    this.touchEndX = 0;
-  }
-
-  // Mouse drag handlers
+  // Mouse handlers
   handleMouseDown(e) {
-    this.isDragging = true;
+    this.isDragging = false;
     this.dragStartX = e.clientX;
-    this.dragDistance = 0;
-    this.container.style.cursor = "grabbing";
-    e.preventDefault();
+    this.pauseAutoPlay();
   }
 
   handleMouseMove(e) {
-    if (!this.isDragging) return;
-
-    this.dragDistance = e.clientX - this.dragStartX;
+    if (this.dragStartX !== 0) {
+      const distance = Math.abs(e.clientX - this.dragStartX);
+      if (distance > 5) {
+        this.isDragging = true;
+      }
+    }
   }
 
   handleMouseUp(e) {
-    if (!this.isDragging) return;
+    if (this.isDragging) {
+      const deltaX = e.clientX - this.dragStartX;
 
-    const minDragDistance = 50;
-
-    if (Math.abs(this.dragDistance) > minDragDistance) {
-      const velocity = Math.abs(this.dragDistance) / 100;
-      const skipCount = 1; // Always 1 image for consistent order
-      if (this.dragDistance < 0) {
-        // Drag left - go forward
-        this.navigate(-skipCount);
-      } else {
-        // Drag right - go backward
-        this.navigate(skipCount);
+      if (Math.abs(deltaX) > 100) {
+        if (deltaX > 0) {
+          this.prev();
+        } else {
+          this.next();
+        }
       }
     }
 
     this.isDragging = false;
     this.dragStartX = 0;
-    this.dragDistance = 0;
-    this.container.style.cursor = "grab";
+    this.resumeAutoPlay();
   }
 
   navigate(direction) {
@@ -378,14 +381,21 @@ class HologramCarousel {
 
     this.isAnimating = true;
 
+    const totalItems = this.items.length;
     this.currentIndex =
-      (this.currentIndex + direction + this.items.length) % this.items.length;
+      (this.currentIndex - direction + totalItems) % totalItems;
+
+    // Add transition class
+    this.sphere.classList.add("holo-carousel-transitioning");
+
     this.updatePositions();
 
     setTimeout(() => {
+      this.sphere.classList.remove("holo-carousel-transitioning");
       this.isAnimating = false;
     }, this.config.transitionDuration);
 
+    // Reset auto-play timer
     this.resetAutoPlay();
   }
 
@@ -656,14 +666,16 @@ if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
     if (document.querySelector(".holo-carousel-wrapper")) {
       window.hologramCarousel = new HologramCarousel({
-        dataUrl: "api/projects.php",
+        // Use direct JSON file instead of PHP API
+        dataUrl: "../resources/jsons/carousel-data.json",
       });
     }
   });
 } else {
   if (document.querySelector(".holo-carousel-wrapper")) {
     window.hologramCarousel = new HologramCarousel({
-      dataUrl: "api/projects.php",
+      // Use direct JSON file instead of PHP API
+      dataUrl: "../resources/jsons/carousel-data.json",
     });
   }
 }
