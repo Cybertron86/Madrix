@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
   canvas.height = window.innerHeight;
 
   const chars =
-    "AアァィゥィウエカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンAアァィゥィウエカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+    "AアァィゥィウエカキクケコサシスセソタチツテトナニヌネハヒフヘホマミムメモヤユヨラリルレロワヲンAアァィゥィウエカキクケコサシスセソタチツテトナニヌネハヒフヘホマミムメモヤユヨラリルレロワヲン";
   const warningChar = "\u26A0";
   const fullCharSet = chars + warningChar;
   const fontSize = 16;
@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function initMatrix() {
     let effectiveFontSize = fontSize;
-    if ((isChrome || isBrave) && canvas.width > 1920)
+    if ((isChrome || isBrave || isEdge || isFirefox) && canvas.width > 1920)
       effectiveFontSize = fontSize * 1.5;
     columns = Math.floor(canvas.width / effectiveFontSize);
     drops = Array(columns).fill(1);
@@ -241,7 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   let frame = 0;
-  const frameSkip = isChrome || isBrave ? 2 : isEdge ? 1.4 : 1.6;
+  const frameSkip = isChrome || isBrave ? 1.1 : isEdge ? 1.4 : 1.2;
 
   function drawMatrix() {
     frame++;
@@ -267,7 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
       drops[i]++;
     }
 
-    if (Math.random() < (isChrome || isBrave ? 0.05 : isEdge ? 0.15 : 0.1)) {
+    if (Math.random() < (isChrome || isBrave ? 0.02 : isEdge ? 0.15 : 0.08)) {
       applyGlitch({ stripes: 2, offsetMax: 60, alpha: 0.5 });
     }
 
