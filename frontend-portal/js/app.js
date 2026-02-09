@@ -382,8 +382,34 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    // Event Listener für Dropdown-Buttons
     dropdownMenu.querySelectorAll(".dropdown-item").forEach((item) => {
-      item.addEventListener("click", () => {
+      item.addEventListener("click", (e) => {
+        const action = e.target.getAttribute("data-action");
+
+        // Hier kannst du die Aktionen für die Buttons definieren
+        console.log("Button clicked:", action);
+
+        // Beispiel für verschiedene Aktionen:
+        switch (action) {
+          case "about":
+            // Hier Code für "About me"
+            console.log("About me clicked");
+            // Beispiel: window.location.href = "#about";
+            break;
+          case "gallery":
+            // Hier Code für "Gallery"
+            console.log("Gallery clicked");
+            // Beispiel: window.location.href = "#gallery";
+            break;
+          case "profile":
+            // Hier Code für "Profil"
+            console.log("Profil clicked");
+            // Beispiel: window.location.href = "#profile";
+            break;
+        }
+
+        // Dropdown schließen nach Klick
         dropdownMenu.classList.remove("open");
         menuBtn.classList.remove("active");
       });
