@@ -145,7 +145,7 @@ class UltimateMatrixEye {
   }
 
   generateMatrixCode(length) {
-    // Mix of binary, hex, and katakana
+    // Mix of binary and katakana
     const chars =
       "01010110アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
     let code = "";

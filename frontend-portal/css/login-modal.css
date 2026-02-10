@@ -8,9 +8,9 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.95);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.3);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
 
   display: flex;
   align-items: center;
@@ -37,7 +37,7 @@
   max-height: 85vh; /* NEU - maximale Höhe */
   overflow-y: auto; /* NEU - Scrolling ermöglichen */
 
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 1);
   border: 2px solid #00ff88;
   box-shadow:
     0 0 30px rgba(0, 255, 136, 0.4),
