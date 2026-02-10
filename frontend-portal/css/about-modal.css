@@ -98,6 +98,7 @@
     0 0 20px #00ff88,
     0 0 40px #00ff88;
   transform: rotate(90deg);
+  padding-bottom: 1.2vh;
 }
 
 .about-modal-title {
