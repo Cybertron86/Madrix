@@ -449,7 +449,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ESC key to close
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && galleryModal.classList.contains("active")) {
-        closeGalleryModal();
+        closeGalleryModal(footerBar);
       }
     });
   }
