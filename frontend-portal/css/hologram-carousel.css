@@ -946,6 +946,10 @@
     --holo-carousel-mobile-reflection-height: 82px;
   }
 
+  .holo-carousel-item {
+    padding-top: 10vh !important;
+  }
+
   .holo-carousel-content-title {
     font-size: 1.3em;
   }
