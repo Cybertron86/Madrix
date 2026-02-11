@@ -1,4 +1,6 @@
-// === Luxuriöser Glanzeffekt in Intervallen ===
+// ====================================================================================================================================
+//  Luxuriöser Glanzeffekt in Intervallen
+// ====================================================================================================================================
 document.addEventListener("DOMContentLoaded", () => {
   const sparkle = document.querySelector(".lux-sparkle");
 

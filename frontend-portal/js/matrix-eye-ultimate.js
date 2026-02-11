@@ -1,9 +1,6 @@
-/**
- * ULTIMATE MATRIX EYE for HOLO CAROUSEL
- *
- * Features:
- * Aggressive staring, glitch effects, intense matrix rain
- */
+/*====================================================================================================================================
+     ULTIMATE MATRIX EYE for HOLO CAROUSEL
+   ====================================================================================================================================*/
 
 class UltimateMatrixEye {
   constructor(container) {
@@ -55,7 +52,7 @@ class UltimateMatrixEye {
     for (let i = 0; i < 20; i++) {
       const column = document.createElement("div");
       column.className = "holo-carousel-matrix-column";
-      column.textContent = this.generateMatrixCode(25); // More characters
+      column.textContent = this.generateMatrixCode(25); // Initial code, will update rapidly
       matrixRain.appendChild(column);
       this.matrixColumns.push(column);
     }
@@ -147,7 +144,7 @@ class UltimateMatrixEye {
   generateMatrixCode(length) {
     // Mix of binary and katakana
     const chars =
-      "01010110アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+      "01010110アイウエオカキクケコサシスセソタチツテトナニヌネハヒフヘホマミムメモヤユヨラリルレロワヲン";
     let code = "";
     for (let i = 0; i < length; i++) {
       code += chars.charAt(Math.floor(Math.random() * chars.length)) + "\n";
@@ -264,8 +261,8 @@ class UltimateMatrixEye {
         }, randomAction.duration || 150);
       }
 
-      // Schedule next look - MORE FREQUENT
-      const nextDelay = this.getRandomInt(800, 2500); // Much faster
+      // Schedule next look
+      const nextDelay = this.getRandomInt(800, 2500);
       setTimeout(aggressiveLook, nextDelay);
     };
 

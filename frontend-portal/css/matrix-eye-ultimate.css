@@ -1,9 +1,6 @@
-/* ============================================
+/* ============================================================================================================================
    ULTIMATE MATRIX EYE for HOLO CAROUSEL
-
-   Features:
-   Maximum detail, glitch effects, aggressive animations
-   ============================================ */
+   ============================================================================================================================ */
 
 .holo-carousel-matrix-eye {
   position: absolute;
@@ -88,7 +85,7 @@
   }
 }
 
-/* Outer eye shape with enhanced effects */
+/* Outer eye shape with  effects */
 .holo-carousel-eye-outer {
   position: absolute;
   width: 100%;
@@ -470,7 +467,9 @@
   z-index: 5;
 }
 
-/* ULTRA DETAILED IRIS */
+/* ========================================================================================================================
+   DETAILED IRIS 
+   ========================================================================================================================*/
 
 /* Outer iris ring with rotating segments */
 .holo-carousel-eye-iris-outer-ring {
@@ -664,7 +663,7 @@
   }
 }
 
-/* Pupil with extreme depth */
+/* Pupil with depth */
 .holo-carousel-eye-pupil {
   position: absolute;
   top: 50%;
@@ -785,7 +784,7 @@
   }
 }
 
-/* SMOOTH FADE-OUT - Eye blends into sphere background */
+/* FADE-OUT - Eye blends into sphere background */
 .holo-carousel-eye-fade-mask {
   position: absolute;
   top: 0;
@@ -903,7 +902,9 @@
   height: 52px;
 }
 
-/* Responsive */
+/* ========================================================================================================================
+    Responsive
+    ======================================================================================================================== */
 @media (max-width: 1024px) {
   .holo-carousel-matrix-eye {
     width: 280px;

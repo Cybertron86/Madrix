@@ -1,8 +1,6 @@
-/**
- * MATRIX HOLOGRAPHIC CAROUSEL - JAVASCRIPT (DIRECT JSON VERSION)
- * 3D carousel with extreme glitch effects and Matrix styling
- * This version loads the JSON file directly without PHP
- */
+/**====================================================================================================================================
+ * MATRIX HOLOGRAPHIC CAROUSEL 
+ ====================================================================================================================================*/
 
 class HologramCarousel {
   constructor(options = {}) {
@@ -12,7 +10,7 @@ class HologramCarousel {
       dataUrl: options.dataUrl || "./carousel-data.json",
 
       // OPTION 2: PHP API endpoint (use if you have PHP server running)
-      // dataUrl: options.dataUrl || "/backend/api.php",
+      // dataUrl: options.dataUrl || "/backend/apiExample.php",
 
       containerSelector: options.containerSelector || ".holo-carousel-wrapper",
       autoPlayDelay: options.autoPlayDelay || 15000, // 15 seconds
@@ -58,7 +56,7 @@ class HologramCarousel {
       // Setup DOM
       this.setupDOM();
 
-      // CREATE ULTIMATE MATRIX EYE - NEUE ZEILEN
+      // CREATE MATRIX EYE
       const sphereContainer = this.container.querySelector(
         ".holo-carousel-container",
       );
@@ -223,7 +221,7 @@ class HologramCarousel {
     closeBtn.textContent = "×";
     closeBtn.setAttribute("aria-label", "Close");
 
-    closeBtn.style.lineHeight = "40px"; // Gleiche Höhe wie der Button
+    closeBtn.style.lineHeight = "40px";
 
     const contentInner = document.createElement("div");
     contentInner.className = "holo-carousel-content-inner";
@@ -666,7 +664,6 @@ if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
     if (document.querySelector(".holo-carousel-wrapper")) {
       window.hologramCarousel = new HologramCarousel({
-        // Use direct JSON file instead of PHP API
         dataUrl: "../resources/jsons/carousel-data.json",
       });
     }
@@ -674,7 +671,6 @@ if (document.readyState === "loading") {
 } else {
   if (document.querySelector(".holo-carousel-wrapper")) {
     window.hologramCarousel = new HologramCarousel({
-      // Use direct JSON file instead of PHP API
       dataUrl: "../resources/jsons/carousel-data.json",
     });
   }

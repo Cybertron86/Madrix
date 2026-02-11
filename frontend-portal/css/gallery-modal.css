@@ -1,6 +1,6 @@
-/* ========================================
-   GALLERY MODAL - MATRIX CYBERPUNK STYLE
-   ======================================== */
+/* ========================================================================================================================
+   GALLERY MODAL
+   ======================================================================================================================== */
 
 /* Modal Overlay */
 .gallery-modal {
@@ -141,7 +141,7 @@
   padding-right: 1rem;
 }
 
-/* Custom Scrollbar - Matrix Style */
+/* Custom Scrollbar */
 .gallery-modal-content::-webkit-scrollbar {
   width: 12px;
 }
@@ -333,7 +333,9 @@
   text-shadow: 0 0 10px #ff0088;
 }
 
-/* Responsive Design */
+/*======================================================================================================================== 
+  Responsive Design 
+  ========================================================================================================================*/
 @media (max-width: 1200px) {
   .gallery-grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -371,7 +373,7 @@
   .gallery-modal-title {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
-    margin-right: 45px; /* Platz für Close Button auf kleinen Bildschirmen */
+    margin-right: 45px;
   }
 
   .gallery-grid {
@@ -410,7 +412,7 @@
 
   .gallery-modal-title {
     font-size: 1.2rem;
-    margin-right: 40px; /* Mehr Platz für Close Button auf sehr kleinen Bildschirmen */
+    margin-right: 40px;
     margin-bottom: 0;
   }
 

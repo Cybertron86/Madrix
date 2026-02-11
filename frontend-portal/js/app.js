@@ -1,9 +1,9 @@
 // ====================================================================================================================================
-// 🎯 SINGLE PAGE APPLICATION - APP.JS
+//  SINGLE PAGE APPLICATION - APP.JS
 // ====================================================================================================================================
 document.addEventListener("DOMContentLoaded", () => {
   // ====================================================================================================================================
-  // 1️⃣ DOM CACHE
+  //  DOM CACHE
   // ====================================================================================================================================
 
   try {
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const canvas = document.getElementById("matrixGlitch");
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-  // Navbar, Footer & Buttons if already entered
+  // Navbar, Footer, Luxbar & Buttons if already entered
   if (sessionStorage.getItem("portalEntered") === "true") {
     if (navBar) {
       navBar.style.visibility = "visible";
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ====================================================================================================================================
-  // 2️⃣ STATE
+  // STATE
   // ====================================================================================================================================
   const hasVisited = sessionStorage.getItem("portalEntered") === "true";
   let musicEnabled = false;
@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ====================================================================================================================================
-  // 4️⃣ MATRIX MODULE (FULL GLITCH + BROWSER OPTIMIZATIONS)
+  //  MATRIX_RAIN MODULE (FULL GLITCH EFFECTS + BROWSER OPTIMIZATIONS)
   // ====================================================================================================================================
 
   const isEdge = /Edg\//.test(navigator.userAgent);
@@ -294,7 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
   triggerShake();
 
   // ====================================================================================================================================
-  // 5️⃣ PORTAL + DROPDOWN MODULE
+  //   PORTAL + DROPDOWN MODULE
   // ====================================================================================================================================
 
   function showMainContent() {
@@ -387,7 +387,6 @@ document.addEventListener("DOMContentLoaded", () => {
       item.addEventListener("click", (e) => {
         const action = e.target.getAttribute("data-action");
 
-        // Beispiel für verschiedene Aktionen:
         switch (action) {
           case "about":
             console.log("About me clicked");
@@ -399,7 +398,6 @@ document.addEventListener("DOMContentLoaded", () => {
             break;
           case "profile":
             console.log("Profil clicked");
-            // Beispiel: window.location.href = "#profile";
             break;
         }
 
@@ -411,7 +409,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ====================================================================================================================================
-  // 6️⃣ GALLERY MODAL MODULE
+  //   GALLERY MODAL MODULE
   // ====================================================================================================================================
 
   let galleryModal = null;
@@ -640,7 +638,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ====================================================================================================================================
-  // 7️⃣ ABOUT ME MODAL MODULE
+  //  ABOUT ME MODAL MODULE
   // ====================================================================================================================================
 
   let aboutModal = null;
@@ -656,15 +654,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <h2 class="about-modal-title">ABOUT ME</h2>
         <div class="about-modal-content">
           <div class="about-modal-text">
-            <p>Hello <strong>stranger</strong>,</p>
-
-            <p>My name is <strong>Benjamin Tron</strong>, a software and web developer based in Karlsruhe, Germany. My professional journey began in a hands-on world: from 2002 to 2006, I trained as an industrial mechanic, learning precision, structure, and how complex systems truly work beneath the surface.</p>
-            
-            <p>Years later, curiosity pulled me deeper into the digital realm. Between 2022 and 2024, I completed a 24-month career transition and earned an IHK qualification as a Computer Science Expert, specializing in software development. To further sharpen my skills, I pursued an intensive 10-month web development program from 2025 to 2026.</p>
-            
-            <p>Today, I'm passionate about full-stack development, building software that connects logic and creativity, backend robustness and frontend experience. I enjoy understanding how things work end to end, from databases and APIs to clean interfaces and thoughtful user interactions.</p>
-            
-            <p>I'm driven by curiosity, continuous learning, and a quiet fascination with solving problems that aren't always obvious at first glance. Some details reveal themselves instantly, others only after you look a little closer.</p>
+            <!-- Typewriter text will be injected here -->
           </div>
         </div>
         <button class="about-scroll-bottom" aria-label="Scroll to bottom"></button>
@@ -691,7 +681,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Scroll to bottom button - NEU
+    // Scroll to bottom button
     const scrollBottomBtn = aboutModal.querySelector(".about-scroll-bottom");
     scrollBottomBtn.addEventListener("click", () => {
       const contentContainer = aboutModal.querySelector(".about-modal-content");
@@ -837,7 +827,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ====================================================================================================================================
-  // 8️⃣ LOGIN MODAL MODULE
+  //  LOGIN MODAL MODULE
   // ====================================================================================================================================
 
   let loginModal = null;
@@ -869,7 +859,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="login-error-message" data-error="username"></div>
           </div>
 
-          <!-- Password Field -->
+          <!-- Password Field-->
           <div class="login-form-group">
             <label for="login-password" class="login-form-label">Password</label>
             <div class="login-form-input-wrapper">
@@ -1131,7 +1121,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ====================================================================================================================================
-  // 9️⃣ REGISTER MODAL MODULE
+  //  REGISTER MODAL MODULE
   // ====================================================================================================================================
 
   let registerModal = null;

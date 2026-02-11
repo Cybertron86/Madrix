@@ -140,7 +140,7 @@ body {
   animation: fallOut 1s ease forwards;
 }
 
-/* === Lautsprecher‑Button rechts unten ============================ */
+/* =============================== Lautsprecher‑Button rechts unten ============================ */
 .muteUnmuteBtn {
   position: absolute;
   bottom: 20px; /* Abstand zum unteren Rand des Overlays */
@@ -172,7 +172,7 @@ body {
   pointer-events: none;
 }
 
-/* --- Ambient‑Button (Haupt‑Phase) ------------------------------- */
+/* ======================================== Ambient‑Button (Haupt‑Phase) ======================================== */
 .ambientBtn {
   position: fixed;
   bottom: 20px;
