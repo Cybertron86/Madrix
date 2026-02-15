@@ -6,4 +6,3 @@ CREATE TABLE if NOT EXISTS messages (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-

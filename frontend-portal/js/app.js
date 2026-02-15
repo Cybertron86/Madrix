@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function initMatrix() {
     let effectiveFontSize = fontSize;
     if ((isChrome || isBrave || isEdge || isFirefox) && canvas.width > 1920)
-      effectiveFontSize = fontSize * 1.5;
+      effectiveFontSize = fontSize * 1.8;
     columns = Math.floor(canvas.width / effectiveFontSize);
     drops = Array(columns).fill(1);
   }
@@ -242,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   let frame = 0;
-  const frameSkip = isChrome || isBrave ? 1.1 : isEdge ? 1.4 : 1.2;
+  const frameSkip = isChrome || isBrave ? 2 : isEdge ? 1.6 : 1.8;
 
   function drawMatrix() {
     frame++;
