@@ -1,5 +1,4 @@
 import { startAllSounds } from "./audio.js";
-
 // ====================================================================================================================================
 //  SINGLE PAGE APPLICATION - APP.JS
 // ====================================================================================================================================
@@ -23,8 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const mainContent = document.getElementById("mainContent");
   const yesBtn = document.getElementById("yesBtn");
   const noBtn = document.getElementById("noBtn");
-  const soundBtn = document.getElementById("soundBtn");
-  const ambientBtn = document.getElementById("ambientBtn");
   const menuBtn = document.getElementById("btn_menu");
   const dropdownMenu = document.getElementById("dropdown_menu");
   const loginBtn = document.getElementById("btn_login");
