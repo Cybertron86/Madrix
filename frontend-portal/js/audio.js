@@ -63,7 +63,6 @@ function playRandomAmbient() {
 export function startAllSounds() {
   music.play().catch(console.warn);
   musicEnabled = true;
-  console.log("Audio started");
 
   if (soundBtn) soundBtn.textContent = "🔊";
 

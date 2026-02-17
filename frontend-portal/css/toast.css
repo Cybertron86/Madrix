@@ -1,0 +1,126 @@
+/* ====================================================================
+   TOAST NOTIFICATION SYSTEM
+   Matches the cyberpunk / matrix aesthetic of the site
+   ==================================================================== */
+
+#app-toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-16px);
+  z-index: 99999;
+  pointer-events: none;
+
+  /* Layout */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 28px;
+  white-space: nowrap;
+
+  /* Typography */
+  font-family: "Orbitron", monospace;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  /* Base appearance - overridden by modifier classes */
+  color: #e0ffe8;
+  background: rgba(0, 10, 5, 0.92);
+  border: 1px solid transparent;
+  border-radius: 4px;
+
+  /* Glow border via box-shadow */
+  box-shadow:
+    0 0 0 1px rgba(0, 255, 100, 0.25),
+    0 0 18px rgba(0, 255, 100, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.55);
+
+  /* Enter/exit animation */
+  opacity: 0;
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+
+/* ── Visible state ── */
+#app-toast.toast--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Success (green matrix) ── */
+#app-toast.toast--success {
+  color: #a8ffcc;
+  border-color: rgba(0, 255, 100, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(0, 255, 100, 0.3),
+    0 0 22px rgba(0, 255, 100, 0.18),
+    0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+#app-toast.toast--success::before {
+  content: "✔";
+  font-size: 0.85rem;
+  color: #00ff64;
+}
+
+/* ── Info / neutral (ice blue) ── */
+#app-toast.toast--info {
+  color: #aee8ff;
+  border-color: rgba(0, 180, 255, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(0, 180, 255, 0.3),
+    0 0 22px rgba(0, 180, 255, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+#app-toast.toast--info::before {
+  content: "→";
+  font-size: 0.85rem;
+  color: #00b4ff;
+}
+
+/* ── Error (red alert) ── */
+#app-toast.toast--error {
+  color: #ffb3b3;
+  border-color: rgba(255, 50, 50, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(255, 50, 50, 0.3),
+    0 0 22px rgba(255, 50, 50, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+#app-toast.toast--error::before {
+  content: "✖";
+  font-size: 0.85rem;
+  color: #ff3232;
+}
+
+/* ── Scanline shimmer (subtle) ── */
+#app-toast::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(255, 255, 255, 0.015) 3px,
+    rgba(255, 255, 255, 0.015) 4px
+  );
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  #app-toast {
+    font-size: 0.72rem;
+    padding: 11px 18px;
+    white-space: normal;
+    text-align: center;
+    max-width: 90vw;
+  }
+}

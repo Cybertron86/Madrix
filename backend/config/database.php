@@ -1,4 +1,14 @@
 <?php
+define('REMEMBER_COOKIE', 'madrix_remember');
+define('REMEMBER_LIFETIME', 60 * 60 * 24 * 30); // 30 Tage
+
+session_set_cookie_params([
+    'httponly' => true,
+    'secure' => isset($_SERVER['HTTPS']),  // ✅ false auf HTTP, true auf HTTPS
+    'samesite' => 'Strict'
+]);
+session_start();
+
 class Database
 {
     public static function connect()
@@ -17,3 +27,4 @@ class Database
         }
     }
 }
+
