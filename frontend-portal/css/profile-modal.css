@@ -1,0 +1,583 @@
+/* ============================================================
+   PROFILE MODAL — Matrix/Tron Design  v2
+   Full responsive (portrait + landscape + desktop)
+   ============================================================ */
+
+/* OVERLAY */
+.profile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  z-index: 20000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.35s ease,
+    visibility 0.35s ease;
+}
+
+.profile-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* MODAL BOX */
+.profile-modal {
+  background: rgba(0, 0, 0, 0.97);
+  border: 2px solid #00ff88;
+  box-shadow:
+    0 0 30px rgba(0, 255, 136, 0.35),
+    0 0 80px rgba(0, 255, 136, 0.1),
+    inset 0 0 60px rgba(0, 255, 136, 0.03);
+
+  width: 100%;
+  max-width: 480px;
+  padding: 2rem 2rem 1.8rem;
+  position: relative;
+  margin: auto;
+
+  transform: translateY(-20px) scale(0.97);
+  transition: transform 0.35s ease;
+
+  font-family: "Orbitron", monospace;
+  color: #00ff88;
+}
+
+.profile-overlay.open .profile-modal {
+  transform: translateY(0) scale(1);
+}
+
+/* Scanline effect */
+.profile-modal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 255, 136, 0.018) 3px,
+    rgba(0, 255, 136, 0.018) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Corner accent top-left */
+.profile-modal::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 24px;
+  height: 24px;
+  border-top: 3px solid #00ff88;
+  border-left: 3px solid #00ff88;
+  filter: drop-shadow(0 0 6px #00ff88);
+}
+
+/* Corner accent bottom-right */
+.profile-modal-corner-br {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 24px;
+  height: 24px;
+  border-bottom: 3px solid #00ff88;
+  border-right: 3px solid #00ff88;
+  filter: drop-shadow(0 0 6px #00ff88);
+  z-index: 2;
+}
+
+/* All content above scanlines */
+.profile-modal > *:not(.profile-modal-corner-br) {
+  position: relative;
+  z-index: 2;
+}
+
+/* HEADER */
+.profile-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.6rem;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.25);
+  padding-bottom: 1rem;
+  gap: 0.5rem;
+}
+
+.profile-modal-title {
+  font-size: 1rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px #00ff88;
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-modal-title span {
+  color: rgba(0, 255, 136, 0.5);
+  font-size: 0.65rem;
+  display: block;
+  letter-spacing: 2px;
+  margin-top: 3px;
+}
+
+/* CLOSE BUTTON */
+.profile-close-btn {
+  background: transparent;
+  border: 1px solid rgba(0, 255, 136, 0.4);
+  color: #00ff88;
+  font-size: 1rem;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Orbitron", monospace;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.profile-close-btn:hover {
+  background: #00ff88;
+  color: black;
+  box-shadow: 0 0 12px #00ff88;
+  border-color: #00ff88;
+}
+
+/* SECTIONS */
+.profile-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.12);
+}
+
+.profile-section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.profile-section-label {
+  font-size: 0.62rem;
+  letter-spacing: 2.5px;
+  color: rgba(0, 255, 136, 0.6);
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+}
+
+/* INPUT FIELDS */
+.profile-input {
+  width: 100%;
+  background: rgba(0, 255, 136, 0.05);
+  border: 1px solid rgba(0, 255, 136, 0.35);
+  color: #00ff88;
+  padding: 0.6rem 0.9rem;
+  font-family: "Orbitron", monospace;
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  margin-bottom: 0.5rem;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0;
+}
+
+.profile-input::placeholder {
+  color: rgba(0, 255, 136, 0.3);
+  letter-spacing: 1px;
+}
+
+.profile-input:focus {
+  border-color: #00ff88;
+  background: rgba(0, 255, 136, 0.08);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+}
+
+.profile-input.input-error {
+  border-color: #ff4444;
+  box-shadow: 0 0 8px rgba(255, 68, 68, 0.3);
+}
+
+.profile-input.input-success {
+  border-color: rgba(0, 255, 136, 0.7);
+}
+
+/* Password wrapper for toggle button */
+.profile-pw-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.profile-pw-wrapper .profile-input {
+  margin-bottom: 0;
+  padding-right: 2.6rem;
+  width: 100%;
+}
+
+.profile-pw-toggle {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  line-height: 1;
+  padding: 0;
+  color: rgba(0, 255, 136, 0.5);
+  transition: color 0.2s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.profile-pw-toggle:hover {
+  color: #00ff88;
+}
+
+/* PASSWORD STRENGTH BARS */
+.profile-pw-strength {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 0.4rem;
+}
+
+.profile-pw-strength-bar {
+  flex: 1;
+  height: 3px;
+  background: rgba(0, 255, 136, 0.15);
+  transition: all 0.3s ease;
+}
+
+.profile-pw-strength-bar.weak {
+  background: #ff4444;
+  box-shadow: 0 0 4px #ff4444;
+}
+.profile-pw-strength-bar.medium {
+  background: #ffaa00;
+  box-shadow: 0 0 4px #ffaa00;
+}
+.profile-pw-strength-bar.strong {
+  background: #00ff88;
+  box-shadow: 0 0 4px #00ff88;
+}
+
+/* Password hint text */
+.profile-pw-hint {
+  font-size: 0.6rem;
+  color: rgba(0, 255, 136, 0.4);
+  letter-spacing: 0.8px;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+/* BUTTONS – primary */
+.profile-btn {
+  background: transparent;
+  border: 2px solid #00ff88;
+  color: #00ff88;
+  padding: 0.55rem 1.1rem;
+  font-family: "Orbitron", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  white-space: nowrap;
+  -webkit-appearance: none;
+  appearance: none;
+
+  border-radius: 0;
+}
+
+.profile-btn:hover:not(:disabled) {
+  background: #00ff88;
+  color: black;
+  box-shadow:
+    0 0 15px #00ff88,
+    0 0 30px rgba(0, 255, 136, 0.4);
+}
+
+.profile-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Row layout: input + button side by side */
+.profile-input-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+.profile-input-row .profile-input {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+/* FEEDBACK MESSAGES */
+.profile-feedback {
+  font-size: 0.68rem;
+  letter-spacing: 1px;
+  min-height: 1rem;
+  transition: all 0.2s ease;
+  margin-top: 0.4rem;
+}
+
+.profile-feedback.success {
+  color: #00ff88;
+  text-shadow: 0 0 6px #00ff88;
+}
+
+.profile-feedback.error {
+  color: #ff4444;
+  text-shadow: 0 0 6px rgba(255, 68, 68, 0.6);
+}
+
+.profile-feedback.loading {
+  color: rgba(0, 255, 136, 0.5);
+  animation: profile-blink 0.8s ease infinite;
+}
+
+@keyframes profile-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* DELETE ZONE */
+.profile-delete-zone {
+  border: 1px solid rgba(255, 68, 68, 0.25);
+  padding: 1.2rem;
+  transition: border-color 0.3s ease;
+}
+
+.profile-delete-zone:hover {
+  border-color: rgba(255, 68, 68, 0.45);
+}
+
+.profile-delete-zone .profile-section-label {
+  color: rgba(255, 68, 68, 0.6);
+}
+
+.profile-delete-description {
+  font-size: 0.66rem;
+  color: rgba(255, 68, 68, 0.55);
+  letter-spacing: 1px;
+  line-height: 1.65;
+  margin-bottom: 1rem;
+  font-family: "Orbitron", monospace;
+}
+
+/* DELETE BUTTON */
+.profile-btn-delete {
+  background: transparent;
+  border: 2px solid #ff4444;
+  color: #ff4444;
+  padding: 0.55rem 1.1rem;
+  font-family: "Orbitron", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  text-shadow: 0 0 6px rgba(255, 68, 68, 0.5);
+  -webkit-appearance: none;
+  appearance: none;
+
+  border-radius: 0;
+}
+
+.profile-btn-delete:hover:not(:disabled) {
+  background: #ff4444;
+  color: black;
+  box-shadow:
+    0 0 15px #ff4444,
+    0 0 30px rgba(255, 68, 68, 0.4);
+  text-shadow: none;
+}
+
+.profile-btn-delete:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* CONFIRM DELETE PANEL */
+.profile-confirm-panel {
+  display: none;
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 68, 68, 0.5);
+  background: rgba(255, 0, 0, 0.05);
+  animation: profile-fade-in 0.25s ease;
+}
+
+.profile-confirm-panel.visible {
+  display: block;
+}
+
+@keyframes profile-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.profile-confirm-text {
+  font-size: 0.68rem;
+  color: #ff4444;
+  letter-spacing: 1px;
+  line-height: 1.75;
+  margin-bottom: 1rem;
+  font-family: "Orbitron", monospace;
+  text-shadow: 0 0 4px rgba(255, 68, 68, 0.3);
+}
+
+.profile-confirm-text strong {
+  display: block;
+  font-size: 0.78rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 2px;
+}
+
+.profile-confirm-actions {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+/* CANCEL BUTTON */
+.profile-btn-cancel {
+  background: transparent;
+  border: 2px solid rgba(0, 255, 136, 0.5);
+  color: rgba(0, 255, 136, 0.7);
+  padding: 0.5rem 1rem;
+  font-family: "Orbitron", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0;
+}
+
+.profile-btn-cancel:hover {
+  border-color: #00ff88;
+  color: #00ff88;
+  background: rgba(0, 255, 136, 0.08);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+/* Tablet */
+@media (max-width: 600px) {
+  .profile-modal {
+    padding: 1.5rem 1.2rem 1.4rem;
+    max-width: 100%;
+  }
+  .profile-modal-title {
+    font-size: 0.88rem;
+  }
+}
+
+/* Mobile Portrait */
+@media (max-width: 420px) {
+  .profile-overlay {
+    padding: 0.5rem;
+    align-items: flex-start;
+  }
+  .profile-modal {
+    padding: 1.2rem 1rem 1.2rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .profile-input-row {
+    flex-direction: column;
+  }
+  .profile-input-row .profile-btn {
+    width: 100%;
+  }
+  .profile-btn,
+  .profile-btn-delete,
+  .profile-btn-cancel {
+    width: 100%;
+    padding: 0.65rem 1rem;
+  }
+  .profile-confirm-actions {
+    flex-direction: column;
+  }
+}
+
+/* Mobile Landscape (height-based) */
+@media (max-height: 500px) {
+  .profile-overlay {
+    align-items: flex-start;
+    padding: 0.4rem;
+  }
+  .profile-modal {
+    padding: 0.9rem 1rem;
+    margin: 0 auto;
+  }
+  .profile-modal-header {
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.6rem;
+  }
+  .profile-section {
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+  }
+  .profile-section-label {
+    margin-bottom: 0.4rem;
+  }
+  .profile-modal-title span {
+    display: none;
+  }
+  .profile-delete-description {
+    display: none;
+  }
+  .profile-pw-hint {
+    display: none;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  .profile-modal-title {
+    font-size: 0.76rem;
+    letter-spacing: 1.5px;
+  }
+  .profile-input {
+    font-size: 0.72rem;
+    padding: 0.5rem 0.7rem;
+  }
+  .profile-section-label {
+    font-size: 0.56rem;
+  }
+}
