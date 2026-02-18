@@ -1,0 +1,5 @@
+{
+    "username": "test",
+    "password": "Password123!",
+    "csrf_token": "invalid_token"
+}

@@ -1,5 +1,6 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1)
+;
 
 /**
  * register.php
@@ -21,7 +22,7 @@ require_once __DIR__ . '/config/bootstrap.php';
 // Security Response Headers
 // ==========================
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: *'); // only for development. for dev allow only neccessary origins
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
 header('X-Content-Type-Options: nosniff');
@@ -68,11 +69,11 @@ if (!is_array($data)) {
 // ==========================
 // CSRF Token Validation
 // ==========================
-$submittedCsrfToken = (string) ($data['csrf_token'] ?? '');
+$submittedCsrfToken = (string)($data['csrf_token'] ?? '');
 
 if (
-    empty($_SESSION['csrf_token']) ||
-    !hash_equals((string) $_SESSION['csrf_token'], $submittedCsrfToken)
+empty($_SESSION['csrf_token']) ||
+!hash_equals((string)$_SESSION['csrf_token'], $submittedCsrfToken)
 ) {
     http_response_code(403);
     echo json_encode(['error' => 'Invalid or missing CSRF token']);
@@ -113,7 +114,7 @@ if ($apcuAvailable) {
     // ----- APCu rate limiting -----
     $attempts = apcu_fetch($rateLimitKey, $exists);
 
-    if ($exists && (int) $attempts >= $rateLimit) {
+    if ($exists && (int)$attempts >= $rateLimit) {
         http_response_code(429);
         header('Retry-After: ' . $ratePeriod);
         echo json_encode(['error' => 'Too many registration attempts. Please try again in 1 hour.']);
@@ -122,11 +123,13 @@ if ($apcuAvailable) {
 
     if ($exists) {
         apcu_inc($rateLimitKey);
-    } else {
+    }
+    else {
         apcu_store($rateLimitKey, 1, $ratePeriod);
     }
 
-} else {
+}
+else {
     // ----- Database fallback rate limiting -----
     // APCu is not functional in this FPM context.
     // Log this so the Docker/ini issue is visible in error logs.
@@ -144,7 +147,7 @@ if ($apcuAvailable) {
         $stmt->execute([':ip_hash' => $ipHash]);
         $row = $stmt->fetch();
 
-        if ($row && (int) $row['attempts'] >= $rateLimit) {
+        if ($row && (int)$row['attempts'] >= $rateLimit) {
             http_response_code(429);
             header('Retry-After: ' . $ratePeriod);
             echo json_encode(['error' => 'Too many registration attempts. Please try again in 1 hour.']);
@@ -158,7 +161,8 @@ if ($apcuAvailable) {
             ON DUPLICATE KEY UPDATE attempts = attempts + 1
         ")->execute([':ip_hash' => $ipHash]);
 
-    } catch (PDOException $e) {
+    }
+    catch (PDOException $e) {
         // If the rate_limits table doesn't exist yet, log and continue.
         // Rate limiting is a protection layer, not a hard dependency.
         // See the SQL below to create the table.
@@ -169,11 +173,11 @@ if ($apcuAvailable) {
 // ==========================
 // Input Extraction
 // ==========================
-$username = trim((string) ($data['username'] ?? ''));
-$password = (string) ($data['password'] ?? '');
+$username = trim((string)($data['username'] ?? ''));
+$password = (string)($data['password'] ?? '');
 $remember = !empty($data['remember']);
 $clientUserAgent = substr(
-    trim((string) ($data['device'] ?? $_SERVER['HTTP_USER_AGENT'] ?? '')),
+    trim((string)($data['device'] ?? $_SERVER['HTTP_USER_AGENT'] ?? '')),
     0,
     512
 );
@@ -227,7 +231,7 @@ try {
         ':username' => $username,
         ':password_hash' => $passwordHash,
     ]);
-    $userId = (int) $pdo->lastInsertId();
+    $userId = (int)$pdo->lastInsertId();
 
     if ($remember) {
         $token = bin2hex(random_bytes(32));
@@ -271,7 +275,8 @@ try {
     echo json_encode(['success' => true]);
     exit;
 
-} catch (PDOException $e) {
+}
+catch (PDOException $e) {
 
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
@@ -286,7 +291,7 @@ try {
     ));
 
     $userMessage = 'Registration failed. Please try again later.';
-    if ((int) $e->getCode() === 23000) {
+    if ((int)$e->getCode() === 23000) {
         $userMessage = 'This username is already taken. Please choose a different one.';
     }
 

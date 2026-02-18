@@ -1,5 +1,12 @@
 // ====================================================================================================================================
 //  LOGIN MODAL MODULE
+//
+//  Security measures implemented in this file:
+//    - CSRF token fetched/sent for every login attempt
+//    - User-Agent ("device") sent for session binding
+//    - Username HTML-escaped in toast messages (XSS prevention)
+//    - Rate limit (429) handling to prevent brute-force feedback loops
+//    - All validation/security logic shared via SecurityUtils
 // ====================================================================================================================================
 const loginBtn = document.getElementById("btn_login");
 
@@ -161,6 +168,16 @@ function attachClearOnAnyInput() {
   passwordInput.addEventListener("input", passwordInput._clearHandler);
 }
 
+// ==========================
+// Form Submission Handler
+//
+// Security improvements implemented:
+//   1. CSRF Protection: Fetches a fresh CSRF token before submission.
+//      This token is stored only in memory (local variable), never in persistent
+//      storage (localStorage/sessionStorage), preventing XSS-based token theft.
+//   2. Rate Limit Handling: Gracefully handles 429 Too Many Requests responses.
+//   3. XSS Prevention: Username is HTML-escaped before being shown in the welcome toast.
+// ==========================
 async function handleLoginSubmit(e) {
   e.preventDefault();
 
@@ -178,13 +195,33 @@ async function handleLoginSubmit(e) {
   if (usernameEmpty || passwordEmpty) {
     if (usernameEmpty) usernameInput.classList.add("error");
     if (passwordEmpty) passwordInput.classList.add("error");
-    usernameError.textContent = "Please enter username and password";
-    usernameError.classList.add("show");
+    
+    // Use shared error display
+    window.SecurityUtils.showError(
+      usernameInput, 
+      usernameError, 
+      "Please enter username and password"
+    );
+    
     attachClearOnAnyInput();
     return;
   }
 
   try {
+    // ==========================
+    // Step 1: Fetch CSRF Token
+    // Uses shared utility to get a fresh token bound to the current session.
+    // ==========================
+    const csrfToken = await window.SecurityUtils.fetchCsrfToken();
+
+    // ==========================
+    // Step 2: Submit Login
+    //
+    // Payload includes:
+    //   - username & password
+    //   - csrf_token: validated by backend
+    //   - device: User-Agent string for session hijacking detection
+    // ==========================
     const response = await fetch("/api/login.php", {
       method: "POST",
       credentials: "same-origin",
@@ -193,6 +230,7 @@ async function handleLoginSubmit(e) {
         username: usernameInput.value.trim(),
         password: passwordInput.value,
         remember: true,
+        csrf_token: csrfToken,
         device: navigator.userAgent,
       }),
     });
@@ -200,16 +238,23 @@ async function handleLoginSubmit(e) {
     const data = await response.json();
 
     if (!response.ok) {
-      const message =
-        response.status === 401
-          ? "Username or Password do not match"
-          : data.error || "Login failed";
+      let message = "Login failed";
+
+      if (response.status === 401) {
+        message = "Username or Password do not match";
+      } else if (response.status === 429) {
+        // Rate limit hit
+        message = data.error || "Too many attempts. Please try again later.";
+      } else {
+        message = data.error || "Login failed";
+      }
 
       // Mark both fields red, show message under username
       usernameInput.classList.add("error");
       passwordInput.classList.add("error");
-      usernameError.textContent = message;
-      usernameError.classList.add("show");
+      
+      window.SecurityUtils.showError(usernameInput, usernameError, message);
+      
       attachClearOnAnyInput();
       return;
     }
@@ -223,13 +268,22 @@ async function handleLoginSubmit(e) {
 
     if (typeof showToast === "function") {
       const username = data.user?.username ?? usernameInput.value.trim();
-      showToast(`Welcome back, ${username}!`, "success");
+      // Safe interpolation using shared escapeHtml utility
+      showToast(
+        `Welcome back, ${window.SecurityUtils.escapeHtml(username)}!`, 
+        "success"
+      );
     }
   } catch (err) {
     console.error("Login error:", err);
     usernameInput.classList.add("error");
-    usernameError.textContent = "Server not reachable";
-    usernameError.classList.add("show");
+    
+    window.SecurityUtils.showError(
+      usernameInput, 
+      usernameError, 
+      "Server not reachable"
+    );
+    
     attachClearOnAnyInput();
   }
 }

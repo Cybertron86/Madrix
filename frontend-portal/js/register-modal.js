@@ -187,182 +187,37 @@ function closeRegisterModal() {
 // ==========================
 // XSS Prevention Utility
 //
-// Any user-supplied string that is interpolated into HTML or shown in a toast
-// MUST be escaped first. Even though the username passes server-side validation
-// (alphanumeric + hyphen + underscore only), we apply defense-in-depth:
-// escaping here ensures this function is safe for any string, regardless of origin.
-//
-// How it works:
-//   - A temporary <div> node is created in memory (never attached to the DOM).
-//   - The raw string is inserted as a text node (createTextNode), which the browser
-//     treats as plain text — it will never parse it as HTML or execute it as script.
-//   - Reading innerHTML back out gives us the HTML-encoded representation.
-//
-// Example: '<script>alert(1)</script>' → '&lt;script&gt;alert(1)&lt;/script&gt;'
+// Shared utility now loaded from security-utils.js
 // ==========================
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.appendChild(document.createTextNode(str));
-  return div.innerHTML;
-}
 
 // ==========================
 // Username Validation
-//
-// Rules (mirroring server-side):
-//   - 3 to 30 characters
-//   - Only letters, digits, hyphens, and underscores
+// Uses shared SecurityUtils
 // ==========================
 function validateRegisterUsername(input) {
-  const value = input.value.trim();
   const errorDiv = registerModal.querySelector('[data-error="username"]');
-
-  input.classList.remove("error", "success");
-  errorDiv.classList.remove("show");
-
-  // No feedback while field is empty — wait for the user to start typing
-  if (value === "") return false;
-
-  if (value.length < 3) {
-    showRegisterError(
-      input,
-      errorDiv,
-      "Username must be at least 3 characters",
-    );
-    return false;
-  }
-
-  if (value.length > 30) {
-    showRegisterError(
-      input,
-      errorDiv,
-      "Username must not exceed 30 characters",
-    );
-    return false;
-  }
-
-  if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
-    showRegisterError(
-      input,
-      errorDiv,
-      "Only letters, numbers, - and _ allowed",
-    );
-    return false;
-  }
-
-  input.classList.add("success");
-  return true;
+  return window.SecurityUtils.validateUsername(input, errorDiv);
 }
 
 // ==========================
 // Password Validation
-//
-// Rules (mirroring server-side exactly — previously the frontend required 12 chars
-// and special characters but the backend only required 8 chars and no special char):
-//   - Minimum 12 characters
-//   - Maximum 128 characters (bcrypt truncates beyond 72 bytes — we cap early)
-//   - At least one uppercase letter
-//   - At least one lowercase letter
-//   - At least one digit
-//   - At least one special character
-//
-// The strength indicator provides progressive feedback as each rule is satisfied.
+// Uses shared SecurityUtils
 // ==========================
 function validateRegisterPassword(input) {
-  const value = input.value;
   const errorDiv = registerModal.querySelector('[data-error="password"]');
-  const strengthBars = registerModal.querySelectorAll(
-    ".register-password-strength-bar",
-  );
-
-  input.classList.remove("error", "success");
-  errorDiv.classList.remove("show");
-  strengthBars.forEach((bar) =>
-    bar.classList.remove("active", "weak", "medium", "strong"),
-  );
-
-  if (value === "") return false;
-
-  // Rule 1: Minimum length (aligned with server: 12 not 8)
-  if (value.length < 12) {
-    showRegisterError(
-      input,
-      errorDiv,
-      "Password must be at least 12 characters",
-    );
-    updateRegisterPasswordStrength(strengthBars, 1, "weak");
-    return false;
-  }
-
-  // Rule 2: Maximum length (bcrypt silently truncates at 72 bytes — catch this early)
-  if (value.length > 128) {
-    showRegisterError(
-      input,
-      errorDiv,
-      "Password must not exceed 128 characters",
-    );
-    updateRegisterPasswordStrength(strengthBars, 1, "weak");
-    return false;
-  }
-
-  // Rule 3: Uppercase letter
-  if (!/[A-Z]/.test(value)) {
-    showRegisterError(
-      input,
-      errorDiv,
-      "Password must contain an uppercase letter",
-    );
-    updateRegisterPasswordStrength(strengthBars, 1, "weak");
-    return false;
-  }
-
-  // Rule 4: Lowercase letter
-  if (!/[a-z]/.test(value)) {
-    showRegisterError(
-      input,
-      errorDiv,
-      "Password must contain a lowercase letter",
-    );
-    updateRegisterPasswordStrength(strengthBars, 2, "weak");
-    return false;
-  }
-
-  // Rule 5: Digit
-  if (!/[0-9]/.test(value)) {
-    showRegisterError(input, errorDiv, "Password must contain a number");
-    updateRegisterPasswordStrength(strengthBars, 2, "medium");
-    return false;
-  }
-
-  // Rule 6: Special character (aligned with server-side regex)
-  if (!/[!@#$%^&*()\-_=+\[\]{};:'",.<>?\/\\|`~]/.test(value)) {
-    showRegisterError(
-      input,
-      errorDiv,
-      "Password must contain a special character",
-    );
-    updateRegisterPasswordStrength(strengthBars, 3, "medium");
-    return false;
-  }
-
-  input.classList.add("success");
-  updateRegisterPasswordStrength(strengthBars, 4, "strong");
-  return true;
+  const strengthBars = registerModal.querySelectorAll(".register-password-strength-bar");
+  return window.SecurityUtils.validatePassword(input, errorDiv, strengthBars);
 }
 
 // ==========================
 // Password Confirmation Validation
-//
-// Checks that both password fields contain identical values.
-// Triggered on input in either field so feedback is always current.
 // ==========================
 function validatePasswordMatch(passwordInput, confirmInput) {
   const password = passwordInput.value;
   const confirm = confirmInput.value;
-  const errorDiv = registerModal.querySelector(
-    '[data-error="password-confirm"]',
-  );
+  const errorDiv = registerModal.querySelector('[data-error="password-confirm"]');
 
+  // Reset state
   confirmInput.classList.remove("error", "success");
   errorDiv.classList.remove("show");
 
@@ -379,25 +234,14 @@ function validatePasswordMatch(passwordInput, confirmInput) {
 
 // Attaches error state styling and message to an input field
 function showRegisterError(input, errorDiv, message) {
-  input.classList.add("error");
-  errorDiv.textContent = message;
-  errorDiv.classList.add("show");
-}
-
-// Updates the password strength indicator bars
-function updateRegisterPasswordStrength(bars, count, strength) {
-  for (let i = 0; i < count; i++) {
-    bars[i].classList.add("active", strength);
-  }
+  window.SecurityUtils.showError(input, errorDiv, message);
 }
 
 // Clears all validation error states and strength indicator after modal close/reset
 function clearRegisterValidationErrors() {
   const inputs = registerModal.querySelectorAll(".register-form-input");
   const errors = registerModal.querySelectorAll(".register-error-message");
-  const strengthBars = registerModal.querySelectorAll(
-    ".register-password-strength-bar",
-  );
+  const strengthBars = registerModal.querySelectorAll(".register-password-strength-bar");
 
   inputs.forEach((input) => input.classList.remove("error", "success"));
   errors.forEach((error) => error.classList.remove("show"));
@@ -445,29 +289,9 @@ async function handleRegisterSubmit(e) {
   try {
     // ==========================
     // Step 1: Fetch CSRF Token
-    //
-    // The token is fetched immediately before the form submission to ensure
-    // it is as fresh as possible. It is stored in a local const, scoped to
-    // this function call only — not in any persistent client-side storage.
-    //
-    // credentials: "same-origin" ensures the session cookie is sent with this
-    // request so the server can associate the token with our session.
+    // Uses shared utility
     // ==========================
-    const csrfResponse = await fetch("/api/csrf-token.php", {
-      method: "GET",
-      credentials: "same-origin", // Required: sends the session cookie so the token is bound to our session
-    });
-
-    if (!csrfResponse.ok) {
-      throw new Error("Failed to fetch CSRF token");
-    }
-
-    const csrfData = await csrfResponse.json();
-    const csrfToken = csrfData.csrf_token ?? "";
-
-    if (!csrfToken) {
-      throw new Error("CSRF token missing in server response");
-    }
+    const csrfToken = await window.SecurityUtils.fetchCsrfToken();
 
     // ==========================
     // Step 2: Submit Registration
@@ -522,14 +346,10 @@ async function handleRegisterSubmit(e) {
 
     // ==========================
     // XSS-Safe Welcome Toast
-    //
-    // The username is HTML-escaped before interpolation to prevent XSS.
-    // Even though the server enforces alphanumeric-only usernames, we apply
-    // defense-in-depth: if the server's constraint were ever relaxed, or if
-    // the username came from a different source, this escaping prevents injection.
+    // Uses shared utility
     // ==========================
     showToast(
-      `Registration successful. Welcome ${escapeHtml(username)}!`,
+      `Registration successful. Welcome ${window.SecurityUtils.escapeHtml(username)}!`,
       "success",
     );
   } catch (err) {
