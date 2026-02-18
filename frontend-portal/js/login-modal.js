@@ -48,12 +48,6 @@ function createLoginModal() {
                 👁️
               </button>
             </div>
-            <div class="password-strength">
-              <div class="password-strength-bar"></div>
-              <div class="password-strength-bar"></div>
-              <div class="password-strength-bar"></div>
-              <div class="password-strength-bar"></div>
-            </div>
             <div class="login-error-message" data-error="password"></div>
           </div>
 
@@ -75,10 +69,8 @@ function createLoginModal() {
 
   document.body.appendChild(loginModal);
 
-  // Get elements
   const closeBtn = loginModal.querySelector(".login-modal-close");
   const form = loginModal.querySelector("#loginForm");
-  const usernameInput = loginModal.querySelector("#login-username");
   const passwordInput = loginModal.querySelector("#login-password");
   const passwordToggle = loginModal.querySelector(".password-toggle");
   const registerBtn = loginModal.querySelector(".login-register-btn");
@@ -88,9 +80,7 @@ function createLoginModal() {
 
   // Click outside to close
   loginModal.addEventListener("click", (e) => {
-    if (e.target === loginModal) {
-      closeLoginModal();
-    }
+    if (e.target === loginModal) closeLoginModal();
   });
 
   // ESC key to close
@@ -107,152 +97,68 @@ function createLoginModal() {
     passwordToggle.textContent = type === "password" ? "👁️" : "🙈";
   });
 
-  // Real-time validation
-  usernameInput.addEventListener("input", () =>
-    validateUsername(usernameInput),
-  );
-  passwordInput.addEventListener("input", () =>
-    validatePassword(passwordInput),
-  );
-
   // Form submission
   form.addEventListener("submit", handleLoginSubmit);
 
   // Register button
-  // Register button
   registerBtn.addEventListener("click", () => {
     closeLoginModal();
-    setTimeout(() => {
-      openRegisterModal();
-    }, 400);
+    setTimeout(() => openRegisterModal(), 400);
   });
 }
 
 function openLoginModal() {
   createLoginModal();
-
-  setTimeout(() => {
-    loginModal.classList.add("active");
-  }, 10);
+  setTimeout(() => loginModal.classList.add("active"), 10);
 }
 
 function closeLoginModal() {
   if (!loginModal) return;
   loginModal.classList.remove("active");
-
-  // Reset form
   const form = loginModal.querySelector("#loginForm");
   if (form) {
     form.reset();
-    clearValidationErrors();
+    clearAllErrors();
   }
 }
 
-function validateUsername(input) {
-  const value = input.value.trim();
-  const errorDiv = loginModal.querySelector('[data-error="username"]');
-
-  // Clear previous state
-  input.classList.remove("error", "success");
-  errorDiv.classList.remove("show");
-
-  if (value === "") {
-    return false;
-  }
-
-  if (value.length < 3) {
-    showError(input, errorDiv, "Username must be at least 3 characters");
-    return false;
-  }
-
-  if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
-    showError(input, errorDiv, "Only letters, numbers, - and _ allowed");
-    return false;
-  }
-
-  input.classList.add("success");
-  return true;
-}
-
-function validatePassword(input) {
-  const value = input.value;
-  const errorDiv = loginModal.querySelector('[data-error="password"]');
-  const strengthBars = loginModal.querySelectorAll(".password-strength-bar");
-
-  // Clear previous state
-  input.classList.remove("error", "success");
-  errorDiv.classList.remove("show");
-  strengthBars.forEach((bar) => {
-    bar.classList.remove("active", "weak", "medium", "strong");
-  });
-
-  if (value === "") {
-    return false;
-  }
-
-  // Check length
-  if (value.length < 12) {
-    showError(input, errorDiv, "Password must be at least 12 characters");
-    updatePasswordStrength(strengthBars, 1, "weak");
-    return false;
-  }
-
-  // Check for uppercase
-  if (!/[A-Z]/.test(value)) {
-    showError(input, errorDiv, "Password must contain an uppercase letter");
-    updatePasswordStrength(strengthBars, 1, "weak");
-    return false;
-  }
-
-  // Check for lowercase
-  if (!/[a-z]/.test(value)) {
-    showError(input, errorDiv, "Password must contain a lowercase letter");
-    updatePasswordStrength(strengthBars, 2, "weak");
-    return false;
-  }
-
-  // Check for number
-  if (!/[0-9]/.test(value)) {
-    showError(input, errorDiv, "Password must contain a number");
-    updatePasswordStrength(strengthBars, 2, "medium");
-    return false;
-  }
-
-  // Check for special character
-  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value)) {
-    showError(input, errorDiv, "Password must contain a special character");
-    updatePasswordStrength(strengthBars, 3, "medium");
-    return false;
-  }
-
-  // All checks passed
-  input.classList.add("success");
-  updatePasswordStrength(strengthBars, 4, "strong");
-  return true;
-}
-
-function showError(input, errorDiv, message) {
-  input.classList.add("error");
-  errorDiv.textContent = message;
-  errorDiv.classList.add("show");
-}
-
-function updatePasswordStrength(bars, count, strength) {
-  for (let i = 0; i < count; i++) {
-    bars[i].classList.add("active", strength);
-  }
-}
-
-function clearValidationErrors() {
+// Clears ALL red borders and ALL error message texts
+function clearAllErrors() {
   const inputs = loginModal.querySelectorAll(".login-form-input");
   const errors = loginModal.querySelectorAll(".login-error-message");
-  const strengthBars = loginModal.querySelectorAll(".password-strength-bar");
 
-  inputs.forEach((input) => input.classList.remove("error", "success"));
-  errors.forEach((error) => error.classList.remove("show"));
-  strengthBars.forEach((bar) =>
-    bar.classList.remove("active", "weak", "medium", "strong"),
-  );
+  inputs.forEach((input) => {
+    input.classList.remove("error", "success");
+    if (input._clearHandler) {
+      input.removeEventListener("input", input._clearHandler);
+      delete input._clearHandler;
+    }
+  });
+  errors.forEach((error) => {
+    error.classList.remove("show");
+    error.textContent = "";
+  });
+}
+
+// Attaches a listener on BOTH fields — first interaction with either clears ALL errors
+function attachClearOnAnyInput() {
+  const usernameInput = loginModal.querySelector("#login-username");
+  const passwordInput = loginModal.querySelector("#login-password");
+
+  const handler = () => {
+    clearAllErrors();
+  };
+
+  // Clean up old handlers first
+  if (usernameInput._clearHandler)
+    usernameInput.removeEventListener("input", usernameInput._clearHandler);
+  if (passwordInput._clearHandler)
+    passwordInput.removeEventListener("input", passwordInput._clearHandler);
+
+  usernameInput._clearHandler = handler;
+  passwordInput._clearHandler = handler;
+  usernameInput.addEventListener("input", usernameInput._clearHandler);
+  passwordInput.addEventListener("input", passwordInput._clearHandler);
 }
 
 async function handleLoginSubmit(e) {
@@ -260,22 +166,29 @@ async function handleLoginSubmit(e) {
 
   const usernameInput = loginModal.querySelector("#login-username");
   const passwordInput = loginModal.querySelector("#login-password");
+  const usernameError = loginModal.querySelector('[data-error="username"]');
 
-  const isUsernameValid = validateUsername(usernameInput);
-  const isPasswordValid = validatePassword(passwordInput);
+  // Clear previous errors first
+  clearAllErrors();
 
-  if (!isUsernameValid || !isPasswordValid) {
+  // Empty check — mark BOTH fields red if either is empty
+  const usernameEmpty = !usernameInput.value.trim();
+  const passwordEmpty = !passwordInput.value;
+
+  if (usernameEmpty || passwordEmpty) {
+    if (usernameEmpty) usernameInput.classList.add("error");
+    if (passwordEmpty) passwordInput.classList.add("error");
+    usernameError.textContent = "Please enter username and password";
+    usernameError.classList.add("show");
+    attachClearOnAnyInput();
     return;
   }
 
   try {
     const response = await fetch("/api/login.php", {
-      // Korrigierter Pfad
       method: "POST",
-      credentials: "same-origin", // Session-Cookie mitsenden
-      headers: {
-        "Content-Type": "application/json",
-      },
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         username: usernameInput.value.trim(),
         password: passwordInput.value,
@@ -287,40 +200,41 @@ async function handleLoginSubmit(e) {
     const data = await response.json();
 
     if (!response.ok) {
-      showError(
-        usernameInput,
-        loginModal.querySelector('[data-error="username"]'),
-        data.error || "Login failed",
-      );
+      const message =
+        response.status === 401
+          ? "Username or Password do not match"
+          : data.error || "Login failed";
+
+      // Mark both fields red, show message under username
+      usernameInput.classList.add("error");
+      passwordInput.classList.add("error");
+      usernameError.textContent = message;
+      usernameError.classList.add("show");
+      attachClearOnAnyInput();
       return;
     }
 
-    // Login erfolgreich - Modal schliessen
+    // Login successful
     closeLoginModal();
 
-    // Navbar: LOGIN to LOGOUT
     if (typeof updateAuthButton === "function") {
       await updateAuthButton();
     }
 
-    // Toast Willkommensnachricht
     if (typeof showToast === "function") {
       const username = data.user?.username ?? usernameInput.value.trim();
       showToast(`Welcome back, ${username}!`, "success");
     }
   } catch (err) {
     console.error("Login error:", err);
-    showError(
-      usernameInput,
-      loginModal.querySelector('[data-error="username"]'),
-      "Server not reachable",
-    );
+    usernameInput.classList.add("error");
+    usernameError.textContent = "Server not reachable";
+    usernameError.classList.add("show");
+    attachClearOnAnyInput();
   }
 }
 
 // Login button event listener
 if (loginBtn) {
-  loginBtn.addEventListener("click", () => {
-    openLoginModal();
-  });
+  loginBtn.addEventListener("click", () => openLoginModal());
 }
