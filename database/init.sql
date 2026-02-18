@@ -20,6 +20,7 @@ SET foreign_key_checks = 0;
 DROP TABLE IF EXISTS remember_tokens;
 DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS rate_limits;
 
 SET foreign_key_checks = 1;
 
@@ -78,6 +79,24 @@ CREATE TABLE messages (
 ) ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci;
+
+
+
+-- ==============================================================================
+-- Add this table to database/init.sql
+--
+-- Used as fallback rate limiter when APCu is not available in PHP-FPM.
+-- When APCu works correctly this table is never written to.
+-- ==============================================================================
+
+CREATE TABLE rate_limits (
+    ip_hash    CHAR(64)     NOT NULL,          -- SHA-256 hex of the client IP
+    action     VARCHAR(32)  NOT NULL,          -- e.g. 'register', 'login'
+    attempts   INT UNSIGNED NOT NULL DEFAULT 1,
+    reset_at   DATETIME     NOT NULL,          -- when the counter expires
+    PRIMARY KEY (ip_hash, action),
+    INDEX idx_reset_at (reset_at)              -- for fast cleanup of expired rows
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 -- =========================================
