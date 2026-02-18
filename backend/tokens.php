@@ -1,18 +1,14 @@
 <?php
-require __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/bootstrap.php';
 
 header('Content-Type: application/json');
 
-/*
-// Nur für Admins zugänglich. WICHTIG: Adminpanel muss noch implementiert werden.
-
-if ($_SESSION['user']['role'] !== 'admin') {
+// Admin-only access
+if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
     http_response_code(403);
     echo json_encode(['error' => 'Forbidden']);
     exit;
 }
-    */
 
 try {
     $stmt = $pdo->query("
@@ -26,7 +22,9 @@ try {
         'success' => true,
         'tokens' => $stmt->fetchAll(PDO::FETCH_ASSOC)
     ]);
-} catch (PDOException $e) {
+}
+catch (PDOException $e) {
+    error_log('[tokens.php] ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => $e->getMessage()]);
+    echo json_encode(['error' => 'Database error']);
 }

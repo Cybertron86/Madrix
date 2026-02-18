@@ -1,8 +1,6 @@
 <?php
 
-
-session_start();
-require '../config/database.php';
+require_once __DIR__ . '/../config/bootstrap.php';
 
 
 if (empty($_SESSION['user']) && !empty($_COOKIE[REMEMBER_COOKIE])) {
@@ -28,7 +26,8 @@ if (empty($_SESSION['user']) && !empty($_COOKIE[REMEMBER_COOKIE])) {
             'role' => $user['role']
         ];
 
-    } else {
+    }
+    else {
         // ungültiges Cookie → löschen
         setcookie(REMEMBER_COOKIE, '', time() - 3600, '/');
     }

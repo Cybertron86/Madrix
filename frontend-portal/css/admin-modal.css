@@ -1,0 +1,432 @@
+/* ============================================================
+   ADMIN MODAL — Matrix/Tron Design
+   Consistent with profile-modal.css
+   ============================================================ */
+
+/* OVERLAY */
+.admin-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 20000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.35s ease,
+    visibility 0.35s ease;
+}
+
+.admin-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* MODAL BOX */
+.admin-modal {
+  background: rgba(0, 0, 0, 0.97);
+  border: 2px solid #00ff88;
+  box-shadow:
+    0 0 30px rgba(0, 255, 136, 0.35),
+    0 0 80px rgba(0, 255, 136, 0.1),
+    inset 0 0 60px rgba(0, 255, 136, 0.03);
+
+  width: 100%;
+  max-width: 750px;
+  padding: 2rem 2rem 1.8rem;
+  position: relative;
+  margin: auto;
+
+  transform: translateY(-20px) scale(0.97);
+  transition: transform 0.35s ease;
+
+  font-family: "Orbitron", monospace;
+  color: #00ff88;
+}
+
+.admin-overlay.open .admin-modal {
+  transform: translateY(0) scale(1);
+}
+
+/* Scanline effect */
+.admin-modal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 255, 136, 0.018) 3px,
+    rgba(0, 255, 136, 0.018) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Corner accents */
+.admin-modal::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 24px;
+  height: 24px;
+  border-top: 3px solid #00ff88;
+  border-left: 3px solid #00ff88;
+  filter: drop-shadow(0 0 6px #00ff88);
+}
+
+.admin-modal-corner-br {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 24px;
+  height: 24px;
+  border-bottom: 3px solid #00ff88;
+  border-right: 3px solid #00ff88;
+  filter: drop-shadow(0 0 6px #00ff88);
+  z-index: 2;
+}
+
+/* All content above scanlines */
+.admin-modal > *:not(.admin-modal-corner-br) {
+  position: relative;
+  z-index: 2;
+}
+
+/* HEADER */
+.admin-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.6rem;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.25);
+  padding-bottom: 1rem;
+  gap: 0.5rem;
+}
+
+.admin-modal-title {
+  font-size: 1rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px #00ff88;
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-modal-title span {
+  color: rgba(0, 255, 136, 0.5);
+  font-size: 0.65rem;
+  display: block;
+  letter-spacing: 2px;
+  margin-top: 3px;
+}
+
+/* CLOSE BUTTON */
+.admin-close-btn {
+  background: transparent;
+  border: 1px solid rgba(0, 255, 136, 0.4);
+  color: #00ff88;
+  font-size: 1rem;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Orbitron", monospace;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.admin-close-btn:hover {
+  background: #00ff88;
+  color: black;
+  box-shadow: 0 0 12px #00ff88;
+  border-color: #00ff88;
+}
+
+/* SECTIONS */
+.admin-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.12);
+}
+
+.admin-section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.admin-section-label {
+  font-size: 0.62rem;
+  letter-spacing: 2.5px;
+  color: rgba(0, 255, 136, 0.6);
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+}
+
+/* TABS */
+.admin-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.admin-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(0, 255, 136, 0.4);
+  padding: 0.6rem 1.2rem;
+  font-family: "Orbitron", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+}
+
+.admin-tab:hover {
+  color: rgba(0, 255, 136, 0.7);
+  background: rgba(0, 255, 136, 0.05);
+}
+
+.admin-tab.active {
+  color: #00ff88;
+  border-bottom-color: #00ff88;
+  text-shadow: 0 0 8px #00ff88;
+}
+
+/* TAB PANELS */
+.admin-tab-panel {
+  display: none;
+}
+
+.admin-tab-panel.active {
+  display: block;
+}
+
+/* TABLE */
+.admin-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Orbitron", monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.5px;
+}
+
+.admin-table th {
+  color: rgba(0, 255, 136, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 0.58rem;
+  font-weight: 600;
+  padding: 0.6rem 0.7rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.25);
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.08);
+  color: rgba(0, 255, 136, 0.8);
+  vertical-align: middle;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-table tr:hover td {
+  background: rgba(0, 255, 136, 0.04);
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ROLE BADGE */
+.admin-role-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.55rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border: 1px solid;
+}
+
+.admin-role-badge.role-admin {
+  color: #ffaa00;
+  border-color: rgba(255, 170, 0, 0.4);
+  text-shadow: 0 0 6px rgba(255, 170, 0, 0.5);
+}
+
+.admin-role-badge.role-user {
+  color: rgba(0, 255, 136, 0.6);
+  border-color: rgba(0, 255, 136, 0.2);
+}
+
+/* ACTION BUTTONS */
+.admin-btn-delete {
+  background: transparent;
+  border: 1px solid rgba(255, 68, 68, 0.5);
+  color: #ff4444;
+  padding: 0.3rem 0.6rem;
+  font-family: "Orbitron", monospace;
+  font-size: 0.58rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border-radius: 0;
+}
+
+.admin-btn-delete:hover:not(:disabled) {
+  background: #ff4444;
+  color: black;
+  box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+  text-shadow: none;
+}
+
+.admin-btn-delete:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* REFRESH BUTTON */
+.admin-btn-refresh {
+  background: transparent;
+  border: 1px solid rgba(0, 255, 136, 0.4);
+  color: rgba(0, 255, 136, 0.7);
+  padding: 0.35rem 0.8rem;
+  font-family: "Orbitron", monospace;
+  font-size: 0.6rem;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  border-radius: 0;
+  margin-left: auto;
+}
+
+.admin-btn-refresh:hover {
+  border-color: #00ff88;
+  color: #00ff88;
+  background: rgba(0, 255, 136, 0.08);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+}
+
+/* LOADING / EMPTY STATE */
+.admin-status-msg {
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 0.68rem;
+  letter-spacing: 1.5px;
+  color: rgba(0, 255, 136, 0.4);
+}
+
+.admin-status-msg.loading {
+  animation: admin-blink 0.8s ease infinite;
+}
+
+.admin-status-msg.error {
+  color: #ff4444;
+}
+
+@keyframes admin-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* SECTION HEADER ROW */
+.admin-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.admin-count {
+  font-size: 0.6rem;
+  color: rgba(0, 255, 136, 0.4);
+  letter-spacing: 1px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 700px) {
+  .admin-modal {
+    padding: 1.5rem 1rem 1.4rem;
+    max-width: 100%;
+  }
+  .admin-modal-title {
+    font-size: 0.88rem;
+  }
+  .admin-table {
+    font-size: 0.6rem;
+  }
+  .admin-table th,
+  .admin-table td {
+    padding: 0.45rem 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-overlay {
+    padding: 0.5rem;
+    align-items: flex-start;
+  }
+  .admin-modal {
+    padding: 1.2rem 0.8rem 1.2rem;
+    margin-top: 0.5rem;
+  }
+  .admin-tabs {
+    gap: 0;
+  }
+  .admin-tab {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+  }
+  .admin-table td {
+    max-width: 120px;
+  }
+}
+
+@media (max-height: 500px) {
+  .admin-overlay {
+    align-items: flex-start;
+    padding: 0.4rem;
+  }
+  .admin-modal {
+    padding: 0.9rem 1rem;
+    margin: 0 auto;
+  }
+  .admin-modal-header {
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.6rem;
+  }
+  .admin-modal-title span {
+    display: none;
+  }
+}

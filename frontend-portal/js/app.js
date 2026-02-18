@@ -52,11 +52,13 @@ async function updateAuthButton() {
   const user = await res.json();
 
   const btn = document.getElementById("btn_login");
+  const adminItem = document.getElementById("adminMenuItem");
   if (!btn) return;
 
   if (user.role === "guest") {
     btn.textContent = "LOGIN";
     btn.onclick = openLoginModal;
+    if (adminItem) adminItem.style.display = "none";
   } else {
     btn.textContent = "LOGOUT";
     btn.onclick = async () => {
@@ -64,6 +66,9 @@ async function updateAuthButton() {
       updateAuthButton();
       showToast("You are now logged out.", "info");
     };
+    if (adminItem) {
+      adminItem.style.display = user.role === "admin" ? "" : "none";
+    }
   }
 }
 
@@ -182,6 +187,10 @@ document.addEventListener("DOMContentLoaded", () => {
         luxBar.style.visibility = "visible";
         luxBar.style.opacity = "1";
       }
+      if (soundBtn) {
+        soundBtn.style.visibility = "visible";
+        soundBtn.style.opacity = "1";
+      }
     }, totalDuration + 500);
 
     startAllSounds();
@@ -223,6 +232,9 @@ document.addEventListener("DOMContentLoaded", () => {
             break;
           case "profile":
             console.log("Profil clicked");
+            break;
+          case "admin":
+            if (typeof openAdminModal === "function") openAdminModal();
             break;
         }
         dropdownMenu.classList.remove("open");

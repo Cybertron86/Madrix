@@ -100,18 +100,18 @@ CREATE TABLE rate_limits (
 
 
 -- =========================================
--- OPTIONAL ADMIN USER (REMOVE IF NOT NEEDED)
--- Password: Admin123
+-- DEFAULT ADMIN USER
+-- Username: admin
+-- Password: Admin123Pass!
 -- =========================================
 
--- INSERT INTO users (username, password_hash, role)
--- VALUES (
---     'admin',
---     '$2y$10$wH0Z8xYp4nQKz8rW4y6zUOeV9lY9S1xk1x1x1x1x1x1x1x1x1x1x1',
---     'admin'
--- );
+INSERT INTO users (username, password_hash, role)
+VALUES (
+    'admin',
+    '$2y$10$ExUb8mDKce4ApnWLTFqcHeOD13kHK9LsiGiVWNYZuYgv2mU2/joeu',
+    'admin'
+);
 
 -- =========================================
 -- DONE
 -- =========================================
-

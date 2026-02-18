@@ -1,6 +1,7 @@
 <?php
-require __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/bootstrap.php';
+
+header('Content-Type: application/json');
 
 if (!isset($_SESSION['user'])) {
     echo json_encode(['role' => 'guest']);
