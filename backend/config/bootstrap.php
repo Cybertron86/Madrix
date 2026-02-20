@@ -112,27 +112,61 @@ if (session_status() === PHP_SESSION_NONE) {
 
 
 // ==========================
+// Database Connection
+// ==========================
+$pdo = Database::connect();
+
+// ==========================
 // Session Inactivity Timeout
-//
-// Enforces a hard 30-minute inactivity limit regardless of gc_maxlifetime.
-// A stolen session cookie becomes useless after the session has been idle
-// for 30 minutes — it will be destroyed and a fresh session created.
 // ==========================
 $sessionTimeout = 1800; // 30 minutes
 
 if (isset($_SESSION['last_activity'])) {
     if ((time() - (int)$_SESSION['last_activity']) > $sessionTimeout) {
-        // Destroy the old session completely so the ID cannot be reused
+        $remember = $_COOKIE[REMEMBER_COOKIE] ?? null;
         session_unset();
         session_destroy();
-        // Start fresh so subsequent code can write to $_SESSION normally
         session_start();
         session_regenerate_id(true);
+        if ($remember)
+            $_COOKIE[REMEMBER_COOKIE] = $remember;
     }
 }
-
-// Refresh timestamp on every request that reaches an authenticated endpoint
 $_SESSION['last_activity'] = time();
+
+// ==========================
+// Session Restoration (Remember Me)
+// ==========================
+if (empty($_SESSION['user']) && !empty($_COOKIE[REMEMBER_COOKIE])) {
+    try {
+        $tokenHash = hash('sha256', $_COOKIE[REMEMBER_COOKIE]);
+        $stmt = $pdo->prepare("
+            SELECT u.id, u.username, u.role
+            FROM remember_tokens rt
+            JOIN users u ON u.id = rt.user_id
+            WHERE rt.token_hash = ?
+              AND rt.expires_at > NOW()
+            LIMIT 1
+        ");
+        $stmt->execute([$tokenHash]);
+
+        if ($user = $stmt->fetch()) {
+            $_SESSION['user'] = [
+                'id' => (int)$user['id'],
+                'username' => $user['username'],
+                'role' => $user['role'],
+                'ua_hash' => hash('sha256', $_SERVER['HTTP_USER_AGENT'] ?? ''),
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ];
+        }
+        else {
+            setcookie(REMEMBER_COOKIE, '', time() - 3600, '/');
+        }
+    }
+    catch (PDOException $e) {
+        error_log('[bootstrap.php] Restoration error: ' . $e->getMessage());
+    }
+}
 
 
 // ==========================
@@ -155,10 +189,3 @@ if ($isHttps) {
 // - HTTPS images (img-src https:)
 // - Inline styles for JS modals (style-src 'unsafe-inline')
 header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://picsum.photos https:; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';");
-
-// ==========================
-// Database Connection
-//
-// $pdo is available to every endpoint that includes this file.
-// ==========================
-$pdo = Database::connect();

@@ -125,7 +125,7 @@ body {
    SOUND CONTROLS (Floating Buttons)
    ========================================= */
 
-/* --- Lautsprecher‑Button (Intro Phase) --- */
+/* --- Sound‑Button (Intro Phase) --- */
 .muteUnmuteBtn {
   position: absolute;
   bottom: 20px; 
