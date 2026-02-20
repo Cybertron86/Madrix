@@ -1,4 +1,7 @@
 <?php
+require_once "config/bootstrap.php";
+
+
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
@@ -9,7 +12,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-require_once "config/database.php";
+// ==========================
+// Admin Auth Check
+// ==========================
+if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+    http_response_code(403);
+    echo json_encode(['error' => 'Forbidden']);
+    exit;
+}
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -55,7 +65,8 @@ try {
 
     throw new Exception("Method not allowed");
 
-} catch (Exception $e) {
+}
+catch (Exception $e) {
     http_response_code(400);
     echo json_encode(["error" => $e->getMessage()]);
 }
