@@ -1,7 +1,8 @@
-/* ====================================================================
+/* ==========================================================================
    TOAST NOTIFICATION SYSTEM
-   Matches the cyberpunk / matrix aesthetic of the site
-   ==================================================================== */
+   Matches the cyberpunk / matrix aesthetic of the site.
+   Displays success, info, and error messages via fixed-position overlay.
+   ========================================================================== */
 
 #app-toast {
   position: fixed;
@@ -11,46 +12,50 @@
   z-index: 99999;
   pointer-events: none;
 
-  /* Layout */
+  /* --- Layout --- */
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 13px 28px;
   white-space: nowrap;
 
-  /* Typography */
+  /* --- Typography --- */
   font-family: "Orbitron", monospace;
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 
-  /* Base appearance - overridden by modifier classes */
+  /* --- Base Appearance --- */
   color: #e0ffe8;
   background: rgba(0, 10, 5, 0.92);
   border: 1px solid transparent;
   border-radius: 4px;
 
-  /* Glow border via box-shadow */
+  /* Glow border via multiple box-shadows */
   box-shadow:
     0 0 0 1px rgba(var(--color-primary-rgb), 0.25),
     0 0 18px rgba(var(--color-primary-rgb), 0.15),
     0 8px 32px rgba(0, 0, 0, 0.55);
 
-  /* Enter/exit animation */
+  /* Enter/exit transition */
   opacity: 0;
   transition:
     opacity 0.35s ease,
     transform 0.35s ease;
 }
 
-/* ── Visible state ── */
+/* --- Visible State --- */
 #app-toast.toast--visible {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
 
-/* ── Success (green matrix) ── */
+/* =========================================
+   VARIANTS - SUCCESS / INFO / ERROR
+   ========================================= */
+
+/* --- Success (Matrix Green) --- */
 #app-toast.toast--success {
   color: #a8ffcc;
   border-color: rgba(var(--color-primary-rgb), 0.35);
@@ -66,7 +71,7 @@
   color: var(--color-primary);
 }
 
-/* ── Info / neutral (ice blue) ── */
+/* --- Info / Neutral (Ice Blue) --- */
 #app-toast.toast--info {
   color: #aee8ff;
   border-color: rgba(var(--color-ice-blue-rgb), 0.35);
@@ -82,7 +87,7 @@
   color: var(--color-ice-blue);
 }
 
-/* ── Error (red alert) ── */
+/* --- Error (Alert Red) --- */
 #app-toast.toast--error {
   color: #ffb3b3;
   border-color: rgba(var(--color-error-red-rgb), 0.35);
@@ -98,7 +103,11 @@
   color: var(--color-error-red);
 }
 
-/* ── Scanline shimmer (subtle) ── */
+/* =========================================
+   DECORATIVE ELEMENTS
+   ========================================= */
+
+/* --- CRT Scanline Shimmer Shimmer --- */
 #app-toast::after {
   content: "";
   position: absolute;
@@ -114,7 +123,10 @@
   pointer-events: none;
 }
 
-/* ── Responsive ── */
+/* =========================================
+   RESPONSIVE DESIGN
+   ========================================= */
+
 @media (max-width: 480px) {
   #app-toast {
     font-size: 0.72rem;

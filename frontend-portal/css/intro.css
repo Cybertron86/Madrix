@@ -1,3 +1,8 @@
+/* ==========================================================================
+   INTRO PORTAL OVERLAY
+   Handles the landing screen, entry questions, and ambient sound controls.
+   ========================================================================== */
+
 body {
   margin: 0;
   background: black;
@@ -5,6 +10,7 @@ body {
   font-family: "Orbitron", monospace;
 }
 
+/* --- Main Portal Wrapper --- */
 #portalOverlay {
   position: fixed;
   inset: 0;
@@ -20,15 +26,7 @@ body {
   overflow: hidden;
 }
 
-@keyframes scanline {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 0 100vh;
-  }
-}
-
+/* --- CRT Scanline Overlays --- */
 #portalOverlay::after {
   content: "";
   position: absolute;
@@ -45,27 +43,9 @@ body {
   z-index: 20000;
 }
 
-@keyframes portalPulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.02);
-    opacity: 0.95;
-  }
-}
-
-@keyframes portalBrightness {
-  0%,
-  100% {
-    filter: brightness(1);
-  }
-  50% {
-    filter: brightness(1.4);
-  }
-}
+/* =========================================
+   PORTAL CONTENT & BUTTONS
+   ========================================= */
 
 .portalContent {
   text-align: center;
@@ -121,30 +101,35 @@ body {
   display: inline-block;
 }
 
-@keyframes portalFadeOut {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.2);
-  }
+/* --- No-Button Animations --- */
+.shake {
+  animation: shake 0.5s ease-in-out;
 }
 
-#noBtn.shake {
-  animation: shakeOut 0.5s ease;
+.fall {
+  animation: fall 1.5s forwards ease-in;
+  pointer-events: none;
 }
 
-#noBtn.fall {
-  animation: fallOut 1s ease forwards;
+/* --- Falling characters for YES-Button --- */
+.falling-char {
+  display: inline-block;
+  color: var(--color-primary);
+  text-shadow: 0 0 10px var(--color-primary);
+  pointer-events: none;
+  animation: transition-falling-char 2s forwards ease-in;
+  z-index: 10001;
 }
 
-/* =============================== Lautsprecher‑Button rechts unten ============================ */
+/* =========================================
+   SOUND CONTROLS (Floating Buttons)
+   ========================================= */
+
+/* --- Lautsprecher‑Button (Intro Phase) --- */
 .muteUnmuteBtn {
   position: absolute;
-  bottom: 20px; /* Abstand zum unteren Rand des Overlays */
-  right: 20px; /* Abstand zum rechten Rand */
+  bottom: 20px; 
+  right: 20px; 
   background: none;
   border: 2px solid var(--color-primary);
   color: var(--color-primary);
@@ -162,17 +147,19 @@ body {
   transition: opacity 0.5s ease;
   z-index: 10001;
 }
+
 .muteUnmuteBtn:hover {
   background: var(--color-primary);
   color: var(--color-black);
   box-shadow: 0 0 12px var(--color-primary);
 }
+
 .muteUnmuteBtn:disabled {
   opacity: 0.5;
   pointer-events: none;
 }
 
-/* ======================================== Ambient‑Button (Haupt‑Phase) ======================================== */
+/* --- Ambient‑Button (Main Phase) --- */
 .ambientBtn {
   position: fixed;
   bottom: 20px;
@@ -192,12 +179,76 @@ body {
   transition: 0.25s;
   z-index: 20000;
 }
+
 .ambientBtn:hover {
   background: var(--color-primary);
   color: var(--color-black);
   box-shadow: 0 0 12px var(--color-primary);
 }
+
 .ambientBtn:disabled {
   pointer-events: none;
   opacity: 0.5;
+}
+
+/* =========================================
+   KEYFRAMES - ANIMATIONS
+   ========================================= */
+
+@keyframes scanline {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100vh;
+  }
+}
+
+@keyframes portalPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.95;
+  }
+}
+
+@keyframes portalBrightness {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.4);
+  }
+}
+
+@keyframes portalFadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+@keyframes fall {
+  0% { transform: translateY(0) rotate(0); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(30deg); opacity: 0; }
+}
+
+@keyframes transition-falling-char {
+  0% { transform: translateY(0) rotate(0); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
 }

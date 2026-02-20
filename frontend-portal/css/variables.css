@@ -1,4 +1,9 @@
-/* Global Box Sizing Reset */
+/* ==========================================================================
+   GLOBAL VARIABLES & BASE STYLES
+   Core theme definitions, typography, and global resets.
+   ========================================================================== */
+
+/* --- Global Box Sizing Reset --- */
 :root {
   box-sizing: border-box;
 }
@@ -15,7 +20,7 @@ body {
   padding: 0;
 }
 
-/* Global Scrollbar */
+/* --- Global Scrollbar Styling (Matrix Theme) --- */
 *::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -43,10 +48,10 @@ body {
 
 :root {
   /* =========================================
-     COLORS - PRIMARY
+     COLORS - PRIMARY (Matrix Aesthetic)
      ========================================= */
   --color-primary: #00ff88;        /* Matrix Green */
-  --color-primary-rgb: 0, 255, 136; /* Matrix Green RGB for rgba() */
+  --color-primary-rgb: 0, 255, 136; /* RGB component for alpha transparency */
   --color-primary-dim: rgba(0, 255, 136, 0.6);
   --color-primary-glow: rgba(0, 255, 136, 0.3);
   
@@ -59,23 +64,23 @@ body {
   /* =========================================
      COLORS - ACCENTS & STATES
      ========================================= */
-  --color-error-pink: #ff0088;     /* Login/Register Errors */
+  --color-error-pink: #ff0088;     /* Login/Register validation errors */
   --color-error-pink-rgb: 255, 0, 136;
-  --color-error-red: #ff4444;      /* Admin/Profile Delete & Errors */
+  --color-error-red: #ff4444;      /* Destructive actions & critical errors */
   --color-error-red-rgb: 255, 68, 68;
-  --color-warning: #ffaa00;        /* Warnings / Admin Role */
+  --color-warning: #ffaa00;        /* Warnings and special roles */
   --color-warning-rgb: 255, 170, 0;
-  --color-ice-blue: #00d4ff;       /* Secondary Accent */
+  --color-ice-blue: #00d4ff;       /* Tron-style secondary accent */
   --color-ice-blue-rgb: 0, 212, 255;
 
   /* =========================================
-     FONTS
+     TYPOGRAPHY
      ========================================= */
   --font-main: "Orbitron", monospace;
   --font-code: "Courier New", monospace;
 
   /* =========================================
-     EFFECTS
+     VISUAL EFFECTS
      ========================================= */
   --shadow-glow: 0 0 10px var(--color-primary);
   --shadow-glow-strong: 0 0 20px var(--color-primary);

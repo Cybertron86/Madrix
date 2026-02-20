@@ -33,19 +33,19 @@ function createGalleryModal() {
   // Click outside to close
   galleryModal.addEventListener("click", (e) => {
     if (e.target === galleryModal) {
-      closeGalleryModal(footerBar);
+      closeGalleryModal();
     }
   });
 
   // ESC key to close
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && galleryModal.classList.contains("active")) {
-      closeGalleryModal(footerBar);
+      closeGalleryModal();
     }
   });
 }
 
-async function openGalleryModal(footerBar) {
+async function openGalleryModal() {
   createGalleryModal();
   footerBar = document.getElementById("site-footer");
   if (window.matchMedia("(max-width: 480px)").matches) {
@@ -73,7 +73,7 @@ async function openGalleryModal(footerBar) {
   }
 }
 
-function closeGalleryModal(footerBar) {
+function closeGalleryModal() {
   if (!galleryModal) return;
   galleryModal.classList.remove("active");
 

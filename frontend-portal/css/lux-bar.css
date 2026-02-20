@@ -1,6 +1,9 @@
-/* =========================================================================================================================== 
-    Edler, schmaler Streifen am oberen Rand 
-    =========================================================================================================================== */
+/* ==========================================================================
+   LUX PROGRESS BAR
+   High-end loading bar animation at the top of the screen.
+   ========================================================================== */
+
+/* --- Primary Bar Container --- */
 .lux-bar {
   position: fixed;
   top: 0;
@@ -8,6 +11,7 @@
   width: 100%;
   height: 5px;
   visibility: hidden;
+  /* Multi-stop gradient for a metallic/glassy green look */
   background: linear-gradient(
     to bottom,
     #88ffb8 0%,
@@ -27,9 +31,7 @@
   z-index: 10001;
 }
 
-/* ===========================================================================================================================
-   Gleitender Funken/Lichtstreifen 
-   =========================================================================================================================== */
+/* --- Gleaming Sparkle Effect --- */
 .lux-sparkle {
   position: absolute;
   top: 0;
@@ -70,7 +72,11 @@
   }
 }
 
-/* === Animation: sanfter, gleitender Glanzeffekt === */
+/* =========================================
+   ANIMATIONS
+   ========================================= */
+
+/* --- Sanft gleitender Glanzeffekt --- */
 @keyframes luxShine {
   0% {
     right: -70%;

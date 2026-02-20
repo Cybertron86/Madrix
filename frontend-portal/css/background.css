@@ -1,16 +1,24 @@
+/* ==========================================================================
+   BACKGROUND CANVAS & CORE LAYOUT
+   Handles the Matrix rain background, glitch effects, and main content visibility.
+   ========================================================================== */
+
 @import "intro.css";
 
+/* --- Base Canvas Layout --- */
 canvas {
   position: fixed;
   inset: 0;
   z-index: 0;
 }
 
+/* --- Main Site Content Wrapper --- */
 main {
   position: relative;
   z-index: 1;
 }
 
+/* --- Main Content Container (Hidden during intro) --- */
 #mainContent {
   display: none;
   opacity: 0;
@@ -23,16 +31,20 @@ main {
   animation: fadeIn 0.8s ease forwards;
 }
 
-/* Ensure Matrix rain stays in background */
+/* --- Matrix Digital Rain Canvas --- */
 #matrix-canvas {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1; /* Behind carousel */
+  z-index: 1; /* Positioned behind the interactive carousel */
   pointer-events: none;
 }
+
+/* =========================================
+   KEYFRAMES - FALLING EFFECTS
+   ========================================= */
 
 @keyframes fallOut {
   0% {
@@ -56,6 +68,7 @@ main {
   }
 }
 
+/* --- Complex Glitch Animation for falling characters --- */
 @keyframes fallOutGlitch {
   0% {
     transform: translateY(0) translateX(0);
@@ -97,6 +110,7 @@ main {
   }
 }
 
+/* --- Interactive Falling Character Style --- */
 .falling-char {
   position: absolute;
   font-family: var(--font-main);
@@ -111,6 +125,10 @@ main {
     0 0 8px var(--color-primary);
   z-index: 1001;
 }
+
+/* =========================================
+   GLITCH & SHAKE EFFECTS
+   ========================================= */
 
 @keyframes shake {
   0% {
@@ -143,6 +161,7 @@ canvas.shake {
   animation: shake 0.3s ease-in-out;
 }
 
+/* --- Text Glitch Effect Elements --- */
 .glitchEffect::before,
 .glitchEffect::after {
   content: attr(data-text);
@@ -186,6 +205,7 @@ canvas.shake {
   }
 }
 
+/* --- Transition/Exit Keyframes --- */
 @keyframes shakeOut {
   0%,
   100% {
@@ -205,13 +225,7 @@ canvas.shake {
   }
 }
 
-@keyframes fallOut {
-  to {
-    transform: translateY(150vh);
-    opacity: 0;
-  }
-}
-
+/* --- Global Scanline Animation --- */
 @keyframes scanline {
   0% {
     background-position: 0 0;

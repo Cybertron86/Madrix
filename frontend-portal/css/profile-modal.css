@@ -1,9 +1,10 @@
-/* ============================================================
-   PROFILE MODAL — Matrix/Tron Design  v2
-   Full responsive (portrait + landscape + desktop)
-   ============================================================ */
+/* ==========================================================================
+   USER PROFILE MODAL
+   Interfaces for account management, security settings, and data export.
+   Features progressive disclosure (Confirmation panels) and validation feedback.
+   ========================================================================== */
 
-/* OVERLAY */
+/* --- Primary Modal Overlay --- */
 .profile-overlay {
   position: fixed;
   inset: 0;
@@ -14,12 +15,9 @@
   justify-content: center;
   padding: 1rem;
   overflow-y: auto;
-
   opacity: 0;
   visibility: hidden;
-  transition:
-    opacity 0.35s ease,
-    visibility 0.35s ease;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
 }
 
 .profile-overlay.open {
@@ -27,10 +25,11 @@
   visibility: visible;
 }
 
-/* MODAL BOX */
+/* --- Modal Box Styling --- */
 .profile-modal {
   background: rgba(0, 0, 0, 0.97);
   border: 2px solid var(--color-primary);
+  /* Themed glow effect with depth */
   box-shadow:
     0 0 30px rgba(var(--color-primary-rgb), 0.35),
     0 0 80px rgba(var(--color-primary-rgb), 0.1),
@@ -101,7 +100,10 @@
   z-index: 2;
 }
 
-/* HEADER */
+/* =========================================
+   HEADER & NAVIGATION
+   ========================================= */
+
 .profile-modal-header {
   display: flex;
   align-items: center;
@@ -176,7 +178,7 @@
   text-transform: uppercase;
 }
 
-/* INPUT FIELDS */
+/* --- Input Groups & Fields --- */
 .profile-input {
   width: 100%;
   background: rgba(0, 255, 136, 0.05);
@@ -249,7 +251,11 @@
   color: var(--color-primary);
 }
 
-/* PASSWORD STRENGTH BARS */
+/* =========================================
+   SPECIAL FEATURE COMPONENTS
+   ========================================= */
+
+/* --- Password Strength Indicator --- */
 .profile-pw-strength {
   display: flex;
   gap: 4px;
@@ -364,6 +370,7 @@
   }
 }
 
+/* --- Account Actions (Destructive) --- */
 /* DELETE ZONE */
 .profile-delete-zone {
   border: 1px solid rgba(var(--color-error-red-rgb), 0.25);
@@ -421,7 +428,7 @@
   cursor: not-allowed;
 }
 
-/* CONFIRM DELETE PANEL */
+/* --- Confirmation Overlay Panels --- */
 .profile-confirm-panel {
   display: none;
   margin-top: 1rem;
@@ -492,9 +499,9 @@
   background: rgba(var(--color-primary-rgb), 0.08);
 }
 
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
+/* =========================================
+   RESPONSIVE DESIGN
+   ========================================= */
 
 /* Tablet */
 @media (max-width: 600px) {

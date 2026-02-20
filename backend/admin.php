@@ -56,6 +56,7 @@ try {
 
         echo json_encode([
             'success' => true,
+            'currentUserId' => (int)$_SESSION['user']['id'],
             'users' => $usersStmt->fetchAll(PDO::FETCH_ASSOC),
             'tokens' => $tokensStmt->fetchAll(PDO::FETCH_ASSOC)
         ]);

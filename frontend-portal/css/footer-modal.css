@@ -1,12 +1,15 @@
-/* ========================================================================================================================
-   FOOTER MODALS (Impressum, Privacy, Contact)
-   ======================================================================================================================== */
+/* ==========================================================================
+   FOOTER INFORMATION MODALS
+   Handles legal notices (Impressum), Privacy Policy, and Contact forms.
+   Features a glassmorphism effect with code-style typography for readability.
+   ========================================================================== */
 
 .footer-modal,
 .footer-modal * {
   box-sizing: border-box;
 }
 
+/* --- Primary Modal Overlay --- */
 .footer-modal {
   position: fixed;
   top: 0;
@@ -35,6 +38,7 @@
   visibility: visible;
 }
 
+/* --- Modal Container --- */
 .footer-modal-container {
   position: relative;
   width: 90%;
@@ -43,6 +47,7 @@
   
   background: var(--color-bg-dark);
   border: 2px solid var(--color-primary);
+  /* Primary themed glow effect */
   box-shadow:
     0 0 30px var(--color-primary-glow),
     0 0 60px rgba(var(--color-primary-rgb), 0.1),
@@ -56,40 +61,24 @@
   animation: footerModalSlideIn 0.5s ease;
 }
 
-@keyframes footerModalSlideIn {
-  from {
-    transform: translateY(50px) scale(0.9);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-}
-
-/* Close Button */
+/* --- Navigation & Control --- */
 .footer-modal-close {
   position: absolute;
   top: 1rem;
   right: 1rem;
   width: 40px;
   height: 40px;
-
   background: transparent;
   border: 2px solid var(--color-primary);
   color: var(--color-primary);
-
   font-family: var(--font-main);
   font-size: 1.8rem;
   line-height: 1;
-
   cursor: pointer;
   z-index: 10;
-
   display: flex;
   align-items: center;
   justify-content: center;
-  
   text-shadow: 0 0 10px var(--color-primary);
   transition: all 0.3s ease;
 }
@@ -101,7 +90,6 @@
   transform: rotate(90deg);
 }
 
-/* Header */
 .footer-modal-title {
   font-family: var(--font-main);
   font-size: 2rem;
@@ -113,17 +101,19 @@
   text-shadow:
     0 0 10px var(--color-primary),
     0 0 20px var(--color-primary);
-    
   flex-shrink: 0;
 }
 
-/* Scrollable Content */
+/* =========================================
+   SCROLLABLE CONTENT AREA
+   ========================================= */
+
 .footer-modal-content {
   flex: 1;
   overflow-y: auto;
-  padding-right: 1rem; /* Space for scrollbar */
+  padding-right: 1rem;
   
-  font-family: var(--font-code); /* Use code font for legal text */
+  font-family: var(--font-code); /* Precise font choice for legal text */
   font-size: 0.95rem;
   line-height: 1.6;
   color: rgba(var(--color-primary-rgb), 0.9);
@@ -139,23 +129,10 @@
   text-shadow: 0 0 5px var(--color-primary-glow);
 }
 
-.footer-modal-content p {
-  margin-bottom: 1rem;
-}
-
-.footer-modal-content ul {
-  list-style-type: disc;
-  margin-left: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.footer-modal-content li {
-  margin-bottom: 0.5rem;
-}
-
-.footer-modal-content strong {
-  color: var(--color-ice-blue);
-}
+.footer-modal-content p { margin-bottom: 1rem; }
+.footer-modal-content ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
+.footer-modal-content li { margin-bottom: 0.5rem; }
+.footer-modal-content strong { color: var(--color-ice-blue); }
 
 .footer-modal-content a {
   color: var(--color-ice-blue);
@@ -168,6 +145,10 @@
   text-shadow: 0 0 8px var(--color-ice-blue);
   border-bottom-style: solid;
 }
+
+/* =========================================
+   FORM ELEMENTS (Contact)
+   ========================================= */
 
 .footer-modal-content input,
 .footer-modal-content textarea {
@@ -222,13 +203,11 @@
   border-radius: 50%;
   background: rgba(var(--color-primary-rgb), 0.3);
   transform: translate(-50%, -50%);
-  transition:
-    width 0.6s,
-    height 0.6s;
+  transition: width 0.6s, height 0.6s;
 }
 
 .footer-modal-content button[type="button"]:hover::before {
-  width: 400px; /* Large enough to cover */
+  width: 400px;
   height: 400px;
 }
 
@@ -240,10 +219,11 @@
     0 0 40px var(--color-primary);
 }
 
+/* =========================================
+   DECORATIVE & ANIMATIONS
+   ========================================= */
 
-
-
-/* Scanline Effect */
+/* --- CRT Scanline Overlay --- */
 .footer-modal-container::before {
   content: "";
   position: absolute;
@@ -260,31 +240,23 @@
   z-index: 5;
 }
 
+@keyframes footerModalSlideIn {
+  from { transform: translateY(50px) scale(0.9); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
 @keyframes footerScanline {
   0% { background-position: 0 0; }
   100% { background-position: 0 100%; }
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .footer-modal-container {
-    padding: 2rem 1.5rem;
-    width: 95%;
-    max-height: 80vh;
-  }
-  
-  .footer-modal-title {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
+/* =========================================
+   RESPONSIVE DESIGN
+   ========================================= */
 
-  .footer-modal-content {
-    font-size: 0.85rem;
-  }
-  
-  .footer-modal-close {
-    width: 35px;
-    height: 35px;
-    font-size: 1.5rem;
-  }
+@media (max-width: 768px) {
+  .footer-modal-container { padding: 2rem 1.5rem; width: 95%; max-height: 80vh; }
+  .footer-modal-title { font-size: 1.5rem; margin-bottom: 1rem; }
+  .footer-modal-content { font-size: 0.85rem; }
+  .footer-modal-close { width: 35px; height: 35px; font-size: 1.5rem; }
 }

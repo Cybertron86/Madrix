@@ -61,6 +61,7 @@
 
   /* ── State ───────────────────────────────────────────────── */
   let injected = false;
+  let currentUserId = null;
 
   /* ── XSS Safety ─────────────────────────────────────────── */
   function esc(str) {
@@ -110,7 +111,9 @@
       </tr></thead><tbody>`;
 
     for (const u of users) {
+      const isSelf = parseInt(u.id) === currentUserId;
       const roleClass = u.role === "admin" ? "role-admin" : "role-user";
+      
       html += `<tr>
         <td>${esc(String(u.id))}</td>
         <td>${esc(u.username)}</td>
@@ -118,7 +121,7 @@
         <td>${fmtDate(u.created_at)}</td>
         <td>
           <button class="admin-btn-delete" data-action="delete-user" data-id="${u.id}"
-            ${u.role === "admin" ? "disabled title='Cannot delete admin'" : ""}>
+            ${isSelf ? "disabled title='Cannot delete your own account'" : ""}>
             DELETE
           </button>
         </td>
@@ -195,6 +198,7 @@
       if (!res.ok) throw new Error("HTTP " + res.status);
 
       const data = await res.json();
+      currentUserId = data.currentUserId || null;
       renderUsers(data.users || []);
       renderTokens(data.tokens || []);
     } catch (err) {

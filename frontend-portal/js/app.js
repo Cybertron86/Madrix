@@ -232,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
             openAboutModal();
             break;
           case "gallery":
-            openGalleryModal(footerBar);
+            openGalleryModal();
             break;
           case "profile":
             console.log("Profile clicked");
