@@ -349,7 +349,7 @@ async function handleRegisterSubmit(e) {
     // Uses shared utility
     // ==========================
     showToast(
-      `Registration successful. Welcome ${window.SecurityUtils.escapeHtml(username)}!`,
+      `Registration successful. Welcome ${username}!`,
       "success",
     );
   } catch (err) {

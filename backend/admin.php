@@ -16,10 +16,8 @@ require_once __DIR__ . '/config/bootstrap.php';
 
 header('Content-Type: application/json');
 
-// CORS
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+// CORS headers removed (handled by bootstrap/server config)
+// header('Access-Control-Allow-Origin: *');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);

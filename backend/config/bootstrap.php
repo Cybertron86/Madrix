@@ -121,7 +121,7 @@ if (session_status() === PHP_SESSION_NONE) {
 $sessionTimeout = 1800; // 30 minutes
 
 if (isset($_SESSION['last_activity'])) {
-    if ((time() - (int) $_SESSION['last_activity']) > $sessionTimeout) {
+    if ((time() - (int)$_SESSION['last_activity']) > $sessionTimeout) {
         // Destroy the old session completely so the ID cannot be reused
         session_unset();
         session_destroy();
@@ -134,6 +134,27 @@ if (isset($_SESSION['last_activity'])) {
 // Refresh timestamp on every request that reaches an authenticated endpoint
 $_SESSION['last_activity'] = time();
 
+
+// ==========================
+// Global Security Headers
+// ==========================
+// Prevent MIME-type sniffing
+header('X-Content-Type-Options: nosniff');
+
+// Prevent clickjacking (deny rendering in iframes)
+header('X-Frame-Options: DENY');
+
+// Strict Transport Security (HSTS) - enforce HTTPS for 1 year
+if ($isHttps) {
+    header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+}
+
+// Content Security Policy (CSP)
+// Aligned with Nginx config to allow:
+// - Google Fonts (style-src, font-src)
+// - HTTPS images (img-src https:)
+// - Inline styles for JS modals (style-src 'unsafe-inline')
+header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://picsum.photos https:; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';");
 
 // ==========================
 // Database Connection

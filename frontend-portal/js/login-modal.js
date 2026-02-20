@@ -270,7 +270,7 @@ async function handleLoginSubmit(e) {
       const username = data.user?.username ?? usernameInput.value.trim();
       // Safe interpolation using shared escapeHtml utility
       showToast(
-        `Welcome back, ${window.SecurityUtils.escapeHtml(username)}!`, 
+        `Welcome back, ${username}!`, 
         "success"
       );
     }
