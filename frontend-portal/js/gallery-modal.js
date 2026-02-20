@@ -11,12 +11,15 @@ function createGalleryModal() {
   // Create modal structure
   galleryModal = document.createElement("div");
   galleryModal.className = "gallery-modal";
+  galleryModal.setAttribute("role", "dialog");
+  galleryModal.setAttribute("aria-modal", "true");
+  galleryModal.setAttribute("aria-labelledby", "gallery-title");
   galleryModal.innerHTML = `
       <div class="gallery-modal-container">
-        <button class="gallery-modal-close" aria-label="Close Gallery">×</button>
-        <h2 class="gallery-modal-title">PROJECT GALLERY</h2>
+        <button class="gallery-modal-close" aria-label="Close Project Gallery Modal">×</button>
+        <h2 class="gallery-modal-title" id="gallery-title">PROJECT GALLERY</h2>
         <div class="gallery-modal-content">
-          <div class="gallery-loading">LOADING PROJECTS...</div>
+          <div class="gallery-loading" role="status" aria-live="polite">LOADING PROJECTS...</div>
         </div>
       </div>
     `;
@@ -84,7 +87,7 @@ function closeGalleryModal(footerBar) {
 async function loadGalleryProjects() {
   const contentDiv = galleryModal.querySelector(".gallery-modal-content");
   contentDiv.innerHTML =
-    '<div class="gallery-loading">LOADING PROJECTS...</div>';
+    '<div class="gallery-loading" role="status" aria-live="polite">LOADING PROJECTS...</div>';
 
   try {
     // Fetch carousel data
@@ -112,11 +115,16 @@ function renderGalleryGrid() {
   const contentDiv = galleryModal.querySelector(".gallery-modal-content");
 
   const gridHTML = `
-      <div class="gallery-grid">
+      <div class="gallery-grid" role="list">
         ${galleryProjects
           .map(
             (project, index) => `
-          <div class="gallery-item" data-project-id="${project.id}" data-project-index="${index}">
+          <div class="gallery-item" 
+               data-project-id="${project.id}" 
+               data-project-index="${index}" 
+               role="listitem" 
+               tabindex="0" 
+               aria-label="View details for ${escapeHtml(project.title)}">
             <img src="${escapeHtml(project.mainImage)}" 
                  alt="${escapeHtml(project.title)}" 
                  class="gallery-item-image">
@@ -133,11 +141,19 @@ function renderGalleryGrid() {
 
   contentDiv.innerHTML = gridHTML;
 
-  // Add click events to gallery items
+  // Add click and keyboard events to gallery items
   contentDiv.querySelectorAll(".gallery-item").forEach((item) => {
     item.addEventListener("click", () => {
       const projectIndex = parseInt(item.dataset.projectIndex);
       openProjectDetail(projectIndex);
+    });
+    
+    item.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        const projectIndex = parseInt(item.dataset.projectIndex);
+        openProjectDetail(projectIndex);
+      }
     });
   });
 }

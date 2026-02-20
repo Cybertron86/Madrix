@@ -11,32 +11,32 @@
 
   /* ── HTML Template ──────────────────────────────────────── */
   const MODAL_HTML = `
-    <div id="adminOverlay" class="admin-overlay" role="dialog" aria-modal="true" aria-label="Admin Panel">
+    <div id="adminOverlay" class="admin-overlay" role="dialog" aria-modal="true" aria-labelledby="admin-title">
       <div class="admin-modal">
 
         <div class="admin-modal-corner-br"></div>
 
         <!-- Header -->
         <div class="admin-modal-header">
-          <h2 class="admin-modal-title">
+          <h2 class="admin-modal-title" id="admin-title">
             ADMIN PANEL
             <span>// SYSTEM CONTROL</span>
           </h2>
-          <button id="adminCloseBtn" class="admin-close-btn" aria-label="Close">✕</button>
+          <button id="adminCloseBtn" class="admin-close-btn" aria-label="Close Admin Modal">✕</button>
         </div>
 
         <!-- Tabs -->
-        <div class="admin-tabs">
-          <button class="admin-tab active" data-tab="users">USERS</button>
-          <button class="admin-tab" data-tab="tokens">SESSIONS</button>
+        <div class="admin-tabs" role="tablist">
+          <button class="admin-tab active" data-tab="users" role="tab" aria-selected="true" aria-controls="adminPanelUsers" id="tab-users">USERS</button>
+          <button class="admin-tab" data-tab="tokens" role="tab" aria-selected="false" aria-controls="adminPanelTokens" id="tab-tokens">SESSIONS</button>
         </div>
 
         <!-- Users Panel -->
-        <div id="adminPanelUsers" class="admin-tab-panel active" data-panel="users">
+        <div id="adminPanelUsers" class="admin-tab-panel active" data-panel="users" role="tabpanel" aria-labelledby="tab-users">
           <div class="admin-section-header">
             <p class="admin-section-label">▸ Registered Users</p>
             <span id="adminUserCount" class="admin-count"></span>
-            <button id="adminRefreshUsers" class="admin-btn-refresh">REFRESH</button>
+            <button id="adminRefreshUsers" class="admin-btn-refresh" aria-label="Refresh Users List">REFRESH</button>
           </div>
           <div class="admin-table-wrap">
             <div id="adminUsersBody"></div>
@@ -44,11 +44,11 @@
         </div>
 
         <!-- Tokens Panel -->
-        <div id="adminPanelTokens" class="admin-tab-panel" data-panel="tokens">
+        <div id="adminPanelTokens" class="admin-tab-panel" data-panel="tokens" role="tabpanel" aria-labelledby="tab-tokens">
           <div class="admin-section-header">
             <p class="admin-section-label">▸ Active Sessions</p>
             <span id="adminTokenCount" class="admin-count"></span>
-            <button id="adminRefreshTokens" class="admin-btn-refresh">REFRESH</button>
+            <button id="adminRefreshTokens" class="admin-btn-refresh" aria-label="Refresh Sessions List">REFRESH</button>
           </div>
           <div class="admin-table-wrap">
             <div id="adminTokensBody"></div>
@@ -293,8 +293,11 @@
 
       overlay
         .querySelectorAll(".admin-tab")
-        .forEach((t) => t.classList.remove("active"));
-      tab.classList.add("active");
+        .forEach((t) => {
+          const isActive = t === tab;
+          t.classList.toggle("active", isActive);
+          t.setAttribute("aria-selected", isActive);
+        });
 
       overlay.querySelectorAll(".admin-tab-panel").forEach((p) => {
         p.classList.toggle("active", p.dataset.panel === tabName);

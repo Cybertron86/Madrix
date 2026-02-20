@@ -16,10 +16,13 @@ function createRegisterModal() {
 
   registerModal = document.createElement("div");
   registerModal.className = "register-modal";
+  registerModal.setAttribute("role", "dialog");
+  registerModal.setAttribute("aria-modal", "true");
+  registerModal.setAttribute("aria-labelledby", "register-title");
   registerModal.innerHTML = `
       <div class="register-modal-container">
-        <button class="register-modal-close" aria-label="Close Register">×</button>
-        <h2 class="register-modal-title">REGISTER</h2>
+        <button class="register-modal-close" aria-label="Close Registration Modal">×</button>
+        <h2 class="register-modal-title" id="register-title">REGISTER</h2>
         
         <form class="register-form" id="registerForm" novalidate>
           <!-- Username Field -->
@@ -33,9 +36,10 @@ function createRegisterModal() {
                 placeholder="Choose username"
                 autocomplete="username"
                 required
+                aria-describedby="register-username-error"
               >
             </div>
-            <div class="register-error-message" data-error="username"></div>
+            <div class="register-error-message" id="register-username-error" data-error="username" aria-live="polite"></div>
           </div>
 
           <!-- Password Field -->
@@ -49,18 +53,19 @@ function createRegisterModal() {
                 placeholder="Create password"
                 autocomplete="new-password"
                 required
+                aria-describedby="register-password-strength register-password-error"
               >
-              <button type="button" class="register-password-toggle" aria-label="Toggle password visibility">
+              <button type="button" class="register-password-toggle" aria-label="Show password" aria-pressed="false">
                 👁️
               </button>
             </div>
-            <div class="register-password-strength">
+            <div class="register-password-strength" id="register-password-strength" aria-label="Password strength indicator">
               <div class="register-password-strength-bar"></div>
               <div class="register-password-strength-bar"></div>
               <div class="register-password-strength-bar"></div>
               <div class="register-password-strength-bar"></div>
             </div>
-            <div class="register-error-message" data-error="password"></div>
+            <div class="register-error-message" id="register-password-error" data-error="password" aria-live="polite"></div>
           </div>
 
           <!-- Confirm Password Field -->
@@ -74,12 +79,13 @@ function createRegisterModal() {
                 placeholder="Confirm password"
                 autocomplete="new-password"
                 required
+                aria-describedby="register-password-confirm-error"
               >
-              <button type="button" class="register-password-toggle-confirm" aria-label="Toggle password visibility">
+              <button type="button" class="register-password-toggle-confirm" aria-label="Show confirm password" aria-pressed="false">
                 👁️
               </button>
             </div>
-            <div class="register-error-message" data-error="password-confirm"></div>
+            <div class="register-error-message" id="register-password-confirm-error" data-error="password-confirm" aria-live="polite"></div>
           </div>
 
           <!-- Submit Button -->
@@ -91,7 +97,7 @@ function createRegisterModal() {
         <!-- Login Link -->
         <div class="register-login-link">
           Already have an account?
-          <button type="button" class="register-login-btn">
+          <button type="button" class="register-login-btn" aria-label="Switch to login">
             👉 Login here 👈
           </button>
         </div>
@@ -133,15 +139,21 @@ function createRegisterModal() {
 
   // Password visibility toggles for both password fields
   passwordToggle.addEventListener("click", () => {
-    const type = passwordInput.type === "password" ? "text" : "password";
+    const isVisible = passwordInput.type === "text";
+    const type = isVisible ? "password" : "text";
     passwordInput.type = type;
-    passwordToggle.textContent = type === "password" ? "👁️" : "🙈";
+    passwordToggle.textContent = isVisible ? "👁️" : "🙈";
+    passwordToggle.setAttribute("aria-label", isVisible ? "Show password" : "Hide password");
+    passwordToggle.setAttribute("aria-pressed", !isVisible);
   });
 
   passwordToggleConfirm.addEventListener("click", () => {
-    const type = passwordConfirmInput.type === "password" ? "text" : "password";
+    const isVisible = passwordConfirmInput.type === "text";
+    const type = isVisible ? "password" : "text";
     passwordConfirmInput.type = type;
-    passwordToggleConfirm.textContent = type === "password" ? "👁️" : "🙈";
+    passwordToggleConfirm.textContent = isVisible ? "👁️" : "🙈";
+    passwordToggleConfirm.setAttribute("aria-label", isVisible ? "Show confirm password" : "Hide confirm password");
+    passwordToggleConfirm.setAttribute("aria-pressed", !isVisible);
   });
 
   // Real-time inline validation on input events

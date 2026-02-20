@@ -9,10 +9,13 @@ function createAboutModal() {
 
   aboutModal = document.createElement("div");
   aboutModal.className = "about-modal";
+  aboutModal.setAttribute("role", "dialog");
+  aboutModal.setAttribute("aria-modal", "true");
+  aboutModal.setAttribute("aria-labelledby", "about-title");
   aboutModal.innerHTML = `
       <div class="about-modal-container">
-        <button class="about-modal-close" aria-label="Close About">×</button>
-        <h2 class="about-modal-title">ABOUT ME</h2>
+        <button class="about-modal-close" aria-label="Close About Modal">×</button>
+        <h2 class="about-modal-title" id="about-title">ABOUT ME</h2>
         <div class="about-modal-content">
           <div class="about-modal-text">
             <!-- Typewriter text will be injected here -->

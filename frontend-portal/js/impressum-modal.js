@@ -9,11 +9,14 @@ function createImpressumModal() {
 
   impressumModal = document.createElement("div");
   impressumModal.className = "footer-modal";
-  impressumModal.id = "modal-impressum"; // Specific ID for specificity if needed
+  impressumModal.id = "modal-impressum";
+  impressumModal.setAttribute("role", "dialog");
+  impressumModal.setAttribute("aria-modal", "true");
+  impressumModal.setAttribute("aria-labelledby", "impressum-title");
   impressumModal.innerHTML = `
       <div class="footer-modal-container">
         <button class="footer-modal-close" aria-label="Close Legal Notice">×</button>
-        <h2 class="footer-modal-title">Legal Notice</h2>
+        <h2 class="footer-modal-title" id="impressum-title">Legal Notice</h2>
         <div class="footer-modal-content">
           <h3>Information according to § 5 TMG</h3>
           <p>

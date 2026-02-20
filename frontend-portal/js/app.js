@@ -24,6 +24,8 @@ function showToast(message, type = "success", duration = 3500) {
   toast.id = "app-toast";
   toast.textContent = message;
   toast.classList.add(`toast--${type}`);
+  toast.setAttribute("role", "status");
+  toast.setAttribute("aria-live", "polite");
 
   document.body.appendChild(toast);
 
@@ -209,14 +211,16 @@ document.addEventListener("DOMContentLoaded", () => {
   if (menuBtn && dropdownMenu) {
     menuBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      dropdownMenu.classList.toggle("open");
+      const isOpen = dropdownMenu.classList.toggle("open");
       menuBtn.classList.toggle("active");
+      menuBtn.setAttribute("aria-expanded", isOpen);
     });
 
     document.addEventListener("click", (e) => {
       if (!menuBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
         dropdownMenu.classList.remove("open");
         menuBtn.classList.remove("active");
+        menuBtn.setAttribute("aria-expanded", "false");
       }
     });
 

@@ -2,6 +2,27 @@ body {
   overflow-x: hidden;
 }
 
+/* Accessibility: Skip Link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 20px;
+  background: var(--color-black);
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+  padding: 10px 20px;
+  font-family: var(--font-main);
+  text-decoration: none;
+  z-index: 100000;
+  transition: top 0.3s ease;
+  box-shadow: 0 0 15px var(--color-primary);
+}
+
+.skip-link:focus {
+  top: 10px;
+  outline: none;
+}
+
 .navigationbar {
   position: fixed;
   top: 0;

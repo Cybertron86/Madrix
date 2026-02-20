@@ -37,41 +37,42 @@
 
   /* ── HTML-Template (statisch – kein User-Input darin) ──── */
   const MODAL_HTML = `
-    <div id="profileOverlay" class="profile-overlay" role="dialog" aria-modal="true" aria-label="Profile Settings">
+    <div id="profileOverlay" class="profile-overlay" role="dialog" aria-modal="true" aria-labelledby="profile-title">
       <div class="profile-modal">
 
         <div class="profile-modal-corner-br"></div>
 
         <!-- Header -->
         <div class="profile-modal-header">
-          <h2 class="profile-modal-title">
+          <h2 class="profile-modal-title" id="profile-title">
             PROFILE
             <span>// SYSTEM ACCESS</span>
           </h2>
-          <button id="profileCloseBtn" class="profile-close-btn" aria-label="Close">✕</button>
+          <button id="profileCloseBtn" class="profile-close-btn" aria-label="Close Profile Modal">✕</button>
         </div>
 
         <!-- Section: Change Username -->
-        <div class="profile-section">
-          <p class="profile-section-label">▸ Change Username</p>
+        <div class="profile-section" role="region" aria-labelledby="section-username-title">
+          <p class="profile-section-label" id="section-username-title">▸ Change Username</p>
           <div class="profile-input-row">
             <input
               id="profileNewUsername"
               class="profile-input"
               type="text"
               placeholder="NEW USERNAME"
-              autocomplete="off"
+              autocomplete="username"
               maxlength="32"
               spellcheck="false"
+              aria-describedby="profileUsernameFeedback"
             />
-            <button id="profileSaveUsernameBtn" class="profile-btn">SAVE</button>
+            <button id="profileSaveUsernameBtn" class="profile-btn" aria-label="Save Username">SAVE</button>
           </div>
           <div id="profileUsernameFeedback" class="profile-feedback" aria-live="polite"></div>
         </div>
 
         <!-- Section: Change Password -->
-        <div class="profile-section">
-          <p class="profile-section-label">▸ Change Password</p>
+        <div class="profile-section" role="region" aria-labelledby="section-password-title">
+          <p class="profile-section-label" id="section-password-title">▸ Change Password</p>
 
           <div class="profile-pw-wrapper">
             <input
@@ -81,19 +82,20 @@
               placeholder="NEW PASSWORD"
               autocomplete="new-password"
               maxlength="128"
+              aria-describedby="profile-pw-hint profilePasswordFeedback"
             />
-            <button type="button" class="profile-pw-toggle" id="profilePwToggle1" aria-label="Toggle password visibility">👁️</button>
+            <button type="button" class="profile-pw-toggle" id="profilePwToggle1" aria-label="Show password" aria-pressed="false">👁️</button>
           </div>
 
           <!-- Stärkeanzeige -->
-          <div class="profile-pw-strength" id="profilePwStrength" aria-hidden="true">
+          <div class="profile-pw-strength" id="profilePwStrength" aria-label="Password strength indicator">
             <div class="profile-pw-strength-bar" data-bar="0"></div>
             <div class="profile-pw-strength-bar" data-bar="1"></div>
             <div class="profile-pw-strength-bar" data-bar="2"></div>
             <div class="profile-pw-strength-bar" data-bar="3"></div>
           </div>
 
-          <p class="profile-pw-hint">Min. 12 chars · uppercase · lowercase · number · special character</p>
+          <p class="profile-pw-hint" id="profile-pw-hint">Min. 12 chars · uppercase · lowercase · number · special character</p>
 
           <div class="profile-pw-wrapper">
             <input
@@ -103,8 +105,9 @@
               placeholder="CONFIRM PASSWORD"
               autocomplete="new-password"
               maxlength="128"
+              aria-describedby="profilePasswordFeedback"
             />
-            <button type="button" class="profile-pw-toggle" id="profilePwToggle2" aria-label="Toggle confirm password visibility">👁️</button>
+            <button type="button" class="profile-pw-toggle" id="profilePwToggle2" aria-label="Show confirm password" aria-pressed="false">👁️</button>
           </div>
 
           <div style="margin-top:0.6rem;">
@@ -114,15 +117,15 @@
         </div>
 
         <!-- Section: Delete Account -->
-        <div class="profile-section profile-delete-zone">
-          <p class="profile-section-label">▸ Danger Zone</p>
+        <div class="profile-section profile-delete-zone" role="region" aria-labelledby="section-delete-title">
+          <p class="profile-section-label" id="section-delete-title">▸ Danger Zone</p>
           <p class="profile-delete-description">
             Permanently remove your account and all associated data from the system.
           </p>
-          <button id="profileDeleteBtn" class="profile-btn-delete">DELETE ACCOUNT</button>
+          <button id="profileDeleteBtn" class="profile-btn-delete" aria-haspopup="true">DELETE ACCOUNT</button>
 
           <!-- Bestätigungs-Panel -->
-          <div id="profileConfirmPanel" class="profile-confirm-panel" role="alert">
+          <div id="profileConfirmPanel" class="profile-confirm-panel" role="alert" aria-hidden="true">
             <p class="profile-confirm-text">
               <strong>⚠ WARNING</strong>
               Are you really sure you want to delete your account?
@@ -394,9 +397,11 @@
   }
 
   function togglePwVisibility(input, btn) {
-    const isText = input.type === "text";
-    input.type = isText ? "password" : "text";
-    btn.textContent = isText ? "👁️" : "🙈";
+    const isVisible = input.type === "text";
+    input.type = isVisible ? "password" : "text";
+    btn.textContent = isVisible ? "👁️" : "🙈";
+    btn.setAttribute("aria-label", isVisible ? "Show password" : "Hide password");
+    btn.setAttribute("aria-pressed", !isVisible);
   }
 
   /* ── Username speichern ──────────────────────────────────── */

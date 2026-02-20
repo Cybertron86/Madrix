@@ -17,10 +17,13 @@ function createLoginModal() {
 
   loginModal = document.createElement("div");
   loginModal.className = "login-modal";
+  loginModal.setAttribute("role", "dialog");
+  loginModal.setAttribute("aria-modal", "true");
+  loginModal.setAttribute("aria-labelledby", "login-title");
   loginModal.innerHTML = `
       <div class="login-modal-container">
-        <button class="login-modal-close" aria-label="Close Login">×</button>
-        <h2 class="login-modal-title">LOGIN</h2>
+        <button class="login-modal-close" aria-label="Close Login Modal">×</button>
+        <h2 class="login-modal-title" id="login-title">LOGIN</h2>
         
         <form class="login-form" id="loginForm" novalidate>
           <!-- Username Field -->
@@ -34,9 +37,10 @@ function createLoginModal() {
                 placeholder="Enter username"
                 autocomplete="username"
                 required
+                aria-describedby="login-username-error"
               >
             </div>
-            <div class="login-error-message" data-error="username"></div>
+            <div class="login-error-message" id="login-username-error" data-error="username" aria-live="polite"></div>
           </div>
 
           <!-- Password Field-->
@@ -50,12 +54,13 @@ function createLoginModal() {
                 placeholder="Enter password"
                 autocomplete="current-password"
                 required
+                aria-describedby="login-password-error"
               >
-              <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+              <button type="button" class="password-toggle" aria-label="Show password" aria-pressed="false">
                 👁️
               </button>
             </div>
-            <div class="login-error-message" data-error="password"></div>
+            <div class="login-error-message" id="login-password-error" data-error="password" aria-live="polite"></div>
           </div>
 
           <!-- Submit Button -->
@@ -67,7 +72,7 @@ function createLoginModal() {
         <!-- Register Link -->
         <div class="login-register-link">
           Not registered yet?
-          <button type="button" class="login-register-btn">
+          <button type="button" class="login-register-btn" aria-label="Switch to registration">
             👉 Register here 👈
           </button>
         </div>
@@ -99,9 +104,12 @@ function createLoginModal() {
 
   // Password toggle
   passwordToggle.addEventListener("click", () => {
-    const type = passwordInput.type === "password" ? "text" : "password";
+    const isVisible = passwordInput.type === "text";
+    const type = isVisible ? "password" : "text";
     passwordInput.type = type;
-    passwordToggle.textContent = type === "password" ? "👁️" : "🙈";
+    passwordToggle.textContent = isVisible ? "👁️" : "🙈";
+    passwordToggle.setAttribute("aria-label", isVisible ? "Show password" : "Hide password");
+    passwordToggle.setAttribute("aria-pressed", !isVisible);
   });
 
   // Form submission

@@ -10,10 +10,13 @@ function createPrivacyModal() {
   privacyModal = document.createElement("div");
   privacyModal.className = "footer-modal";
   privacyModal.id = "modal-privacy";
+  privacyModal.setAttribute("role", "dialog");
+  privacyModal.setAttribute("aria-modal", "true");
+  privacyModal.setAttribute("aria-labelledby", "privacy-title");
   privacyModal.innerHTML = `
       <div class="footer-modal-container">
         <button class="footer-modal-close" aria-label="Close Privacy Policy">×</button>
-        <h2 class="footer-modal-title">Privacy Policy</h2>
+        <h2 class="footer-modal-title" id="privacy-title">Privacy Policy</h2>
         <div class="footer-modal-content">
             <h3>General Information</h3>
             <p>The following notes provide a simple overview of what happens to your personal data when you visit this website. Personal data is all data with which you can be personally identified.</p>

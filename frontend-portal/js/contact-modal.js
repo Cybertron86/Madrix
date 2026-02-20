@@ -10,10 +10,13 @@ function createContactModal() {
   contactModal = document.createElement("div");
   contactModal.className = "footer-modal";
   contactModal.id = "modal-contact";
+  contactModal.setAttribute("role", "dialog");
+  contactModal.setAttribute("aria-modal", "true");
+  contactModal.setAttribute("aria-labelledby", "contact-title");
   contactModal.innerHTML = `
       <div class="footer-modal-container">
-        <button class="footer-modal-close" aria-label="Close Contact">×</button>
-        <h2 class="footer-modal-title">Contact</h2>
+        <button class="footer-modal-close" aria-label="Close Contact Modal">×</button>
+        <h2 class="footer-modal-title" id="contact-title">Contact</h2>
         <div class="footer-modal-content">
           <p>Interested in collaboration or just want to connect? I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.</p>
           
@@ -26,10 +29,10 @@ function createContactModal() {
           <h3>Location</h3>
           <p>Karlsruhe, Germany / Remote</p>
           
-          <form id="contact-form" style="display: flex; flex-direction: column; margin-top: 2rem;">
-             <input type="text" placeholder="NAME / ALIAS" required>
-             <input type="email" placeholder="EMAIL ADDRESS" required>
-             <textarea placeholder="YOUR MESSAGE" rows="5" required></textarea>
+          <form id="contact-form" style="display: flex; flex-direction: column; margin-top: 2rem;" aria-label="Contact Form">
+             <input type="text" placeholder="NAME / ALIAS" required aria-label="Your Name or Alias">
+             <input type="email" placeholder="EMAIL ADDRESS" required aria-label="Your Email Address">
+             <textarea placeholder="YOUR MESSAGE" rows="5" required aria-label="Your Message"></textarea>
              <button type="button" id="contact-submit-btn">INITIATE TRANSMISSION</button>
           </form>
         </div>

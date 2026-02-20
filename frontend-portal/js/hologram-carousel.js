@@ -150,9 +150,12 @@ class HologramCarousel {
     // Create sphere container
     const sphereContainer = document.createElement("div");
     sphereContainer.className = "holo-carousel-container";
+    sphereContainer.setAttribute("role", "region");
+    sphereContainer.setAttribute("aria-label", "Holographic Project Carousel");
 
     this.sphere = document.createElement("div");
     this.sphere.className = "holo-carousel-sphere";
+    this.sphere.setAttribute("role", "list");
 
     // Create carousel items
     this.items.forEach((item, index) => {
@@ -174,6 +177,9 @@ class HologramCarousel {
     const itemDiv = document.createElement("div");
     itemDiv.className = "holo-carousel-item";
     itemDiv.dataset.index = index;
+    itemDiv.setAttribute("role", "listitem");
+    itemDiv.setAttribute("tabindex", "0");
+    itemDiv.setAttribute("aria-label", `Project: ${item.title}`);
 
     const inner = document.createElement("div");
     inner.className = "holo-carousel-item-inner";
@@ -212,6 +218,9 @@ class HologramCarousel {
   createOverlay() {
     this.overlay = document.createElement("div");
     this.overlay.className = "holo-carousel-overlay";
+    this.overlay.setAttribute("role", "dialog");
+    this.overlay.setAttribute("aria-modal", "true");
+    this.overlay.setAttribute("aria-labelledby", "carousel-overlay-title");
 
     const content = document.createElement("div");
     content.className = "holo-carousel-content";
@@ -219,7 +228,7 @@ class HologramCarousel {
     const closeBtn = document.createElement("button");
     closeBtn.className = "holo-carousel-close";
     closeBtn.textContent = "×";
-    closeBtn.setAttribute("aria-label", "Close");
+    closeBtn.setAttribute("aria-label", "Close Project Details Modal");
 
     closeBtn.style.lineHeight = "40px";
 
@@ -249,6 +258,17 @@ class HologramCarousel {
       item.addEventListener("click", (e) => {
         if (!this.isDragging && index === this.currentIndex) {
           this.openOverlay(index);
+        }
+      });
+      
+      item.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          if (!this.isDragging && index === this.currentIndex) {
+            this.openOverlay(index);
+          } else {
+            this.goTo(index);
+          }
         }
       });
     });
@@ -569,7 +589,7 @@ class HologramCarousel {
 
     // Build content HTML
     let html = `
-      <h2 class="holo-carousel-content-title">${this.escapeHtml(item.title)}</h2>
+      <h2 class="holo-carousel-content-title" id="carousel-overlay-title">${this.escapeHtml(item.title)}</h2>
       <span class="holo-carousel-content-date">DATE: ${this.escapeHtml(item.date)}</span>
       <p class="holo-carousel-content-description">${this.escapeHtml(item.description)}</p>
       <a href="${this.escapeHtml(item.githubUrl)}" target="_blank" rel="noopener noreferrer" class="holo-carousel-content-github">
