@@ -18,7 +18,7 @@ if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
 try {
     $method = $_SERVER['REQUEST_METHOD'];
 
-    // GET: Alle User auflisten
+    // GET: List all users
     if ($method === 'GET') {
         $stmt = $pdo->query("
             SELECT id, username, created_at 
@@ -35,7 +35,7 @@ try {
         exit;
     }
 
-    // DELETE einzelnen User: DELETE /api/users.php?id=1
+    // DELETE individual user: DELETE /api/users.php?id=1
     if ($method === 'DELETE' && isset($_GET['id'])) {
         $userId = (int)$_GET['id'];
 
@@ -49,7 +49,7 @@ try {
         exit;
     }
 
-    // DELETE: Alle User löschen (für Development)
+    // DELETE: Delete all users (for development)
     if ($method === 'DELETE') {
         $pdo->exec("DELETE FROM users");
         $pdo->exec("DELETE FROM remember_tokens");

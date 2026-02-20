@@ -1,5 +1,5 @@
 // ====================================================================================================================================
-//  Luxuriöser Glanzeffekt in Intervallen
+// Luxurious gloss effect at intervals
 // ====================================================================================================================================
 const sparkle = document.querySelector(".lux-sparkle");
 
@@ -9,7 +9,7 @@ function triggerSparkle() {
   sparkle.style.animation = "luxShine 15s ease-in-out"; // trigger animation
 }
 
-// Initialstart nach kurzer Verzögerung
+// Initial start after a short delay
 setTimeout(triggerSparkle, 1000);
 
 setInterval(

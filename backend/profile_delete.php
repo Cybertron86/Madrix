@@ -18,7 +18,7 @@ if (!isset($_SESSION['user'])) {
 
 $id = $_SESSION['user']['id'];
 
-// Remember Token löschen
+// Delete Remember Token
 if (!empty($_COOKIE[REMEMBER_COOKIE])) {
     $tokenHash = hash('sha256', $_COOKIE[REMEMBER_COOKIE]);
     $stmt = $pdo->prepare("DELETE FROM remember_tokens WHERE token_hash = ?");
@@ -26,10 +26,10 @@ if (!empty($_COOKIE[REMEMBER_COOKIE])) {
     setcookie(REMEMBER_COOKIE, '', time() - 3600, '/');
 }
 
-// User löschen
+// Delete User
 $pdo->prepare("DELETE FROM users WHERE id=?")->execute([$id]);
 
-// Session zerstören
+// Destroy session
 session_unset();
 session_destroy();
 

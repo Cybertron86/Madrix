@@ -235,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
             openGalleryModal(footerBar);
             break;
           case "profile":
-            console.log("Profil clicked");
+            console.log("Profile clicked");
             break;
           case "admin":
             if (typeof openAdminModal === "function") openAdminModal();

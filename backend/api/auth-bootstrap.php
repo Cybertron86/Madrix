@@ -19,7 +19,7 @@ if (empty($_SESSION['user']) && !empty($_COOKIE[REMEMBER_COOKIE])) {
 
     if ($user = $stmt->fetch()) {
 
-        // 🔐 Session wiederherstellen
+        // 🔐 Restore session
         $_SESSION['user'] = [
             'id' => $user['id'],
             'username' => $user['username'],
@@ -28,7 +28,7 @@ if (empty($_SESSION['user']) && !empty($_COOKIE[REMEMBER_COOKIE])) {
 
     }
     else {
-        // ungültiges Cookie → löschen
+        // invalid cookie → delete
         setcookie(REMEMBER_COOKIE, '', time() - 3600, '/');
     }
 }

@@ -35,7 +35,7 @@
   width: 90%;
   max-width: 500px;
   max-height: 85vh;
-  overflow-y: auto; /* Scrolling ermöglichen */
+  overflow-y: auto; /* Enable scrolling */
 
   background: rgba(0, 0, 0, 1);
   border: 2px solid var(--color-primary);
@@ -140,7 +140,7 @@
 .login-form-input {
   width: 100%;
   padding: 0.8rem 1rem;
-  box-sizing: border-box; /*  wichtig für korrekte Breite */
+  box-sizing: border-box; /* Important for correct width */
 
   background: rgba(0, 0, 0, 0.7);
   border: 2px solid rgba(var(--color-primary-rgb), 0.5);

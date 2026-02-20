@@ -30,7 +30,7 @@ function createImpressumModal() {
           <h3>Contact</h3>
           <p>
             Phone: +49 1575 2605349<br>
-            Email: <a href="mailto:[EMAIL_ADDRESS]">[EMAIL_ADDRESS]</a>
+            Email: <a href="mailto:contact@cybertron.sys">contact@cybertron.sys</a>
           </p>
 
           <h3>Responsible for content according to § 55 Abs. 2 RStV</h3>

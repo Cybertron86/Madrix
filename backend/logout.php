@@ -6,7 +6,7 @@ require_once __DIR__ . '/config/bootstrap.php';
 
 header('Content-Type: application/json');
 
-// Remember Token löschen
+// Delete Remember Token
 if (!empty($_COOKIE[REMEMBER_COOKIE])) {
 
     $tokenHash = hash('sha256', $_COOKIE[REMEMBER_COOKIE]);
@@ -17,7 +17,7 @@ if (!empty($_COOKIE[REMEMBER_COOKIE])) {
     setcookie(REMEMBER_COOKIE, '', time() - 3600, '/');
 }
 
-// Session zerstören
+// Destroy session
 session_unset();
 session_destroy();
 

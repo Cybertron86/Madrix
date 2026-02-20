@@ -199,7 +199,7 @@
 @media (max-width: 768px) {
   .about-modal-container {
     width: 95%;
-    height: 75vh; /* NEU - feste Höhe auch auf Mobile */
+    height: 75vh; /* NEW - fixed height also on mobile */
     max-height: 75vh;
     padding: 2rem 1.5rem;
   }
@@ -224,7 +224,7 @@
 @media (max-width: 480px) {
   .about-modal-container {
     width: 98%;
-    height: 70vh; /* NEU - feste Höhe */
+    height: 70vh; /* NEW - fixed height */
     max-height: 70vh;
     padding: 1.5rem 1rem;
   }

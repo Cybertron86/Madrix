@@ -1,10 +1,10 @@
-# 🟢 MADRIX - The Ultimate Cyber Portfolio
+# MADRIX - The Ultimate Cyber Portfolio
 
 Welcome to the **Madrix Portal**, a high-performance web experience inspired by the Matrix/Tron aesthetic. This project combines modern frontend visuals with a robust, secure PHP backend, all orchestrated via Docker.
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 *   **Matrix Eye Ultimate**: A sophisticated, multi-layered visual center with 3D perspective, matrix rain, and glow effects.
 *   **Hologram Carousel**: An immersive 3D carousel for showcasing content with a futuristic glassmorphic UI.
@@ -14,7 +14,7 @@ Welcome to the **Madrix Portal**, a high-performance web experience inspired by 
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 *   **Backend**: PHP 8.2 (FPM)
 *   **Database**: MariaDB 11.x
@@ -24,7 +24,7 @@ Welcome to the **Madrix Portal**, a high-performance web experience inspired by 
 
 ---
 
-## 📦 Getting Started
+## Getting Started
 
 ### Prerequisites
 *   Docker & Docker Compose installed on your system.
@@ -41,7 +41,7 @@ Welcome to the **Madrix Portal**, a high-performance web experience inspired by 
 
 ---
 
-## 🗄 Database Management
+## Database Management
 
 You can interact with the database directly through the MariaDB container.
 
@@ -64,7 +64,7 @@ SELECT * FROM rate_limits;
 
 ---
 
-## 🛰 API Interaction (Curl Cheat Sheet)
+## API Interaction (Curl Cheat Sheet)
 
 The backend uses JSON for communication and requires a valid CSRF token for state-changing operations (POST, DELETE).
 
@@ -107,7 +107,7 @@ curl -b cookies.txt -X DELETE "http://localhost/api/users.php?id=123"
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 *   **/backend**: Core PHP logic, API endpoints, and configuration.
 *   **/frontend-portal**: HTML, CSS, JavaScript, and static resources.
@@ -117,7 +117,7 @@ curl -b cookies.txt -X DELETE "http://localhost/api/users.php?id=123"
 
 ---
 
-## 🛡 Security & Best Practices
+## Security & Best Practices
 
 This project strictly follows modern security standards:
 - **No In-line Scripts**: All logic is served from modular JS files.

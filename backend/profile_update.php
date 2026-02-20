@@ -22,14 +22,14 @@ $id = $_SESSION['user']['id'];
 if (!empty($data['username'])) {
     $username = trim($data['username']);
 
-    // Whitelist-Validierung (gleiche Regeln wie JS)
+    // Whitelist validation (same rules as JS)
     if (!preg_match('/^[a-zA-Z0-9_-]{3,32}$/', $username)) {
         http_response_code(400);
         echo json_encode(['error' => 'invalid_username']);
         exit;
     }
 
-    // Prüfen ob Username bereits von anderem User belegt
+    // Check if username is already taken by another user
     $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? AND id != ?");
     $stmt->execute([$username, $id]);
 
@@ -78,7 +78,7 @@ if (!empty($data['password'])) {
     $pdo->prepare("UPDATE users SET password_hash=? WHERE id=?")
         ->execute([$hash, $id]);
 
-    // Alle anderen Geräte ausloggen
+    // Log out all other devices
     $pdo->prepare("DELETE FROM remember_tokens WHERE user_id=?")
         ->execute([$id]);
 }

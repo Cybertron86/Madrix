@@ -22,7 +22,7 @@ function createContactModal() {
           
           <h3>Get in Touch</h3>
           <p>
-            <strong>Email:</strong> <a href="mailto:[EMAIL_ADDRESS]">[EMAIL_ADDRESS]</a><br>
+            <strong>Email:</strong> <a href="mailto:contact@cybertron.sys">contact@cybertron.sys</a><br>
             <strong>GitHub:</strong> <a href="https://github.com/cybertron86" target="_blank">github.com/cybertron86</a><br>
           </p>
 

@@ -1,16 +1,16 @@
 /**
  * profile-modal.js  v2
  *
- * Verbesserungen:
- *  - Passwort-Validierung identisch zu register-modal.js
- *    (min. 12 Zeichen, Groß-/Kleinbuchstabe, Zahl, Sonderzeichen + Stärkeanzeige)
- *  - Profil-Button erscheint/verschwindet live via userLoggedIn / userLoggedOut Events
- *  - XSS-Schutz: alle User-Inputs werden escaped, kein innerHTML mit User-Daten
- *  - Input-Sanitization: Whitelist-Regex, maxlength enforcement
- *  - Debounce auf Submit-Buttons (verhindert mehrfaches Abschicken)
- *  - Content-Security: keine eval(), keine unsicheren DOM-Injektionen
+ * Improvements:
+ *  - Password validation identical to register-modal.js
+ *    (min. 12 chars, upper/lowercase, number, special char + strength indicator)
+ *  - Profile button appears/disappears live via userLoggedIn / userLoggedOut events
+ *  - XSS Protection: all user inputs are escaped, no innerHTML with user data
+ *  - Input Sanitization: Whitelist regex, maxlength enforcement
+ *  - Debounce on submit buttons (prevents multiple submissions)
+ *  - Content Security: no eval(), no unsafe DOM injections
  *
- * Einbinden in index.html:
+ * Include in index.html:
  *   <link rel="stylesheet" href="css/profile-modal.css" />
  *   <script src="js/profile-modal.js" defer></script>
  */
@@ -18,7 +18,7 @@
 (function () {
   "use strict";
 
-  /* ── Sicherheit: XSS-Escape ──────────────────────────────── */
+  /* ── Security: XSS-Escape ──────────────────────────────── */
   function escapeHtml(str) {
     const div = document.createElement("div");
     div.appendChild(document.createTextNode(String(str)));
@@ -31,11 +31,11 @@
   const PASSWORD_MIN = 12;
 
   function sanitizeUsername(value) {
-    // Trim + auf erlaubte Zeichen begrenzen + maxlength
+    // Trim + limit to allowed characters + maxlength
     return String(value).trim().slice(0, USERNAME_MAX);
   }
 
-  /* ── HTML-Template (statisch – kein User-Input darin) ──── */
+  /* ── HTML-Template (static – no user input within) ──── */
   const MODAL_HTML = `
     <div id="profileOverlay" class="profile-overlay" role="dialog" aria-modal="true" aria-labelledby="profile-title">
       <div class="profile-modal">
@@ -87,7 +87,7 @@
             <button type="button" class="profile-pw-toggle" id="profilePwToggle1" aria-label="Show password" aria-pressed="false">👁️</button>
           </div>
 
-          <!-- Stärkeanzeige -->
+          <!-- Strength indicator -->
           <div class="profile-pw-strength" id="profilePwStrength" aria-label="Password strength indicator">
             <div class="profile-pw-strength-bar" data-bar="0"></div>
             <div class="profile-pw-strength-bar" data-bar="1"></div>
@@ -124,7 +124,7 @@
           </p>
           <button id="profileDeleteBtn" class="profile-btn-delete" aria-haspopup="true">DELETE ACCOUNT</button>
 
-          <!-- Bestätigungs-Panel -->
+          <!-- Confirmation Panel -->
           <div id="profileConfirmPanel" class="profile-confirm-panel" role="alert" aria-hidden="true">
             <p class="profile-confirm-text">
               <strong>⚠ WARNING</strong>
@@ -145,11 +145,11 @@
 
   /* ── State ───────────────────────────────────────────────── */
   let injected = false;
-  let submitLock = {}; // Debounce-Lock pro Aktion
+  let submitLock = {}; // Debounce-lock per action
 
-  /* ── Feedback-Helfer ─────────────────────────────────────── */
+  /* ── Feedback Helper ─────────────────────────────────────── */
   function setFeedback(el, message, type) {
-    // message ist immer ein fester String – kein User-Input → kein escapeHtml nötig
+    // message is always a fixed string – no user input → no escapeHtml needed
     el.textContent = message;
     el.className = "profile-feedback " + type;
   }
@@ -165,7 +165,7 @@
     if (state === "success") input.classList.add("input-success");
   }
 
-  /* ── Passwort-Stärke ─────────────────────────────────────── */
+  /* ── Password Strength ─────────────────────────────────────── */
   function updatePasswordStrength(bars, count, strength) {
     bars.forEach((bar) => bar.classList.remove("weak", "medium", "strong"));
     for (let i = 0; i < count; i++) {
@@ -177,7 +177,7 @@
     bars.forEach((bar) => bar.classList.remove("weak", "medium", "strong"));
   }
 
-  /* ── Passwort-Validierung (gleiche Regeln wie register-modal.js) ── */
+  /* ── Password Validation (same rules as register-modal.js) ── */
   function validateNewPassword(pwInput, bars, feedbackEl) {
     const value = pwInput.value;
 
@@ -254,7 +254,7 @@
     return true;
   }
 
-  /* ── Modal-Lifecycle ─────────────────────────────────────── */
+  /* ── Modal Lifecycle ─────────────────────────────────────── */
   function injectModal() {
     if (injected) return;
     document.body.insertAdjacentHTML("beforeend", MODAL_HTML);
@@ -317,7 +317,7 @@
     submitLock = {};
   }
 
-  /* ── Events binden ───────────────────────────────────────── */
+  /* ── Bind Events ───────────────────────────────────────── */
   function bindEvents() {
     const overlay = document.getElementById("profileOverlay");
     const closeBtn = document.getElementById("profileCloseBtn");
@@ -340,7 +340,7 @@
     });
     document.addEventListener("keydown", handleKeydown);
 
-    // Passwort-Toggles
+    // Password Toggles
     pwToggle1.addEventListener("click", () =>
       togglePwVisibility(pwInput, pwToggle1),
     );
@@ -348,7 +348,7 @@
       togglePwVisibility(pwConfirm, pwToggle2),
     );
 
-    // Live-Validierung Passwort
+    // Live password validation
     pwInput.addEventListener("input", () => {
       validateNewPassword(pwInput, bars, feedbackPw);
       if (pwConfirm.value)
@@ -358,7 +358,7 @@
       validatePasswordMatch(pwInput, pwConfirm, feedbackPw);
     });
 
-    // Username speichern
+    // Save username
     saveUsernameBtn.addEventListener("click", handleSaveUsername);
     document
       .getElementById("profileNewUsername")
@@ -366,7 +366,7 @@
         if (e.key === "Enter") handleSaveUsername();
       });
 
-    // Passwort speichern
+    // Save password
     savePasswordBtn.addEventListener("click", handleSavePassword);
     pwConfirm.addEventListener("keydown", (e) => {
       if (e.key === "Enter") handleSavePassword();
@@ -404,7 +404,7 @@
     btn.setAttribute("aria-pressed", !isVisible);
   }
 
-  /* ── Username speichern ──────────────────────────────────── */
+  /* ── Save Username ──────────────────────────────────── */
   async function handleSaveUsername() {
     if (submitLock.username) return;
 
@@ -416,7 +416,7 @@
     clearFeedback(feedback);
     setInputState(input, null);
 
-    // Client-side Validierung
+    // Client-side validation
     if (!raw) {
       setInputState(input, "error");
       setFeedback(feedback, "▸ Username cannot be empty.", "error");
@@ -450,7 +450,7 @@
       const response = await fetch("/api/profile_update.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Sanitizerter Wert wird gesendet – kein Raw-HTML
+        // Sanitized value is sent – no raw HTML
         body: JSON.stringify({ username: raw }),
         credentials: "same-origin",
       });
@@ -465,7 +465,7 @@
         setInputState(input, "success");
         setFeedback(feedback, "▸ Username updated successfully.", "success");
         input.value = "";
-        // Dispatch Event für andere Module
+        // Dispatch event for other modules
         document.dispatchEvent(
           new CustomEvent("usernameChanged", { detail: { username: raw } }),
         );
@@ -487,14 +487,14 @@
       setFeedback(feedback, "▸ Connection error. Please try again.", "error");
     } finally {
       btn.disabled = false;
-      // Lock nach kurzer Abklingzeit aufheben
+      // Lift lock after a short cooldown period
       setTimeout(() => {
         submitLock.username = false;
       }, 1500);
     }
   }
 
-  /* ── Passwort speichern ──────────────────────────────────── */
+  /* ── Save Password ──────────────────────────────────── */
   async function handleSavePassword() {
     if (submitLock.password) return;
 
@@ -506,8 +506,7 @@
 
     clearFeedback(feedback);
 
-    // Vollständige Validierung vor dem Request
-    const isPwValid = validateNewPassword(pwInput, bars, feedback);
+    // Full validation before request    const isPwValid = validateNewPassword(pwInput, bars, feedback);
     if (!isPwValid) return;
 
     const isMatchValid = validatePasswordMatch(pwInput, pwConfirm, feedback);
@@ -522,7 +521,7 @@
       const response = await fetch("/api/profile_update.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Passwort wird als plain string gesendet – kein escapen nötig (JSON.stringify macht das)
+        // Password is sent as plain string – no escaping needed (JSON.stringify handles it)
         body: JSON.stringify({ password: pwInput.value }),
         credentials: "same-origin",
       });
@@ -561,7 +560,7 @@
     }
   }
 
-  /* ── Account löschen ─────────────────────────────────────── */
+  /* ── Delete Account ─────────────────────────────────────── */
   async function handleDeleteAccount() {
     if (submitLock.delete) return;
 
@@ -607,13 +606,13 @@
     }
   }
 
-  /* ── Post-Delete: UI-Reset ohne Reload ───────────────────── */
+  /* ── Post-Delete: UI Reset without Reload ───────────────────── */
   function onAccountDeleted() {
-    // Login-Button sofort auf "LOGIN" zurücksetzen – identisch zu login-modal.js
+    // Instantly reset login button to "LOGIN" – identical to login-modal.js
     if (typeof updateAuthButton === "function") {
       updateAuthButton();
     } else {
-      // Fallback falls updateAuthButton noch nicht geladen ist
+      // Fallback if updateAuthButton hasn't loaded yet
       const loginBtn = document.getElementById("btn_login");
       if (loginBtn) {
         loginBtn.textContent = "LOGIN";
@@ -621,7 +620,7 @@
       }
     }
 
-    // Custom Event für alle anderen Module (z.B. profile-modal syncProfileButton)
+    // Custom event for all other modules (e.g. profile-modal syncProfileButton)
     document.dispatchEvent(
       new CustomEvent("userLoggedOut", {
         detail: { reason: "account_deleted" },
@@ -629,7 +628,7 @@
     );
   }
 
-  /* ── Login/Logout-State-Synchronisation ──────────────────── */
+  /* ── Login/Logout State Synchronization ──────────────────── */
   function syncProfileButton(visible) {
     document
       .querySelectorAll('.dropdown-item[data-action="profile"]')
@@ -638,9 +637,9 @@
       });
   }
 
-  /* ── Dropdown-Item "Profil" triggern ─────────────────────── */
+  /* ── Trigger Dropdown Item "Profile" ─────────────────────── */
   function initTrigger() {
-    // Delegierter Click-Listener (funktioniert für dynamisch gerenderte Elemente)
+    // Delegated click listener (works for dynamically rendered elements)
     document.addEventListener("click", (e) => {
       const item = e.target.closest('.dropdown-item[data-action="profile"]');
       if (item) {
@@ -649,28 +648,28 @@
       }
     });
 
-    // Auf Login-Events reagieren (gefeuert von app.js / login-modal.js)
+    // React to login events (fired by app.js / login-modal.js)
     document.addEventListener("userLoggedIn", () => {
       syncProfileButton(true);
     });
 
-    // Auf Logout-Events reagieren
+    // React to logout events
     document.addEventListener("userLoggedOut", () => {
       syncProfileButton(false);
-      // Falls Modal offen ist: schließen
+      // If modal is open: close it
       const overlay = document.getElementById("profileOverlay");
       if (overlay && overlay.classList.contains("open")) closeModal();
     });
 
-    // Initial-State: Profilbutton nur zeigen wenn Session aktiv
-    // Prüfe ob btn_login "LOGOUT" anzeigt als Heuristik
-    // (sauberer: ein data-Attribut oder eine session-Variable vom Server)
+    // Initial State: Show profile button only if session is active
+    // Check if btn_login shows "LOGOUT" as a heuristic
+    // (Cleaner: a data attribute or session variable from the server)
     const loginBtn = document.getElementById("btn_login");
     if (loginBtn) {
       const isLoggedIn = loginBtn.textContent.trim().toUpperCase() === "LOGOUT";
       syncProfileButton(isLoggedIn);
 
-      // MutationObserver auf den Login-Button-Text für zuverlässige Synchronisation
+      // MutationObserver on login button text for reliable synchronization
       const observer = new MutationObserver(() => {
         const loggedIn = loginBtn.textContent.trim().toUpperCase() === "LOGOUT";
         syncProfileButton(loggedIn);
@@ -683,7 +682,7 @@
     }
   }
 
-  /* ── Öffentliche API ─────────────────────────────────────── */
+  /* ── Public API ─────────────────────────────────────── */
   window.ProfileModal = {
     open: openModal,
     close: closeModal,
