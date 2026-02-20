@@ -143,11 +143,11 @@ class UltimateMatrixEye {
 
   generateMatrixCode(length) {
     // Mix of binary and katakana
-    const chars =
-      "01010110アイウエオカキクケコサシスセソタチツテトナニヌネハヒフヘホマミムメモヤユヨラリルレロワヲン";
+    const chars = "01010110アイウエオカキクケコサシスセソタチツテトナニヌネハヒフヘホマミムメモヤユヨラリルレロワヲン";
+    const charsLength = chars.length;
     let code = "";
     for (let i = 0; i < length; i++) {
-      code += chars.charAt(Math.floor(Math.random() * chars.length)) + "\n";
+        code += chars[Math.floor(Math.random() * charsLength)] + "\n";
     }
     return code;
   }
