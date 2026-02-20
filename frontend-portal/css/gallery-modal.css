@@ -43,9 +43,9 @@
   background: rgba(0, 0, 0, 0.9);
   border: 2px solid var(--color-primary);
   box-shadow:
-    0 0 30px rgba(0, 255, 136, 0.4),
-    0 0 60px rgba(0, 255, 136, 0.2),
-    inset 0 0 30px rgba(0, 255, 136, 0.1);
+    0 0 30px rgba(var(--color-primary-rgb), 0.4),
+    0 0 60px rgba(var(--color-primary-rgb), 0.2),
+    inset 0 0 30px rgba(var(--color-primary-rgb), 0.1);
 
   padding-right: 2rem;
   padding-top: 2rem;
@@ -130,7 +130,7 @@
   }
   50% {
     text-shadow:
-      -2px 0 10px #ff0088,
+      -2px 0 10px var(--color-error-pink),
       2px 0 10px var(--color-error-pink),
       0 0 20px var(--color-primary);
   }
@@ -166,8 +166,8 @@
 
   border: 2px solid var(--color-primary);
   box-shadow:
-    0 0 15px rgba(0, 255, 136, 0.3),
-    inset 0 0 15px rgba(0, 255, 136, 0.1);
+    0 0 15px rgba(var(--color-primary-rgb), 0.3),
+    inset 0 0 15px rgba(var(--color-primary-rgb), 0.1);
 
   transition: all 0.3s ease;
 }
@@ -175,9 +175,9 @@
 .gallery-item:hover {
   transform: scale(1.05) translateZ(0);
   box-shadow:
-    0 0 30px rgba(0, 255, 136, 0.6),
-    0 0 60px rgba(0, 255, 136, 0.3),
-    inset 0 0 30px rgba(0, 255, 136, 0.2);
+    0 0 30px rgba(var(--color-primary-rgb), 0.6),
+    0 0 60px rgba(var(--color-primary-rgb), 0.3),
+    inset 0 0 30px rgba(var(--color-primary-rgb), 0.2);
   border-color: var(--color-primary);
   z-index: 1;
 }
@@ -237,7 +237,7 @@
 .gallery-item-date {
   font-family: "Orbitron", monospace;
   font-size: 0.85rem;
-  color: rgba(0, 255, 136, 0.7);
+  color: rgba(var(--color-primary-rgb), 0.7);
   letter-spacing: 1px;
 }
 
@@ -253,7 +253,7 @@
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    rgba(0, 255, 136, 0.05) 50%,
+    rgba(var(--color-primary-rgb), 0.05) 50%,
     transparent 100%
   );
   background-size: 100% 4px;
@@ -305,9 +305,9 @@
   padding: 4rem 2rem;
   font-family: "Orbitron", monospace;
   font-size: 1.2rem;
-  color: #ff0088;
+  color: var(--color-error-pink);
   letter-spacing: 2px;
-  text-shadow: 0 0 10px #ff0088;
+  text-shadow: 0 0 10px var(--color-error-pink);
 }
 
 /*======================================================================================================================== 

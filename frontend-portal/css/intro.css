@@ -35,8 +35,8 @@ body {
   inset: 0;
   background: repeating-linear-gradient(
     to bottom,
-    rgba(0, 255, 136, 0.05) 0px,
-    rgba(0, 255, 136, 0.05) 1px,
+    rgba(var(--color-primary-rgb), 0.05) 0px,
+    rgba(var(--color-primary-rgb), 0.05) 1px,
     transparent 1px,
     transparent 2px
   );
@@ -108,8 +108,8 @@ body {
   background: var(--color-primary);
   color: var(--color-black);
   box-shadow:
-    0 0 12px #00ff88,
-    0 0 24px #00ff88;
+    0 0 12px var(--color-primary),
+    0 0 24px var(--color-primary);
 }
 
 .portalButtons button:disabled {
@@ -146,8 +146,8 @@ body {
   bottom: 20px; /* Abstand zum unteren Rand des Overlays */
   right: 20px; /* Abstand zum rechten Rand */
   background: none;
-  border: 2px solid #0f0;
-  color: #0f0;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
   font-size: 1.6rem;
   width: 48px;
   height: 48px;
@@ -163,9 +163,9 @@ body {
   z-index: 10001;
 }
 .muteUnmuteBtn:hover {
-  background: #0f0;
-  color: #000;
-  box-shadow: 0 0 12px #0f0;
+  background: var(--color-primary);
+  color: var(--color-black);
+  box-shadow: 0 0 12px var(--color-primary);
 }
 .muteUnmuteBtn:disabled {
   opacity: 0.5;
@@ -180,8 +180,8 @@ body {
   width: 48px;
   height: 48px;
   background: none;
-  border: 2px solid #0f0;
-  color: #0f0;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
   font-size: 1.6rem;
   border-radius: 50%;
   display: none;
@@ -193,9 +193,9 @@ body {
   z-index: 20000;
 }
 .ambientBtn:hover {
-  background: #0f0;
-  color: #000;
-  box-shadow: 0 0 12px #0f0;
+  background: var(--color-primary);
+  color: var(--color-black);
+  box-shadow: 0 0 12px var(--color-primary);
 }
 .ambientBtn:disabled {
   pointer-events: none;

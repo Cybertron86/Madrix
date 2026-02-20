@@ -105,8 +105,8 @@ main {
   pointer-events: none;
   animation: fallOutGlitch 1.4s ease-in forwards;
   text-shadow:
-    -1px 0 red,
-    1px 0 blue,
+    -1px 0 var(--color-error-red),
+    1px 0 var(--color-ice-blue),
     0 0 4px var(--color-primary),
     0 0 8px var(--color-primary);
   z-index: 1001;
@@ -153,12 +153,12 @@ canvas.shake {
 }
 
 .glitchEffect::before {
-  text-shadow: -2px 0 red;
+  text-shadow: -2px 0 var(--color-error-red);
   animation: glitchTop 1s infinite linear alternate-reverse;
 }
 
 .glitchEffect::after {
-  text-shadow: 2px 0 blue;
+  text-shadow: 2px 0 var(--color-ice-blue);
   animation: glitchBottom 1s infinite linear alternate-reverse;
 }
 

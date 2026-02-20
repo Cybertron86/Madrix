@@ -46,20 +46,27 @@ body {
      COLORS - PRIMARY
      ========================================= */
   --color-primary: #00ff88;        /* Matrix Green */
+  --color-primary-rgb: 0, 255, 136; /* Matrix Green RGB for rgba() */
   --color-primary-dim: rgba(0, 255, 136, 0.6);
   --color-primary-glow: rgba(0, 255, 136, 0.3);
   
   --color-black: #000000;
   --color-bg-dark: rgba(0, 0, 0, 0.9);
   --color-bg-overlay: rgba(0, 0, 0, 0.88);
+  --color-bg-deep: #0a0e0a;
+  --color-bg-deeper: #050705;
 
   /* =========================================
      COLORS - ACCENTS & STATES
      ========================================= */
   --color-error-pink: #ff0088;     /* Login/Register Errors */
+  --color-error-pink-rgb: 255, 0, 136;
   --color-error-red: #ff4444;      /* Admin/Profile Delete & Errors */
+  --color-error-red-rgb: 255, 68, 68;
   --color-warning: #ffaa00;        /* Warnings / Admin Role */
+  --color-warning-rgb: 255, 170, 0;
   --color-ice-blue: #00d4ff;       /* Secondary Accent */
+  --color-ice-blue-rgb: 0, 212, 255;
 
   /* =========================================
      FONTS

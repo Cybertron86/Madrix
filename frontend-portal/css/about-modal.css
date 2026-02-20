@@ -40,9 +40,9 @@
   background: rgba(0, 0, 0, 1);
   border: 2px solid var(--color-primary);
   box-shadow:
-    0 0 30px rgba(0, 255, 136, 0.4),
-    0 0 60px rgba(0, 255, 136, 0.2),
-    inset 0 0 30px rgba(0, 255, 136, 0.1);
+    0 0 30px rgba(var(--color-primary-rgb), 0.4),
+    0 0 60px rgba(var(--color-primary-rgb), 0.2),
+    inset 0 0 30px rgba(var(--color-primary-rgb), 0.1);
 
   padding: 3rem 2.5rem;
   overflow: hidden;
@@ -124,7 +124,7 @@
   }
   50% {
     text-shadow:
-      -2px 0 10px #ff0088,
+      -2px 0 10px var(--color-error-pink),
       2px 0 10px var(--color-error-pink),
       0 0 20px var(--color-primary);
   }
@@ -143,11 +143,11 @@
   font-family: "Orbitron", monospace;
   font-size: 1.1rem;
   line-height: 1.8;
-  color: rgba(0, 255, 136, 0.9);
+  color: rgba(var(--color-primary-rgb), 0.9);
   text-align: justify;
   letter-spacing: 0.5px;
 
-  text-shadow: 0 0 5px rgba(0, 255, 136, 0.3);
+  text-shadow: 0 0 5px rgba(var(--color-primary-rgb), 0.3);
 }
 
 .about-modal-text p {
@@ -175,7 +175,7 @@
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    rgba(0, 255, 136, 0.03) 50%,
+    rgba(var(--color-primary-rgb), 0.03) 50%,
     transparent 100%
   );
   background-size: 100% 4px;
@@ -323,10 +323,10 @@
   opacity: 0;
   visibility: hidden;
 
-  text-shadow: 0 0 10px #00ff88;
+  text-shadow: 0 0 10px var(--color-primary);
   box-shadow:
-    0 0 15px rgba(0, 255, 136, 0.3),
-    inset 0 0 10px rgba(0, 255, 136, 0.1);
+    0 0 15px rgba(var(--color-primary-rgb), 0.3),
+    inset 0 0 10px rgba(var(--color-primary-rgb), 0.1);
 
   transition: all 0.3s ease;
 }
@@ -358,13 +358,13 @@
   0%,
   100% {
     box-shadow:
-      0 0 15px rgba(0, 255, 136, 0.3),
-      inset 0 0 10px rgba(0, 255, 136, 0.1);
+      0 0 15px rgba(var(--color-primary-rgb), 0.3),
+      inset 0 0 10px rgba(var(--color-primary-rgb), 0.1);
   }
   50% {
     box-shadow:
-      0 0 25px rgba(0, 255, 136, 0.6),
-      inset 0 0 20px rgba(0, 255, 136, 0.2);
+      0 0 25px rgba(var(--color-primary-rgb), 0.6),
+      inset 0 0 20px rgba(var(--color-primary-rgb), 0.2);
   }
 }
 
