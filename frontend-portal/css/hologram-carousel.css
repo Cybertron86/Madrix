@@ -49,6 +49,11 @@
   justify-content: center;
 }
 
+/* Isolate from global border-box reset to prevent layout shifts */
+.holo-carousel-wrapper * {
+  box-sizing: content-box;
+}
+
 .holo-carousel-wrapper:active {
   cursor: grabbing;
 }
