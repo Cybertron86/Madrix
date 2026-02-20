@@ -54,10 +54,19 @@
   padding: 0;
 }
 
-.footer-nav a {
+.footer-nav a,
+.footer-nav button {
   color: #00ff9f;
   text-decoration: none;
   line-height: 1;
+  background-color: transparent !important;
+  background: transparent !important;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
 }
 
 .footer-nav a:hover,
