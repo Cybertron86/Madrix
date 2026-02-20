@@ -8,8 +8,8 @@ body {
 #portalOverlay {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at center, #002200 0%, #000000 100%);
-  color: #00ff88;
+  background: radial-gradient(circle at center, #002200 0%, var(--color-black) 100%);
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,14 +74,14 @@ body {
 
 .portalQuestion {
   font-size: 2rem;
-  text-shadow: 0 0 8px #00ff88;
+  text-shadow: 0 0 8px var(--color-primary);
   margin-bottom: 2rem;
 }
 
 .portalWarning {
   font-size: 1rem;
-  color: #ff4444;
-  text-shadow: 0 0 6px #ff4444;
+  color: var(--color-error-red);
+  text-shadow: 0 0 6px var(--color-error-red);
   margin-bottom: 2rem;
 }
 
@@ -92,21 +92,21 @@ body {
 }
 
 .portalButtons button {
-  background: black;
-  border: 2px solid #00ff88;
-  color: #00ff88;
+  background: var(--color-black);
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
   padding: 1rem 2rem;
   font-size: 1.2rem;
   cursor: pointer;
-  text-shadow: 0 0 6px #00ff88;
+  text-shadow: 0 0 6px var(--color-primary);
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
 }
 
 .portalButtons button:hover {
-  background: #00ff88;
-  color: black;
+  background: var(--color-primary);
+  color: var(--color-black);
   box-shadow:
     0 0 12px #00ff88,
     0 0 24px #00ff88;

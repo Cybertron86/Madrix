@@ -38,7 +38,7 @@
   overflow-y: auto; /* Scrolling ermöglichen */
 
   background: rgba(0, 0, 0, 1);
-  border: 2px solid #00ff88;
+  border: 2px solid var(--color-primary);
   box-shadow:
     0 0 30px rgba(0, 255, 136, 0.4),
     0 0 60px rgba(0, 255, 136, 0.2),
@@ -65,7 +65,7 @@
     rgba(0, 255, 136, 0.6),
     rgba(0, 255, 136, 0.3)
   );
-  border: 1px solid #00ff88;
+  border: 1px solid var(--color-primary);
   box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
 }
 
@@ -97,8 +97,8 @@
   height: 45px;
 
   background: transparent;
-  border: 2px solid #00ff88;
-  color: #00ff88;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
 
   font-family: "Orbitron", monospace;
   font-size: 2rem;
@@ -107,7 +107,7 @@
   cursor: pointer;
   z-index: 10;
 
-  text-shadow: 0 0 10px #00ff88;
+  text-shadow: 0 0 10px var(--color-primary);
   transition: all 0.3s ease;
 
   display: flex;
@@ -116,11 +116,11 @@
 }
 
 .login-modal-close:hover {
-  background: #00ff88;
+  background: var(--color-primary);
   color: black;
   box-shadow:
-    0 0 20px #00ff88,
-    0 0 40px #00ff88;
+    0 0 20px var(--color-primary),
+    0 0 40px var(--color-primary);
   transform: rotate(90deg);
   padding-bottom: 1.2vh;
 }
@@ -128,13 +128,13 @@
 .login-modal-title {
   font-family: "Orbitron", monospace;
   font-size: 2.5rem;
-  color: #00ff88;
+  color: var(--color-primary);
   text-align: center;
   margin: 0 0 2rem 0;
   letter-spacing: 4px;
   text-shadow:
-    0 0 10px #00ff88,
-    0 0 20px #00ff88;
+    0 0 10px var(--color-primary),
+    0 0 20px var(--color-primary);
 }
 
 .login-form {
@@ -151,9 +151,9 @@
 }
 
 .login-form-label {
-  font-family: "Orbitron", monospace;
+  font-family: var(--font-main);
   font-size: 0.9rem;
-  color: #00ff88;
+  color: var(--color-primary);
   letter-spacing: 1px;
   text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
   text-transform: uppercase;
@@ -172,7 +172,7 @@
   border: 2px solid rgba(0, 255, 136, 0.5);
   color: rgba(0, 255, 136, 0.95);
 
-  font-family: "Orbitron", monospace;
+  font-family: var(--font-main);
   font-size: 1rem;
   letter-spacing: 1px;
 
@@ -187,23 +187,23 @@
 }
 
 .login-form-input:focus {
-  border-color: #00ff88;
-  color: #00ff88;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
   box-shadow:
     0 0 15px rgba(0, 255, 136, 0.3),
     inset 0 0 15px rgba(0, 255, 136, 0.2);
 }
 
 .login-form-input.error {
-  border-color: #ff0088;
+  border-color: var(--color-error-pink);
   box-shadow:
     0 0 15px rgba(255, 0, 136, 0.3),
     inset 0 0 15px rgba(255, 0, 136, 0.1);
 }
 
 .login-form-input.success {
-  border-color: #00ff88;
-  color: #00ff88;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
   box-shadow:
     0 0 15px rgba(0, 255, 136, 0.5),
     inset 0 0 15px rgba(0, 255, 136, 0.2);
@@ -227,15 +227,15 @@
 }
 
 .password-toggle:hover {
-  color: #00ff88;
-  text-shadow: 0 0 10px #00ff88;
+  color: var(--color-primary);
+  text-shadow: 0 0 10px var(--color-primary);
 }
 
 /* Error Message */
 .login-error-message {
-  font-family: "Orbitron", monospace;
+  font-family: var(--font-main);
   font-size: 0.75rem;
-  color: #ff0088;
+  color: var(--color-error-pink);
   letter-spacing: 0.5px;
   text-shadow: 0 0 5px rgba(255, 0, 136, 0.5);
 
@@ -268,23 +268,23 @@
 }
 
 .password-strength-bar.active {
-  background: #00ff88;
-  box-shadow: 0 0 5px #00ff88;
+  background: var(--color-primary);
+  box-shadow: 0 0 5px var(--color-primary);
 }
 
 .password-strength-bar.active.weak {
-  background: #ff0088;
-  box-shadow: 0 0 5px #ff0088;
+  background: var(--color-error-pink);
+  box-shadow: 0 0 5px var(--color-error-pink);
 }
 
 .password-strength-bar.active.medium {
-  background: #ffaa00;
-  box-shadow: 0 0 5px #ffaa00;
+  background: var(--color-warning);
+  box-shadow: 0 0 5px var(--color-warning);
 }
 
 .password-strength-bar.active.strong {
-  background: #00ff88;
-  box-shadow: 0 0 5px #00ff88;
+  background: var(--color-primary);
+  box-shadow: 0 0 5px var(--color-primary);
 }
 
 /* Submit Button */
@@ -293,8 +293,8 @@
   padding: 1rem 2rem;
 
   background: transparent;
-  border: 2px solid #00ff88;
-  color: #00ff88;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
 
   font-family: "Orbitron", monospace;
   font-size: 1.1rem;
@@ -303,7 +303,7 @@
 
   cursor: pointer;
 
-  text-shadow: 0 0 8px #00ff88;
+  text-shadow: 0 0 8px var(--color-primary);
   transition: all 0.3s ease;
 
   position: relative;
@@ -331,11 +331,11 @@
 }
 
 .login-submit-btn:hover {
-  background: #00ff88;
+  background: var(--color-primary);
   color: black;
   box-shadow:
-    0 0 20px #00ff88,
-    0 0 40px #00ff88;
+    0 0 20px var(--color-primary),
+    0 0 40px var(--color-primary);
 }
 
 .login-submit-btn:disabled {
@@ -358,7 +358,7 @@
 .login-register-btn {
   background: none;
   border: none;
-  color: #00ff88;
+  color: var(--color-primary);
 
   font-family: "Orbitron", monospace;
   font-size: 0.9rem;
@@ -375,10 +375,10 @@
 }
 
 .login-register-btn:hover {
-  color: #00ff88;
+  color: var(--color-primary);
   text-shadow:
-    0 0 10px #00ff88,
-    0 0 20px #00ff88;
+    0 0 10px var(--color-primary),
+    0 0 20px var(--color-primary);
   transform: scale(1.05);
 }
 

@@ -30,11 +30,11 @@ body {
 
 /* LEFT */
 .nav-home {
-  font-family: "Orbitron", monospace;
-  color: #00ff88;
+  font-family: var(--font-main);
+  color: var(--color-primary);
   text-decoration: none;
   letter-spacing: 2px;
-  text-shadow: 0 0 8px #00ff88;
+  text-shadow: 0 0 8px var(--color-primary);
 }
 
 /* RIGHT GROUP */
@@ -50,17 +50,17 @@ body {
 .nav-login,
 .nav-menu {
   background: transparent;
-  border: 2px solid #00ff88;
-  color: #00ff88;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
 
   padding: 0.45rem 1rem;
-  font-family: "Orbitron", monospace;
+  font-family: var(--font-main);
   font-size: 0.9rem;
   letter-spacing: 1.2px;
 
   cursor: pointer;
   white-space: nowrap;
-  text-shadow: 0 0 6px #00ff88;
+  text-shadow: 0 0 6px var(--color-primary);
   transition: all 0.25s ease;
 }
 
@@ -75,8 +75,8 @@ body {
 /* HOVER */
 .nav-login:hover,
 .nav-menu:hover {
-  background: #00ff88;
-  color: black;
+  background: var(--color-primary);
+  color: var(--color-black);
   box-shadow:
     0 0 15px #00ff88,
     0 0 30px #00ff88;
@@ -84,8 +84,8 @@ body {
 
 /* ACTIVE STATE FOR MENU BUTTON */
 .nav-menu.active {
-  background: #00ff88;
-  color: black;
+  background: var(--color-primary);
+  color: var(--color-black);
   box-shadow:
     0 0 15px #00ff88,
     0 0 30px #00ff88;
@@ -140,9 +140,9 @@ body {
   font-size: 0.9rem;
   letter-spacing: 1px;
 
-  color: #00ff88;
+  color: var(--color-primary);
   text-decoration: none;
-  text-shadow: 0 0 6px #00ff88;
+  text-shadow: 0 0 6px var(--color-primary);
 
   border-bottom: 1px solid rgba(0, 255, 136, 0.2);
 
@@ -157,26 +157,26 @@ body {
   background: rgba(0, 255, 136, 0.15);
   padding-left: 1.5rem;
   box-shadow:
-    inset 3px 0 0 #00ff88,
+    inset 3px 0 0 var(--color-primary),
     0 0 15px rgba(0, 255, 136, 0.2);
 }
 
 #btn_login {
   background: black;
-  border: 2px solid #00ff88;
-  color: #00ff88;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
   padding: 0.5rem 1rem;
   font-size: 1rem;
   cursor: pointer;
-  text-shadow: 0 0 6px #00ff88;
+  text-shadow: 0 0 6px var(--color-primary);
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
 }
 
 #btn_login:hover {
-  background: #00ff88;
-  color: black;
+  background: var(--color-primary);
+  color: var(--color-black);
   box-shadow:
     0 0 12px #00ff88,
     0 0 24px #00ff88;
@@ -188,8 +188,8 @@ body {
 }
 
 #btn_login:disabled:hover {
-  background: black;
-  color: #00ff88;
+  background: var(--color-black);
+  color: var(--color-primary);
   box-shadow: none;
 }
 

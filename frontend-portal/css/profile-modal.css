@@ -30,7 +30,7 @@
 /* MODAL BOX */
 .profile-modal {
   background: rgba(0, 0, 0, 0.97);
-  border: 2px solid #00ff88;
+  border: 2px solid var(--color-primary);
   box-shadow:
     0 0 30px rgba(0, 255, 136, 0.35),
     0 0 80px rgba(0, 255, 136, 0.1),
@@ -46,7 +46,7 @@
   transition: transform 0.35s ease;
 
   font-family: "Orbitron", monospace;
-  color: #00ff88;
+  color: var(--color-primary);
 }
 
 .profile-overlay.open .profile-modal {
@@ -77,9 +77,9 @@
   left: -2px;
   width: 24px;
   height: 24px;
-  border-top: 3px solid #00ff88;
-  border-left: 3px solid #00ff88;
-  filter: drop-shadow(0 0 6px #00ff88);
+  border-top: 3px solid var(--color-primary);
+  border-left: 3px solid var(--color-primary);
+  filter: drop-shadow(0 0 6px var(--color-primary));
 }
 
 /* Corner accent bottom-right */
@@ -89,9 +89,9 @@
   right: -2px;
   width: 24px;
   height: 24px;
-  border-bottom: 3px solid #00ff88;
-  border-right: 3px solid #00ff88;
-  filter: drop-shadow(0 0 6px #00ff88);
+  border-bottom: 3px solid var(--color-primary);
+  border-right: 3px solid var(--color-primary);
+  filter: drop-shadow(0 0 6px var(--color-primary));
   z-index: 2;
 }
 
@@ -116,7 +116,7 @@
   font-size: 1rem;
   letter-spacing: 3px;
   text-transform: uppercase;
-  text-shadow: 0 0 10px #00ff88;
+  text-shadow: 0 0 10px var(--color-primary);
   margin: 0;
   flex: 1;
   min-width: 0;
@@ -134,7 +134,7 @@
 .profile-close-btn {
   background: transparent;
   border: 1px solid rgba(0, 255, 136, 0.4);
-  color: #00ff88;
+  color: var(--color-primary);
   font-size: 1rem;
   width: 34px;
   height: 34px;
@@ -149,10 +149,10 @@
 }
 
 .profile-close-btn:hover {
-  background: #00ff88;
+  background: var(--color-primary);
   color: black;
-  box-shadow: 0 0 12px #00ff88;
-  border-color: #00ff88;
+  box-shadow: 0 0 12px var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 /* SECTIONS */
@@ -181,7 +181,7 @@
   width: 100%;
   background: rgba(0, 255, 136, 0.05);
   border: 1px solid rgba(0, 255, 136, 0.35);
-  color: #00ff88;
+  color: var(--color-primary);
   padding: 0.6rem 0.9rem;
   font-family: "Orbitron", monospace;
   font-size: 0.78rem;
@@ -201,13 +201,13 @@
 }
 
 .profile-input:focus {
-  border-color: #00ff88;
+  border-color: var(--color-primary);
   background: rgba(0, 255, 136, 0.08);
   box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
 }
 
 .profile-input.input-error {
-  border-color: #ff4444;
+  border-color: var(--color-error-red);
   box-shadow: 0 0 8px rgba(255, 68, 68, 0.3);
 }
 
@@ -246,7 +246,7 @@
 }
 
 .profile-pw-toggle:hover {
-  color: #00ff88;
+  color: var(--color-primary);
 }
 
 /* PASSWORD STRENGTH BARS */
@@ -264,16 +264,16 @@
 }
 
 .profile-pw-strength-bar.weak {
-  background: #ff4444;
-  box-shadow: 0 0 4px #ff4444;
+  background: var(--color-error-red);
+  box-shadow: 0 0 4px var(--color-error-red);
 }
 .profile-pw-strength-bar.medium {
-  background: #ffaa00;
-  box-shadow: 0 0 4px #ffaa00;
+  background: var(--color-warning);
+  box-shadow: 0 0 4px var(--color-warning);
 }
 .profile-pw-strength-bar.strong {
-  background: #00ff88;
-  box-shadow: 0 0 4px #00ff88;
+  background: var(--color-primary);
+  box-shadow: 0 0 4px var(--color-primary);
 }
 
 /* Password hint text */
@@ -288,8 +288,8 @@
 /* BUTTONS – primary */
 .profile-btn {
   background: transparent;
-  border: 2px solid #00ff88;
-  color: #00ff88;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
   padding: 0.55rem 1.1rem;
   font-family: "Orbitron", monospace;
   font-size: 0.72rem;
@@ -305,10 +305,10 @@
 }
 
 .profile-btn:hover:not(:disabled) {
-  background: #00ff88;
+  background: var(--color-primary);
   color: black;
   box-shadow:
-    0 0 15px #00ff88,
+    0 0 15px var(--color-primary),
     0 0 30px rgba(0, 255, 136, 0.4);
 }
 
@@ -340,12 +340,12 @@
 }
 
 .profile-feedback.success {
-  color: #00ff88;
-  text-shadow: 0 0 6px #00ff88;
+  color: var(--color-primary);
+  text-shadow: 0 0 6px var(--color-primary);
 }
 
 .profile-feedback.error {
-  color: #ff4444;
+  color: var(--color-error-red);
   text-shadow: 0 0 6px rgba(255, 68, 68, 0.6);
 }
 
@@ -391,8 +391,8 @@
 /* DELETE BUTTON */
 .profile-btn-delete {
   background: transparent;
-  border: 2px solid #ff4444;
-  color: #ff4444;
+  border: 2px solid var(--color-error-red);
+  color: var(--color-error-red);
   padding: 0.55rem 1.1rem;
   font-family: "Orbitron", monospace;
   font-size: 0.72rem;
@@ -408,10 +408,10 @@
 }
 
 .profile-btn-delete:hover:not(:disabled) {
-  background: #ff4444;
+  background: var(--color-error-red);
   color: black;
   box-shadow:
-    0 0 15px #ff4444,
+    0 0 15px var(--color-error-red),
     0 0 30px rgba(255, 68, 68, 0.4);
   text-shadow: none;
 }
@@ -448,7 +448,7 @@
 
 .profile-confirm-text {
   font-size: 0.68rem;
-  color: #ff4444;
+  color: var(--color-error-red);
   letter-spacing: 1px;
   line-height: 1.75;
   margin-bottom: 1rem;
@@ -487,8 +487,8 @@
 }
 
 .profile-btn-cancel:hover {
-  border-color: #00ff88;
-  color: #00ff88;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
   background: rgba(0, 255, 136, 0.08);
 }
 

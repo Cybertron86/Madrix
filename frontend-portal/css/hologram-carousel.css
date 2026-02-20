@@ -4,11 +4,11 @@
 
 :root {
   /* Matrix Color Palette */
-  --holo-carousel-matrix-green: #00ff88;
+  --holo-carousel-matrix-green: var(--color-primary);
   --holo-carousel-matrix-green-dark: #00aa55;
   --holo-carousel-matrix-green-light: #88ffb8;
   --holo-carousel-error-red: #ff0055;
-  --holo-carousel-baby-blue: #00d4ff;
+  --holo-carousel-baby-blue: var(--color-ice-blue);
   --holo-carousel-neon-yellow: #ffff00;
   --holo-carousel-bg-dark: #0a0e0a;
   --holo-carousel-bg-darker: #050705;

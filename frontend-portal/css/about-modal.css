@@ -38,7 +38,7 @@
   max-height: 80vh;
 
   background: rgba(0, 0, 0, 1);
-  border: 2px solid #00ff88;
+  border: 2px solid var(--color-primary);
   box-shadow:
     0 0 30px rgba(0, 255, 136, 0.4),
     0 0 60px rgba(0, 255, 136, 0.2),
@@ -73,8 +73,8 @@
   height: 45px;
 
   background: transparent;
-  border: 2px solid #00ff88;
-  color: #00ff88;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
 
   font-family: "Orbitron", monospace;
   font-size: 2rem;
@@ -83,7 +83,7 @@
   cursor: pointer;
   z-index: 10;
 
-  text-shadow: 0 0 10px #00ff88;
+  text-shadow: 0 0 10px var(--color-primary);
   transition: all 0.3s ease;
 
   display: flex;
@@ -92,11 +92,11 @@
 }
 
 .about-modal-close:hover {
-  background: #00ff88;
+  background: var(--color-primary);
   color: black;
   box-shadow:
-    0 0 20px #00ff88,
-    0 0 40px #00ff88;
+    0 0 20px var(--color-primary),
+    0 0 40px var(--color-primary);
   transform: rotate(90deg);
   padding-bottom: 1.2vh;
 }
@@ -104,13 +104,13 @@
 .about-modal-title {
   font-family: "Orbitron", monospace;
   font-size: 2.5rem;
-  color: #00ff88;
+  color: var(--color-primary);
   text-align: center;
   margin: 0 0 2rem 0;
   letter-spacing: 4px;
   text-shadow:
-    0 0 10px #00ff88,
-    0 0 20px #00ff88;
+    0 0 10px var(--color-primary),
+    0 0 20px var(--color-primary);
 
   animation: glitchText 3s infinite;
 }
@@ -119,14 +119,14 @@
   0%,
   100% {
     text-shadow:
-      0 0 10px #00ff88,
-      0 0 20px #00ff88;
+      0 0 10px var(--color-primary),
+      0 0 20px var(--color-primary);
   }
   50% {
     text-shadow:
       -2px 0 10px #ff0088,
-      2px 0 10px #00ff88,
-      0 0 20px #00ff88;
+      2px 0 10px var(--color-error-pink),
+      0 0 20px var(--color-primary);
   }
 }
 
@@ -153,7 +153,7 @@
     rgba(0, 255, 136, 0.6),
     rgba(0, 255, 136, 0.3)
   );
-  border: 1px solid #00ff88;
+  border: 1px solid var(--color-primary);
   box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
 }
 
@@ -186,8 +186,8 @@
 }
 
 .about-modal-text strong {
-  color: #00ff88;
-  text-shadow: 0 0 8px #00ff88;
+  color: var(--color-primary);
+  text-shadow: 0 0 8px var(--color-primary);
 }
 
 /* Scanline Effect */
@@ -297,7 +297,7 @@
 /* Typewriter Cursor */
 .about-modal-text.typing::after {
   content: "▋";
-  color: #00ff88;
+  color: var(--color-primary);
   animation: blink 0.7s infinite;
   margin-left: 2px;
 }
@@ -333,9 +333,9 @@
   height: 50px;
 
   background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #00ff88;
+  border: 2px solid var(--color-primary);
   border-radius: 50%;
-  color: #00ff88;
+  color: var(--color-primary);
 
   font-size: 1.5rem;
   line-height: 1;
@@ -364,11 +364,11 @@
 }
 
 .about-scroll-bottom:hover {
-  background: #00ff88;
+  background: var(--color-primary);
   color: black;
   box-shadow:
-    0 0 25px #00ff88,
-    0 0 50px #00ff88;
+    0 0 25px var(--color-primary),
+    0 0 50px var(--color-primary);
   transform: translateX(-50%) scale(1.1);
 }
 

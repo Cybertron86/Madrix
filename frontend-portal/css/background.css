@@ -99,16 +99,16 @@ main {
 
 .falling-char {
   position: absolute;
-  font-family: "Orbitron", monospace;
+  font-family: var(--font-main);
   font-size: 1.5rem;
-  color: #00ff88;
+  color: var(--color-primary);
   pointer-events: none;
   animation: fallOutGlitch 1.4s ease-in forwards;
   text-shadow:
     -1px 0 red,
     1px 0 blue,
-    0 0 4px #00ff88,
-    0 0 8px #00ff88;
+    0 0 4px var(--color-primary),
+    0 0 8px var(--color-primary);
   z-index: 1001;
 }
 

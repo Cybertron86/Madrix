@@ -41,7 +41,7 @@
   margin-bottom: 13vh;
 
   background: rgba(0, 0, 0, 0.9);
-  border: 2px solid #00ff88;
+  border: 2px solid var(--color-primary);
   box-shadow:
     0 0 30px rgba(0, 255, 136, 0.4),
     0 0 60px rgba(0, 255, 136, 0.2),
@@ -78,8 +78,8 @@
   height: 45px;
 
   background: transparent;
-  border: 2px solid #00ff88;
-  color: #00ff88;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
 
   font-family: "Orbitron", monospace;
   font-size: 2rem;
@@ -88,7 +88,7 @@
   cursor: pointer;
   z-index: 10;
 
-  text-shadow: 0 0 10px #00ff88;
+  text-shadow: 0 0 10px var(--color-primary);
   transition: all 0.3s ease;
 
   display: flex;
@@ -97,12 +97,12 @@
 }
 
 .gallery-modal-close:hover {
-  background: #00ff88;
+  background: var(--color-primary);
   color: black;
   padding-bottom: 0.3rem;
   box-shadow:
-    0 0 20px #00ff88,
-    0 0 40px #00ff88;
+    0 0 20px var(--color-primary),
+    0 0 40px var(--color-primary);
   transform: rotate(90deg);
 }
 
@@ -110,13 +110,13 @@
 .gallery-modal-title {
   font-family: "Orbitron", monospace;
   font-size: 2.5rem;
-  color: #00ff88;
+  color: var(--color-primary);
   text-align: center;
   margin: 0 0 2rem 0;
   letter-spacing: 3px;
   text-shadow:
-    0 0 10px #00ff88,
-    0 0 20px #00ff88;
+    0 0 10px var(--color-primary),
+    0 0 20px var(--color-primary);
 
   animation: glitchText 3s infinite;
 }
@@ -125,14 +125,14 @@
   0%,
   100% {
     text-shadow:
-      0 0 10px #00ff88,
-      0 0 20px #00ff88;
+      0 0 10px var(--color-primary),
+      0 0 20px var(--color-primary);
   }
   50% {
     text-shadow:
       -2px 0 10px #ff0088,
-      2px 0 10px #00ff88,
-      0 0 20px #00ff88;
+      2px 0 10px var(--color-error-pink),
+      0 0 20px var(--color-primary);
   }
 }
 
@@ -160,7 +160,7 @@
     rgba(0, 255, 136, 0.6),
     rgba(0, 255, 136, 0.3)
   );
-  border: 1px solid #00ff88;
+  border: 1px solid var(--color-primary);
   box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
 }
 
@@ -191,7 +191,7 @@
   cursor: pointer;
   overflow: hidden;
 
-  border: 2px solid #00ff88;
+  border: 2px solid var(--color-primary);
   box-shadow:
     0 0 15px rgba(0, 255, 136, 0.3),
     inset 0 0 15px rgba(0, 255, 136, 0.1);
@@ -205,7 +205,7 @@
     0 0 30px rgba(0, 255, 136, 0.6),
     0 0 60px rgba(0, 255, 136, 0.3),
     inset 0 0 30px rgba(0, 255, 136, 0.2);
-  border-color: #00ff88;
+  border-color: var(--color-primary);
   z-index: 1;
 }
 
@@ -254,10 +254,10 @@
 .gallery-item-title {
   font-family: "Orbitron", monospace;
   font-size: 1.1rem;
-  color: #00ff88;
+  color: var(--color-primary);
   margin: 0 0 0.5rem 0;
   letter-spacing: 1px;
-  text-shadow: 0 0 8px #00ff88;
+  text-shadow: 0 0 8px var(--color-primary);
 }
 
 /* Project Date */
@@ -310,9 +310,9 @@
   padding: 4rem 2rem;
   font-family: "Orbitron", monospace;
   font-size: 1.5rem;
-  color: #00ff88;
+  color: var(--color-primary);
   letter-spacing: 2px;
-  text-shadow: 0 0 10px #00ff88;
+  text-shadow: 0 0 10px var(--color-primary);
   animation: pulse 1.5s ease infinite;
 }
 

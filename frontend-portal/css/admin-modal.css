@@ -30,7 +30,7 @@
 /* MODAL BOX */
 .admin-modal {
   background: rgba(0, 0, 0, 0.97);
-  border: 2px solid #00ff88;
+  border: 2px solid var(--color-primary);
   box-shadow:
     0 0 30px rgba(0, 255, 136, 0.35),
     0 0 80px rgba(0, 255, 136, 0.1),
@@ -46,7 +46,7 @@
   transition: transform 0.35s ease;
 
   font-family: "Orbitron", monospace;
-  color: #00ff88;
+  color: var(--color-primary);
 }
 
 .admin-overlay.open .admin-modal {
@@ -77,9 +77,9 @@
   left: -2px;
   width: 24px;
   height: 24px;
-  border-top: 3px solid #00ff88;
-  border-left: 3px solid #00ff88;
-  filter: drop-shadow(0 0 6px #00ff88);
+  border-top: 3px solid var(--color-primary);
+  border-left: 3px solid var(--color-primary);
+  filter: drop-shadow(0 0 6px var(--color-primary));
 }
 
 .admin-modal-corner-br {
@@ -88,9 +88,9 @@
   right: -2px;
   width: 24px;
   height: 24px;
-  border-bottom: 3px solid #00ff88;
-  border-right: 3px solid #00ff88;
-  filter: drop-shadow(0 0 6px #00ff88);
+  border-bottom: 3px solid var(--color-primary);
+  border-right: 3px solid var(--color-primary);
+  filter: drop-shadow(0 0 6px var(--color-primary));
   z-index: 2;
 }
 
@@ -115,7 +115,7 @@
   font-size: 1rem;
   letter-spacing: 3px;
   text-transform: uppercase;
-  text-shadow: 0 0 10px #00ff88;
+  text-shadow: 0 0 10px var(--color-primary);
   margin: 0;
   flex: 1;
   min-width: 0;
@@ -133,7 +133,7 @@
 .admin-close-btn {
   background: transparent;
   border: 1px solid rgba(0, 255, 136, 0.4);
-  color: #00ff88;
+  color: var(--color-primary);
   font-size: 1rem;
   width: 34px;
   height: 34px;
@@ -148,10 +148,10 @@
 }
 
 .admin-close-btn:hover {
-  background: #00ff88;
+  background: var(--color-primary);
   color: black;
-  box-shadow: 0 0 12px #00ff88;
-  border-color: #00ff88;
+  box-shadow: 0 0 12px var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 /* SECTIONS */
@@ -203,9 +203,9 @@
 }
 
 .admin-tab.active {
-  color: #00ff88;
-  border-bottom-color: #00ff88;
-  text-shadow: 0 0 8px #00ff88;
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  text-shadow: 0 0 8px var(--color-primary);
 }
 
 /* TAB PANELS */
@@ -273,7 +273,7 @@
 }
 
 .admin-role-badge.role-admin {
-  color: #ffaa00;
+  color: var(--color-warning);
   border-color: rgba(255, 170, 0, 0.4);
   text-shadow: 0 0 6px rgba(255, 170, 0, 0.5);
 }
@@ -287,7 +287,7 @@
 .admin-btn-delete {
   background: transparent;
   border: 1px solid rgba(255, 68, 68, 0.5);
-  color: #ff4444;
+  color: var(--color-error-red);
   padding: 0.3rem 0.6rem;
   font-family: "Orbitron", monospace;
   font-size: 0.58rem;
@@ -300,7 +300,7 @@
 }
 
 .admin-btn-delete:hover:not(:disabled) {
-  background: #ff4444;
+  background: var(--color-error-red);
   color: black;
   box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
   text-shadow: none;
@@ -328,8 +328,8 @@
 }
 
 .admin-btn-refresh:hover {
-  border-color: #00ff88;
-  color: #00ff88;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
   background: rgba(0, 255, 136, 0.08);
   box-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
 }
@@ -348,7 +348,7 @@
 }
 
 .admin-status-msg.error {
-  color: #ff4444;
+  color: var(--color-error-red);
 }
 
 @keyframes admin-blink {
