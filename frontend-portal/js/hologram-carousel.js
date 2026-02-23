@@ -1,700 +1,506 @@
-/**====================================================================================================================================
- * MATRIX HOLOGRAPHIC CAROUSEL 
- ====================================================================================================================================*/
-
-class HologramCarousel {
-  constructor(options = {}) {
-    // Configuration
-    this.config = {
-      // OPTION 1: Direct JSON file path (recommended if no PHP server)
-      dataUrl: options.dataUrl || "./carousel-data.json",
-
-      // OPTION 2: PHP API endpoint (use if you have PHP server running)
-      // dataUrl: options.dataUrl || "/backend/apiExample.php",
-
-      containerSelector: options.containerSelector || ".holo-carousel-wrapper",
-      autoPlayDelay: options.autoPlayDelay || 15000, // 15 seconds
-      autoPlayMinInterval: options.autoPlayMinInterval || 10000, // 10 seconds
-      autoPlayMaxInterval: options.autoPlayMaxInterval || 20000, // 20 seconds
-      glitchMinInterval: options.glitchMinInterval || 10000, // 10 seconds
-      glitchMaxInterval: options.glitchMaxInterval || 20000, // 20 seconds
-      glitchDuration: options.glitchDuration || 600, // 600ms
-      transitionDuration: options.transitionDuration || 600, // 600ms
-      ...options,
-    };
-
-    // State
-    this.items = [];
-    this.currentIndex = 0;
-    this.virtualIndex = 0; // Continuous index for smooth rotation math
-    this.isAnimating = false;
-    this.autoPlayTimeout = null;
-    this.glitchInterval = null;
-    this.touchStartX = 0;
-    this.touchEndX = 0;
-    this.touchStartY = 0;
-    this.touchEndY = 0;
-    this.touchStartTime = 0;
-    this.hasMoved = false;
-    this.isDragging = false;
-    this.dragStartX = 0;
-    this.dragDistance = 0;
-
-    // DOM elements
-    this.container = null;
-    this.sphere = null;
-    this.overlay = null;
-
-    // Initialize
-    this.init();
-  }
-
-  async init() {
-    try {
-      // Load data
-      await this.loadDataJsonProjects();
-
-      // Setup DOM
-      this.setupDOM();
-
-      // CREATE MATRIX EYE
-      const sphereContainer = this.container.querySelector(
-        ".holo-carousel-container",
-      );
-      if (sphereContainer && typeof UltimateMatrixEye !== "undefined") {
-        this.matrixEye = new UltimateMatrixEye(sphereContainer);
-      }
-
-      // Setup events
-      this.setupEvents();
-
-      // Start auto-play
-      this.startAutoPlay();
-
-      // Start glitch effects
-      this.startGlitchEffects();
-
-      console.log("✅ Hologram Carousel initialized successfully");
-      console.log(`📦 Loaded ${this.items.length} projects`);
-    } catch (error) {
-      console.error("❌ Failed to initialize Hologram Carousel:", error);
-    }
-  }
-
-  async loadDataJsonProjects() {
-    console.log("🔍 Trying to load from:", this.config.dataUrl);
-
-    try {
-      const response = await fetch(this.config.dataUrl, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      console.log("📡 Response status:", response.status);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log("📦 Received data:", result);
-
-      // Check if it's API format (with success property)
-      if (result.success && result.data) {
-        this.items = result.data;
-        console.log(`✅ Loaded ${this.items.length} projects from API`);
-      }
-      // Or direct array format (JSON file)
-      else if (Array.isArray(result)) {
-        this.items = result;
-        console.log(`✅ Loaded ${this.items.length} projects from JSON`);
-      } else {
-        throw new Error("Invalid data format");
-      }
-
-      // Validate data structure
-      if (this.items.length === 0) {
-        throw new Error("No projects found in data");
-      }
-    } catch (error) {
-      console.error("❌ Failed to load data:", error);
-      console.warn("⚠️ Using fallback data");
-      this.items = this.getFallbackData();
-    }
-  }
-
-  getFallbackData() {
-    return Array.from({ length: 7 }, (_, i) => ({
-      id: i + 1,
-      title: `Project ${i + 1}`,
-      description: "This is a placeholder project description.",
-      date: "2024-01-01",
-      githubUrl: "#",
-      mainImage: `https://picsum.photos/800/600?random=${i + 1}`,
-      additionalImages: [
-        `https://picsum.photos/800/600?random=${i + 1}1`,
-        `https://picsum.photos/800/600?random=${i + 1}2`,
-        `https://picsum.photos/800/600?random=${i + 1}3`,
-      ],
-    }));
-  }
-
-  setupDOM() {
-    this.container = document.querySelector(this.config.containerSelector);
-    if (!this.container) {
-      console.error("Container not found");
-      return;
-    }
-
-    // Create sphere container
-    const sphereContainer = document.createElement("div");
-    sphereContainer.className = "holo-carousel-container";
-    sphereContainer.setAttribute("role", "region");
-    sphereContainer.setAttribute("aria-label", "Holographic Project Carousel");
-
-    this.sphere = document.createElement("div");
-    this.sphere.className = "holo-carousel-sphere";
-    this.sphere.setAttribute("role", "list");
-
-    // Create carousel items
-    this.items.forEach((item, index) => {
-      const carouselItem = this.createCarouselItem(item, index);
-      this.sphere.appendChild(carouselItem);
-    });
-
-    sphereContainer.appendChild(this.sphere);
-    this.container.appendChild(sphereContainer);
-
-    // Create overlay
-    this.createOverlay();
-
-    // Position items
-    this.updatePositions();
-  }
-
-  createCarouselItem(item, index) {
-    const itemDiv = document.createElement("div");
-    itemDiv.className = "holo-carousel-item";
-    itemDiv.dataset.index = index;
-    itemDiv.setAttribute("role", "listitem");
-    itemDiv.setAttribute("tabindex", "0");
-    itemDiv.setAttribute("aria-label", `Project: ${item.title}`);
-
-    const inner = document.createElement("div");
-    inner.className = "holo-carousel-item-inner";
-
-    // Image wrapper
-    const imageWrapper = document.createElement("div");
-    imageWrapper.className = "holo-carousel-image-wrapper";
-
-    const img = document.createElement("img");
-    img.src = item.mainImage;
-    img.alt = item.title;
-    img.className = "holo-carousel-image";
-    img.draggable = false;
-
-    imageWrapper.appendChild(img);
-    inner.appendChild(imageWrapper);
-
-    // Reflection
-    const reflection = document.createElement("div");
-    reflection.className = "holo-carousel-reflection";
-
-    const reflectionImg = document.createElement("img");
-    reflectionImg.src = item.mainImage;
-    reflectionImg.alt = `${item.title} reflection`;
-    reflectionImg.className = "holo-carousel-reflection-image";
-    reflectionImg.draggable = false;
-
-    reflection.appendChild(reflectionImg);
-    inner.appendChild(reflection);
-
-    itemDiv.appendChild(inner);
-
-    return itemDiv;
-  }
-
-  createOverlay() {
-    this.overlay = document.createElement("div");
-    this.overlay.className = "holo-carousel-overlay";
-    this.overlay.setAttribute("role", "dialog");
-    this.overlay.setAttribute("aria-modal", "true");
-    this.overlay.setAttribute("aria-labelledby", "carousel-overlay-title");
-
-    const content = document.createElement("div");
-    content.className = "holo-carousel-content";
-
-    const closeBtn = document.createElement("button");
-    closeBtn.className = "holo-carousel-close";
-    closeBtn.textContent = "×";
-    closeBtn.setAttribute("aria-label", "Close Project Details Modal");
-
-    closeBtn.style.lineHeight = "40px";
-
-    const contentInner = document.createElement("div");
-    contentInner.className = "holo-carousel-content-inner";
-
-    content.appendChild(closeBtn);
-    content.appendChild(contentInner);
-    this.overlay.appendChild(content);
-    document.body.appendChild(this.overlay);
-
-    // Close button event
-    closeBtn.addEventListener("click", () => this.closeOverlay());
-
-    // Click outside to close
-    this.overlay.addEventListener("click", (e) => {
-      if (e.target === this.overlay) {
-        this.closeOverlay();
-      }
-    });
-  }
-
-  setupEvents() {
-    const allItems = this.sphere.querySelectorAll(".holo-carousel-item");
-
-    allItems.forEach((item, index) => {
-      item.addEventListener("click", (e) => {
-        if (!this.isDragging && index === this.currentIndex) {
-          this.openOverlay(index);
-        }
-      });
-      
-      item.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          if (!this.isDragging && index === this.currentIndex) {
-            this.openOverlay(index);
-          } else {
-            this.goTo(index);
-          }
-        }
-      });
-    });
-
-    // Touch events (mobile)
-    this.container.addEventListener(
-      "touchstart",
-      (e) => this.handleTouchStart(e),
-      { passive: true },
-    );
-    this.container.addEventListener(
-      "touchmove",
-      (e) => this.handleTouchMove(e),
-      { passive: true },
-    );
-    this.container.addEventListener("touchend", (e) => this.handleTouchEnd(e), {
-      passive: true,
-    });
-
-    // Mouse events (desktop)
-    this.container.addEventListener("mousedown", (e) =>
-      this.handleMouseDown(e),
-    );
-    this.container.addEventListener("mousemove", (e) =>
-      this.handleMouseMove(e),
-    );
-    this.container.addEventListener("mouseup", (e) => this.handleMouseUp(e));
-    this.container.addEventListener("mouseleave", (e) => this.handleMouseUp(e));
-
-    // Hover pause for auto-play (desktop)
-    this.container.addEventListener("mouseenter", () => this.pauseAutoPlay());
-    this.container.addEventListener("mouseleave", () => this.resumeAutoPlay());
-
-    // Keyboard navigation
-    document.addEventListener("keydown", (e) => {
-      if (this.overlay.classList.contains("holo-carousel-active")) {
-        if (e.key === "Escape") {
-          this.closeOverlay();
-        }
-      } else {
-        if (e.key === "ArrowLeft") {
-          this.prev();
-        } else if (e.key === "ArrowRight") {
-          this.next();
-        }
-      }
-    });
-  }
-
-  // Touch handlers
-  handleTouchStart(e) {
-    this.touchStartX = e.touches[0].clientX;
-    this.touchStartY = e.touches[0].clientY;
-    this.touchStartTime = Date.now();
-    this.hasMoved = false;
-    this.pauseAutoPlay();
-  }
-
-  handleTouchMove(e) {
-    this.hasMoved = true;
-  }
-
-  handleTouchEnd(e) {
-    if (!this.hasMoved) {
-      this.resumeAutoPlay();
-      return;
-    }
-
-    this.touchEndX = e.changedTouches[0].clientX;
-    this.touchEndY = e.changedTouches[0].clientY;
-
-    const deltaX = this.touchEndX - this.touchStartX;
-    const deltaY = this.touchEndY - this.touchStartY;
-    const deltaTime = Date.now() - this.touchStartTime;
-
-    // Check if horizontal swipe
-    if (
-      Math.abs(deltaX) > Math.abs(deltaY) &&
-      Math.abs(deltaX) > 50 &&
-      deltaTime < 500
-    ) {
-      if (deltaX > 0) {
-        this.prev();
-      } else {
-        this.next();
-      }
-    }
-
-    this.resumeAutoPlay();
-  }
-
-  // Mouse handlers
-  handleMouseDown(e) {
-    this.isDragging = false;
-    this.dragStartX = e.clientX;
-    this.pauseAutoPlay();
-  }
-
-  handleMouseMove(e) {
-    if (this.dragStartX !== 0) {
-      const distance = Math.abs(e.clientX - this.dragStartX);
-      if (distance > 5) {
-        this.isDragging = true;
-      }
-    }
-  }
-
-  handleMouseUp(e) {
-    if (this.isDragging) {
-      const deltaX = e.clientX - this.dragStartX;
-
-      if (Math.abs(deltaX) > 100) {
-        if (deltaX > 0) {
-          this.prev();
-        } else {
-          this.next();
-        }
-      }
-    }
-
-    this.isDragging = false;
-    this.dragStartX = 0;
-    this.resumeAutoPlay();
-  }
-
-  navigate(direction) {
-    if (this.isAnimating) return;
-
-    this.isAnimating = true;
-
-    // Update continuous virtual index (maintains direction logic of original)
-    this.virtualIndex -= direction;
-    
-    // Derived current index for logic (modulo stays internal)
-    const totalItems = this.items.length;
-    this.currentIndex = ((this.currentIndex - direction + totalItems) % totalItems);
-
-    // Add transition class
-    this.sphere.classList.add("holo-carousel-transitioning");
-
-    this.updatePositions();
-
-    setTimeout(() => {
-      this.sphere.classList.remove("holo-carousel-transitioning");
+/**
+ * hologram-carousel.js
+ * 
+ * Implements a high-end 3D "Holographic" carousel.
+ * Features spherical item positioning, momentum-based rotation, 
+ * randomized visual glitches, and integration with the UltimateMatrixEye.
+ */
+(function() {
+  "use strict";
+
+  // ====================================================================================================================================
+  //  HOLOGRAM CAROUSEL CLASS
+  // ====================================================================================================================================
+
+  class HologramCarousel {
+    /**
+     * @param {Object} options - Configuration overrides.
+     */
+    constructor(options = {}) {
+      // 1. Configuration Constants
+      this.config = {
+        dataUrl: options.dataUrl || "./carousel-data.json",
+        containerSelector: options.containerSelector || ".holo-carousel-wrapper",
+        autoPlayDelay: options.autoPlayDelay || 15000,
+        autoPlayMinInterval: options.autoPlayMinInterval || 10000,
+        autoPlayMaxInterval: options.autoPlayMaxInterval || 20000,
+        glitchMinInterval: options.glitchMinInterval || 10000,
+        glitchMaxInterval: options.glitchMaxInterval || 20000,
+        glitchDuration: options.glitchDuration || 600,
+        transitionDuration: options.transitionDuration || 600,
+        ...options,
+      };
+
+      // 2. Engine State
+      this.items = [];
+      this.currentIndex = 0;
+      this.virtualIndex = 0; // Continuous index to prevent "rotation resets"
       this.isAnimating = false;
-    }, this.config.transitionDuration);
-
-    // Reset auto-play timer
-    this.resetAutoPlay();
-  }
-
-  updatePositions() {
-    const items = this.sphere.querySelectorAll(".holo-carousel-item");
-    const totalItems = items.length;
-    const angleStep = (2 * Math.PI) / totalItems;
-    const radius = 600; // Distance from center
-
-    items.forEach((item, index) => {
-      // Calculate 3D position based on continuous virtual index
-      const angle = (index - (this.virtualIndex % totalItems) + totalItems) % totalItems * angleStep;
-      
-      // But we need the rotation itself to be continuous to avoid the flip
-      // We use a base rotation that follows the virtual index
-      const relativeIndex = (index - this.currentIndex + totalItems) % totalItems;
-      
-      // To fix the flip: we need the angle used in transform to be continuous
-      // We'll use the virtualIndex to offset the item positions
-      const continuousAngle = (index - this.virtualIndex) * angleStep;
-
-      const x = Math.sin(continuousAngle) * radius;
-      const z = Math.cos(continuousAngle) * radius - radius;
-      const y = 0;
-
-      // Continuous rotation value
-      const rotationY = (continuousAngle * 180) / Math.PI;
-
-      // RESTORE ORIGINAL STYLE LOGIC
-      let opacity = 1;
-      let scale = 1;
-
-      if (relativeIndex === 0) {
-        // Center item
-        item.classList.add("holo-carousel-center");
-        opacity = 1;
-        scale = 1.1;
-      } else {
-        item.classList.remove("holo-carousel-center");
-        const distance = Math.abs(relativeIndex - totalItems / 2);
-        opacity = Math.max(0.3, 1 - distance * 0.15);
-        scale = Math.max(0.7, 1 - distance * 0.1);
-      }
-
-      // Apply transforms
-      item.style.transform = `
-        translate(-50%, -50%)
-        translate3d(${x}px, ${y}px, ${z}px)
-        rotateY(${rotationY}deg)
-        scale(${scale})
-      `;
-      item.style.opacity = opacity;
-      item.style.zIndex = Math.round(1000 - Math.abs(z));
-    });
-  }
-
-  // Auto-play functionality
-  startAutoPlay() {
-    this.resetAutoPlay();
-  }
-
-  resetAutoPlay() {
-    this.pauseAutoPlay();
-
-    const randomDelay = this.getRandomInt(
-      this.config.autoPlayMinInterval,
-      this.config.autoPlayMaxInterval,
-    );
-
-    this.autoPlayTimeout = setTimeout(() => {
-      this.autoNavigate();
-    }, randomDelay);
-  }
-
-  autoNavigate() {
-    // Always move forward by 1 for consistent order
-    this.navigate(1);
-  }
-
-  pauseAutoPlay() {
-    if (this.autoPlayTimeout) {
-      clearTimeout(this.autoPlayTimeout);
       this.autoPlayTimeout = null;
+      this.glitchInterval = null;
+      
+      // Interaction State
+      this.touchStartX = 0;
+      this.touchStartY = 0;
+      this.isDragging = false;
+      this.dragStartX = 0;
+      this.dragDistance = 0;
+
+      // 3. Component References
+      this.container = null;
+      this.sphere = null;
+      this.overlay = null;
+      this.matrixEye = null;
+
+      this.init();
     }
-  }
 
-  resumeAutoPlay() {
-    this.resetAutoPlay();
-  }
+    /**
+     * Bootstrap sequence: Load data -> Build DOM -> Attach Events.
+     */
+    async init() {
+      try {
+        await this.loadProjectData();
+        this.setupDOM();
 
-  // Glitch effects
-  startGlitchEffects() {
-    const triggerGlitch = () => {
-      this.applyRandomGlitch();
+        // Initialize internal Matrix Eye sub-component
+        const sphereContainer = this.container.querySelector(".holo-carousel-container");
+        if (sphereContainer && typeof UltimateMatrixEye !== "undefined") {
+          this.matrixEye = new UltimateMatrixEye(sphereContainer);
+        }
 
-      const nextDelay = this.getRandomInt(
-        this.config.glitchMinInterval,
-        this.config.glitchMaxInterval,
-      );
+        this.setupEvents();
+        this.startAutoPlay();
+        this.startGlitchEffects();
 
-      setTimeout(triggerGlitch, nextDelay);
-    };
-
-    const initialDelay = this.getRandomInt(5000, 10000);
-    setTimeout(triggerGlitch, initialDelay);
-  }
-
-  applyRandomGlitch() {
-    const items = this.sphere.querySelectorAll(".holo-carousel-item");
-    const glitchTypes = [
-      "rgb-split",
-      "scanline",
-      "pixelate",
-      "brightness",
-      "combined",
-    ];
-
-    const randomType =
-      glitchTypes[Math.floor(Math.random() * glitchTypes.length)];
-
-    items.forEach((item) => {
-      const imageWrapper = item.querySelector(".holo-carousel-image-wrapper");
-      const image = item.querySelector(".holo-carousel-image");
-
-      // Remove all glitch classes
-      item.classList.remove("holo-carousel-glitch-active");
-      imageWrapper.classList.remove("holo-carousel-glitch-rgb-split");
-      image.classList.remove(
-        "holo-carousel-pixelate",
-        "holo-carousel-brightness-glitch",
-      );
-
-      // Apply random glitch
-      switch (randomType) {
-        case "rgb-split":
-          imageWrapper.classList.add("holo-carousel-glitch-rgb-split");
-          break;
-        case "scanline":
-          item.classList.add("holo-carousel-glitch-active");
-          break;
-        case "pixelate":
-          image.classList.add("holo-carousel-pixelate");
-          break;
-        case "brightness":
-          image.classList.add("holo-carousel-brightness-glitch");
-          break;
-        case "combined":
-          item.classList.add("holo-carousel-glitch-active");
-          imageWrapper.classList.add("holo-carousel-glitch-rgb-split");
-          if (Math.random() > 0.5) {
-            image.classList.add("holo-carousel-pixelate");
-          }
-          break;
+        console.log(`✅ Hologram Carousel initialized with ${this.items.length} projects`);
+      } catch (error) {
+        console.error("❌ Carousel initialization failed:", error);
       }
-    });
-
-    // Remove glitch after duration
-    setTimeout(() => {
-      items.forEach((item) => {
-        const imageWrapper = item.querySelector(".holo-carousel-image-wrapper");
-        const image = item.querySelector(".holo-carousel-image");
-
-        item.classList.remove("holo-carousel-glitch-active");
-        imageWrapper.classList.remove("holo-carousel-glitch-rgb-split");
-        image.classList.remove(
-          "holo-carousel-pixelate",
-          "holo-carousel-brightness-glitch",
-        );
-      });
-    }, this.config.glitchDuration);
-  }
-
-  // Overlay methods
-  openOverlay(index) {
-    const item = this.items[index];
-    const contentInner = this.overlay.querySelector(
-      ".holo-carousel-content-inner",
-    );
-
-    // Build content HTML
-    let html = `
-      <h2 class="holo-carousel-content-title" id="carousel-overlay-title">${this.escapeHtml(item.title)}</h2>
-      <span class="holo-carousel-content-date">DATE: ${this.escapeHtml(item.date)}</span>
-      <p class="holo-carousel-content-description">${this.escapeHtml(item.description)}</p>
-      <a href="${this.escapeHtml(item.githubUrl)}" target="_blank" rel="noopener noreferrer" class="holo-carousel-content-github">
-        &gt; VIEW ON GITHUB &lt;
-      </a>
-    `;
-
-    if (item.additionalImages && item.additionalImages.length > 0) {
-      html += '<div class="holo-carousel-content-images">';
-      item.additionalImages.forEach((imgUrl) => {
-        html += `<img src="${this.escapeHtml(imgUrl)}" alt="Project screenshot" class="holo-carousel-content-image">`;
-      });
-      html += "</div>";
     }
 
-    contentInner.innerHTML = html;
+    // ====================================================================================================================================
+    //  DATA FETCHING
+    // ====================================================================================================================================
 
-    // Show overlay with glitch animation
-    this.overlay.classList.add("holo-carousel-active");
-    this.applyOverlayGlitch();
+    /**
+     * Fetches project metadata from the defined JSON/API source.
+     */
+    async loadProjectData() {
+      try {
+        const response = await fetch(this.config.dataUrl);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-    // Pause auto-play
-    this.pauseAutoPlay();
-  }
+        const result = await response.json();
+        
+        // Support both API response wrappers and direct arrays
+        if (result.success && result.data) {
+          this.items = result.data;
+        } else if (Array.isArray(result)) {
+          this.items = result;
+        } else {
+          throw new Error("Invalid format");
+        }
 
-  closeOverlay() {
-    this.overlay.classList.remove("holo-carousel-active");
+        if (this.items.length === 0) throw new Error("Empty project list");
+      } catch (error) {
+        console.warn("⚠️ Data fetch failed. Falling back to internal mock data.");
+        this.items = this.getFallbackData();
+      }
+    }
 
-    // Resume auto-play after short delay
-    setTimeout(() => {
+    /**
+     * Provides mock data if the JSON source is unavailable.
+     */
+    getFallbackData() {
+      return Array.from({ length: 7 }, (_, i) => ({
+        id: i + 1,
+        title: `Project ${i + 1}`,
+        description: "Secure data node containing encrypted project blueprints.",
+        date: "2024.01.01",
+        githubUrl: "#",
+        mainImage: `https://picsum.photos/800/600?random=${i + 1}`,
+        additionalImages: [
+          `https://picsum.photos/800/600?random=${i + 1}1`,
+          `https://picsum.photos/800/600?random=${i + 1}2`,
+        ],
+      }));
+    }
+
+    // ====================================================================================================================================
+    //  DOM CONSTRUCTION
+    // ====================================================================================================================================
+
+    /**
+     * Creates and mounts the carousel structural elements.
+     */
+    setupDOM() {
+      this.container = document.querySelector(this.config.containerSelector);
+      if (!this.container) return;
+
+      // 1. Sphere Surface
+      const sphereContainer = document.createElement("div");
+      sphereContainer.className = "holo-carousel-container";
+      sphereContainer.setAttribute("role", "region");
+      sphereContainer.setAttribute("aria-label", "Holographic Project Carousel");
+
+      this.sphere = document.createElement("div");
+      this.sphere.className = "holo-carousel-sphere";
+      this.sphere.setAttribute("role", "list");
+
+      // 2. Project Items
+      this.items.forEach((item, index) => {
+        const carouselItem = this.createCarouselItem(item, index);
+        this.sphere.appendChild(carouselItem);
+      });
+
+      sphereContainer.appendChild(this.sphere);
+      this.container.appendChild(sphereContainer);
+
+      // 3. Modal Overlay
+      this.createOverlay();
+
+      // 4. Initial Layout Calculation
+      this.updatePositions();
+    }
+
+    /**
+     * Builds an individual carousel card with its reflection.
+     */
+    createCarouselItem(item, index) {
+      const itemDiv = document.createElement("div");
+      itemDiv.className = "holo-carousel-item";
+      itemDiv.dataset.index = index;
+      itemDiv.setAttribute("role", "listitem");
+      itemDiv.setAttribute("tabindex", "0");
+      itemDiv.setAttribute("aria-label", `Project: ${item.title}`);
+
+      const inner = document.createElement("div");
+      inner.className = "holo-carousel-item-inner";
+
+      // Main Glitch Layer
+      const imageWrapper = document.createElement("div");
+      imageWrapper.className = "holo-carousel-image-wrapper";
+
+      const img = document.createElement("img");
+      img.src = item.mainImage;
+      img.className = "holo-carousel-image";
+      img.draggable = false;
+
+      imageWrapper.appendChild(img);
+      inner.appendChild(imageWrapper);
+
+      // Reflection Layer
+      const reflection = document.createElement("div");
+      reflection.className = "holo-carousel-reflection";
+      const reflectionImg = img.cloneNode();
+      reflectionImg.className = "holo-carousel-reflection-image";
+      reflection.appendChild(reflectionImg);
+      
+      inner.appendChild(reflection);
+      itemDiv.appendChild(inner);
+
+      return itemDiv;
+    }
+
+    /**
+     * Builds the detail modal (Details view).
+     */
+    createOverlay() {
+      this.overlay = document.createElement("div");
+      this.overlay.className = "holo-carousel-overlay";
+      this.overlay.setAttribute("role", "dialog");
+      this.overlay.setAttribute("aria-modal", "true");
+
+      const content = document.createElement("div");
+      content.className = "holo-carousel-content";
+
+      const closeBtn = document.createElement("button");
+      closeBtn.className = "holo-carousel-close";
+      closeBtn.innerHTML = "&times;";
+      closeBtn.setAttribute("aria-label", "Close");
+
+      const contentInner = document.createElement("div");
+      contentInner.className = "holo-carousel-content-inner";
+
+      content.appendChild(closeBtn);
+      content.appendChild(contentInner);
+      this.overlay.appendChild(content);
+      document.body.appendChild(this.overlay);
+
+      // Bind basic local events
+      closeBtn.addEventListener("click", () => this.closeOverlay());
+      this.overlay.addEventListener("click", (e) => {
+        if (e.target === this.overlay) this.closeOverlay();
+      });
+    }
+
+    // ====================================================================================================================================
+    //  EVENT HANDLING
+    // ====================================================================================================================================
+
+    /**
+     * Attaches mouse, touch, and keyboard listeners to the carousel.
+     */
+    setupEvents() {
+      const allItems = this.sphere.querySelectorAll(".holo-carousel-item");
+
+      // Card Clicks
+      allItems.forEach((item, index) => {
+        item.addEventListener("click", () => {
+          if (!this.isDragging) {
+            if (index === this.currentIndex) this.openOverlay(index);
+            else this.goTo(index);
+          }
+        });
+      });
+
+      // Drag/Touch Handlers
+      this.container.addEventListener("mousedown", (e) => this.handleMouseDown(e));
+      this.container.addEventListener("mousemove", (e) => this.handleMouseMove(e));
+      window.addEventListener("mouseup", (e) => this.handleMouseUp(e));
+
+      this.container.addEventListener("touchstart", (e) => this.handleTouchStart(e), { passive: true });
+      this.container.addEventListener("touchend", (e) => this.handleTouchEnd(e), { passive: true });
+
+      // Keyboard & Pause
+      this.container.addEventListener("mouseenter", () => this.pauseAutoPlay());
+      this.container.addEventListener("mouseleave", () => this.resumeAutoPlay());
+      
+      document.addEventListener("keydown", (e) => this.handleKeydown(e));
+    }
+
+    /** @param {KeyboardEvent} e */
+    handleKeydown(e) {
+      if (this.overlay.classList.contains("holo-carousel-active")) {
+        if (e.key === "Escape") this.closeOverlay();
+      } else {
+        if (e.key === "ArrowLeft") this.prev();
+        if (e.key === "ArrowRight") this.next();
+      }
+    }
+
+    // Core Interaction Primitives (MouseDown/Move/Up, TouchStart/End)
+    handleMouseDown(e) { this.isDragging = false; this.dragStartX = e.clientX; this.pauseAutoPlay(); }
+    handleMouseMove(e) { if (this.dragStartX !== 0 && Math.abs(e.clientX - this.dragStartX) > 10) this.isDragging = true; }
+    handleMouseUp(e) { 
+      if (this.isDragging) {
+        const delta = e.clientX - this.dragStartX;
+        if (Math.abs(delta) > 50) delta > 0 ? this.prev() : this.next();
+      }
+      this.dragStartX = 0; this.resumeAutoPlay(); 
+    }
+    handleTouchStart(e) { this.touchStartX = e.touches[0].clientX; this.pauseAutoPlay(); }
+    handleTouchEnd(e) {
+      const delta = e.changedTouches[0].clientX - this.touchStartX;
+      if (Math.abs(delta) > 40) delta > 0 ? this.prev() : this.next();
       this.resumeAutoPlay();
-    }, 1000);
-  }
-
-  applyOverlayGlitch() {
-    const content = this.overlay.querySelector(".holo-carousel-content");
-    const title = this.overlay.querySelector(".holo-carousel-content-title");
-
-    // Apply glitch class
-    content.style.animation = "holo-carousel-glitch-rgb 0.3s ease";
-
-    setTimeout(() => {
-      content.style.animation = "";
-    }, 300);
-  }
-
-  // Utility methods
-  getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  escapeHtml(text) {
-    const map = {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;",
-    };
-    return text.replace(/[&<>"']/g, (m) => map[m]);
-  }
-
-  // Public API for integration
-  destroy() {
-    this.pauseAutoPlay();
-    if (this.overlay && this.overlay.parentNode) {
-      this.overlay.parentNode.removeChild(this.overlay);
     }
-    if (this.container) {
-      this.container.innerHTML = "";
+
+    // ====================================================================================================================================
+    //  ROTATION & POSITIONING ENGINE
+    // ====================================================================================================================================
+
+    /**
+     * Rotates the sphere in the specified direction.
+     * 
+     * @param {-1|1} direction - Rotation direction.
+     */
+    navigate(direction) {
+      if (this.isAnimating) return;
+      this.isAnimating = true;
+
+      // Increment virtual index for continuous CSS rotation (prevents 359->0 snap)
+      this.virtualIndex -= direction;
+      
+      const total = this.items.length;
+      this.currentIndex = ((this.currentIndex - direction + total) % total);
+
+      this.sphere.classList.add("holo-carousel-transitioning");
+      this.updatePositions();
+
+      setTimeout(() => {
+        this.sphere.classList.remove("holo-carousel-transitioning");
+        this.isAnimating = false;
+      }, this.config.transitionDuration);
+
+      this.resetAutoPlay();
+    }
+
+    /**
+     * Calculates and applies 3D transforms for all items on the spherical surface.
+     */
+    updatePositions() {
+      const items = this.sphere.querySelectorAll(".holo-carousel-item");
+      const total = items.length;
+      const angleStep = (2 * Math.PI) / total;
+      const radius = 600; // Layout distance
+
+      items.forEach((item, index) => {
+        // Use continuous virtual angle for smooth infinite rotation
+        const continuousAngle = (index - this.virtualIndex) * angleStep;
+        
+        const x = Math.sin(continuousAngle) * radius;
+        const z = Math.cos(continuousAngle) * radius - radius;
+        const rotationY = (continuousAngle * 180) / Math.PI;
+
+        // Visual Hierarchy: Fade and scale items based on proximity to center
+        const relativeIndex = (index - this.currentIndex + total) % total;
+        let opacity = 1;
+        let scale = 1;
+
+        if (relativeIndex === 0) {
+          item.classList.add("holo-carousel-center");
+          scale = 1.1;
+        } else {
+          item.classList.remove("holo-carousel-center");
+          const dist = Math.abs(relativeIndex > total / 2 ? total - relativeIndex : relativeIndex);
+          opacity = Math.max(0.3, 1 - dist * 0.25);
+          scale = Math.max(0.7, 1 - dist * 0.15);
+        }
+
+        item.style.transform = `translate(-50%, -50%) translate3d(${x}px, 0, ${z}px) rotateY(${rotationY}deg) scale(${scale})`;
+        item.style.opacity = opacity;
+        item.style.zIndex = Math.round(1000 - Math.abs(z));
+      });
+    }
+
+    // ====================================================================================================================================
+    //  AUTO-PLAY & VISUAL EFFECTS
+    // ====================================================================================================================================
+
+    startAutoPlay() { this.resetAutoPlay(); }
+
+    resetAutoPlay() {
+      this.pauseAutoPlay();
+      const delay = this.getRandomInt(this.config.autoPlayMinInterval, this.config.autoPlayMaxInterval);
+      this.autoPlayTimeout = setTimeout(() => this.navigate(1), delay);
+    }
+
+    pauseAutoPlay() { clearTimeout(this.autoPlayTimeout); this.autoPlayTimeout = null; }
+    resumeAutoPlay() { if (!this.overlay.classList.contains("holo-carousel-active")) this.resetAutoPlay(); }
+
+    /**
+     * Procedural glitch loop. Targets item textures randomly.
+     */
+    startGlitchEffects() {
+      const trigger = () => {
+        this.applyRandomGlitch();
+        setTimeout(trigger, this.getRandomInt(this.config.glitchMinInterval, this.config.glitchMaxInterval));
+      };
+      setTimeout(trigger, 5000);
+    }
+
+    applyRandomGlitch() {
+      const items = this.sphere.querySelectorAll(".holo-carousel-item");
+      const type = ["rgb-split", "scanline", "pixelate", "brightness"][Math.floor(Math.random() * 4)];
+
+      items.forEach(item => {
+        const wrapper = item.querySelector(".holo-carousel-image-wrapper");
+        const img = item.querySelector(".holo-carousel-image");
+
+        // Apply class based on randomized selection
+        if (type === "rgb-split") wrapper.classList.add("holo-carousel-glitch-rgb-split");
+        if (type === "scanline") item.classList.add("holo-carousel-glitch-active");
+        if (type === "pixelate") img.classList.add("holo-carousel-pixelate");
+        if (type === "brightness") img.classList.add("holo-carousel-brightness-glitch");
+
+        // Flash timeout
+        setTimeout(() => {
+          wrapper.classList.remove("holo-carousel-glitch-rgb-split");
+          item.classList.remove("holo-carousel-glitch-active");
+          img.classList.remove("holo-carousel-pixelate", "holo-carousel-brightness-glitch");
+        }, this.config.glitchDuration);
+      });
+    }
+
+    // ====================================================================================================================================
+    //  OVERLAY & DETAILS VIEW
+    // ====================================================================================================================================
+
+    /**
+     * Opens the detail view for a specific project.
+     * 
+     * @param {number} index - Index in the this.items array.
+     */
+    openOverlay(index) {
+      const item = this.items[index];
+      const contentInner = this.overlay.querySelector(".holo-carousel-content-inner");
+
+      // Render content with basic protection
+      let html = `
+        <h2 class="holo-carousel-content-title" id="carousel-overlay-title">${this.escapeHtml(item.title)}</h2>
+        <span class="holo-carousel-content-date">ACCESS_DATE: ${this.escapeHtml(item.date)}</span>
+        <p class="holo-carousel-content-description">${this.escapeHtml(item.description)}</p>
+        <a href="${this.escapeHtml(item.githubUrl)}" target="_blank" class="holo-carousel-content-github">
+          &gt; Github Link &lt;
+        </a>
+      `;
+
+      if (item.additionalImages?.length) {
+        html += '<div class="holo-carousel-content-images">';
+        item.additionalImages.forEach(src => {
+          html += `<img src="${this.escapeHtml(src)}" alt="System Snap" class="holo-carousel-content-image">`;
+        });
+        html += "</div>";
+      }
+
+      contentInner.innerHTML = html;
+      this.overlay.classList.add("holo-carousel-active");
+      
+      // Flash entry effect
+      const content = this.overlay.querySelector(".holo-carousel-content");
+      content.style.animation = "holo-carousel-glitch-rgb 0.3s ease";
+      setTimeout(() => content.style.animation = "", 300);
+
+      this.pauseAutoPlay();
+    }
+
+    closeOverlay() {
+      this.overlay.classList.remove("holo-carousel-active");
+      this.resumeAutoPlay();
+    }
+
+    // ====================================================================================================================================
+    //  UTILITIES
+    // ====================================================================================================================================
+
+    getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+    escapeHtml(text) {
+      const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" };
+      return text.toString().replace(/[&<>"']/g, m => map[m]);
+    }
+
+    goTo(index) { if (index >= 0 && index < this.items.length) this.navigate(index - this.currentIndex); }
+    next() { this.navigate(-1); }
+    prev() { this.navigate(1); }
+
+    /**
+     * Destruction logic for clean module swapping.
+     */
+    destroy() {
+      this.pauseAutoPlay();
+      if (this.overlay?.parentNode) this.overlay.parentNode.removeChild(this.overlay);
+      if (this.container) this.container.innerHTML = "";
     }
   }
 
-  goTo(index) {
-    if (index >= 0 && index < this.items.length) {
-      const direction = index - this.currentIndex;
-      this.navigate(direction);
+  // ====================================================================================================================================
+  //  GLOBAL INITIALIZATION
+  // ====================================================================================================================================
+
+  /**
+   * Main factory function to initialize the carousel on the portal page.
+   */
+  function initHologramCarousel() {
+    if (document.querySelector(".holo-carousel-wrapper")) {
+      window.hologramCarousel = new HologramCarousel({
+        dataUrl: "../resources/jsons/carousel-data.json",
+      });
     }
   }
 
-  next() {
-    this.navigate(-1);
-  }
+  window.initHologramCarousel = initHologramCarousel;
 
-  prev() {
-    this.navigate(1);
-  }
-}
-
-function initHologramCarousel() {
-  if (document.querySelector(".holo-carousel-wrapper")) {
-    window.hologramCarousel = new HologramCarousel({
-      dataUrl: "../resources/jsons/carousel-data.json",
-    });
-  }
-}
-
-window.initHologramCarousel = initHologramCarousel;
+})();

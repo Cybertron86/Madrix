@@ -1,8 +1,19 @@
-/*====================================================================================================================================
-     ULTIMATE MATRIX EYE for HOLO CAROUSEL
-   ====================================================================================================================================*/
+/**
+ * matrix-eye-ultimate.js
+ * 
+ * Defines the UltimateMatrixEye class - a complex, multi-layered visual component
+ * featured in the Holo Carousel. Combines CSS animations, dynamic Matrix rain,
+ * and procedural "looking around" behaviors to simulate a sentient AI eye.
+ */
+
+// ====================================================================================================================================
+//  ULTIMATE MATRIX EYE CLASS
+// ====================================================================================================================================
 
 class UltimateMatrixEye {
+  /**
+   * @param {HTMLElement} container - Parent element to host the eye component.
+   */
   constructor(container) {
     this.container = container;
     this.eyeElement = null;
@@ -15,120 +26,119 @@ class UltimateMatrixEye {
     this.init();
   }
 
+  /**
+   * Main initialization sequence.
+   */
   init() {
     this.createEye();
     this.startAnimations();
   }
 
+  // ====================================================================================================================================
+  //  DOM CONSTRUCTION
+  // ====================================================================================================================================
+
+  /**
+   * Programmatically builds the complex nested DOM structure of the eye.
+   * Includes rings, sclera, iris, matrix rain columns, and multiple FX overlays.
+   */
   createEye() {
-    // Main eye container
+    // 1. Root Component
     this.eyeElement = document.createElement("div");
     this.eyeElement.className = "holo-carousel-matrix-eye";
 
-    // Container with perspective
+    // 2. Perspective Container
     const eyeContainer = document.createElement("div");
     eyeContainer.className = "holo-carousel-eye-container";
 
-    // Glow rings (3 layers)
+    // 3. Ambient Glow Rings (Multi-layered depth)
     for (let i = 0; i < 3; i++) {
       const glowRing = document.createElement("div");
       glowRing.className = "holo-carousel-eye-glow-ring";
       eyeContainer.appendChild(glowRing);
     }
 
-    // Outer eye shape
+    // 4. Outer Eye Shell
     const eyeOuter = document.createElement("div");
     eyeOuter.className = "holo-carousel-eye-outer";
 
-    // Sclera (eye white)
+    // 5. Sclera (Hosts the background Matrix stream)
     const eyeSclera = document.createElement("div");
     eyeSclera.className = "holo-carousel-eye-sclera";
 
-    // INTENSE Matrix rain container - VERTICAL
+    // 6. Dense Matrix Rain (Vertical Columns)
     const matrixRain = document.createElement("div");
     matrixRain.className = "holo-carousel-eye-matrix-rain";
 
-    // Create 20 dense matrix columns
+    // Generate 20 high-density code streams
     for (let i = 0; i < 20; i++) {
       const column = document.createElement("div");
       column.className = "holo-carousel-matrix-column";
-      column.textContent = this.generateMatrixCode(25); // Initial code, will update rapidly
+      // Initial content - rapidly cycling
+      column.textContent = this.generateMatrixCode(25);
       matrixRain.appendChild(column);
       this.matrixColumns.push(column);
     }
-
     eyeSclera.appendChild(matrixRain);
 
-    // Matrix glitch overlay
+    // 7. Visual FX Overlays
     const matrixGlitch = document.createElement("div");
     matrixGlitch.className = "holo-carousel-eye-matrix-glitch";
     eyeSclera.appendChild(matrixGlitch);
 
-    // Scanlines
     const scanlines = document.createElement("div");
     scanlines.className = "holo-carousel-eye-scanlines";
     eyeSclera.appendChild(scanlines);
 
-    // Vertical scanline
     const scanlineVert = document.createElement("div");
     scanlineVert.className = "holo-carousel-eye-scanline-vert";
     eyeSclera.appendChild(scanlineVert);
 
-    // Veins/circuits
     const veins = document.createElement("div");
     veins.className = "holo-carousel-eye-veins";
     eyeSclera.appendChild(veins);
 
-    // Iris container (moves for looking, scales for focus)
+    // 8. Iris & Pupil Sub-system
     this.irisContainer = document.createElement("div");
     this.irisContainer.className = "holo-carousel-eye-iris-container";
 
-    // Outer iris ring with segments
     const irisOuterRing = document.createElement("div");
     irisOuterRing.className = "holo-carousel-eye-iris-outer-ring";
 
-    // Main iris
     const iris = document.createElement("div");
     iris.className = "holo-carousel-eye-iris";
 
-    // Iris fibers (detailed texture)
     const irisFibers = document.createElement("div");
     irisFibers.className = "holo-carousel-eye-iris-fibers";
     iris.appendChild(irisFibers);
 
-    // Inner iris ring
     const irisInnerRing = document.createElement("div");
     irisInnerRing.className = "holo-carousel-eye-iris-inner-ring";
     iris.appendChild(irisInnerRing);
 
-    // Data orbit around pupil
     const dataOrbit = document.createElement("div");
     dataOrbit.className = "holo-carousel-eye-data-orbit";
     iris.appendChild(dataOrbit);
 
-    // Pupil
     const pupil = document.createElement("div");
     pupil.className = "holo-carousel-eye-pupil";
     iris.appendChild(pupil);
 
-    // Assemble iris structure
     this.irisContainer.appendChild(irisOuterRing);
     this.irisContainer.appendChild(iris);
     eyeSclera.appendChild(this.irisContainer);
 
-    // Fade mask for smooth blending
+    // 9. Post-processing Overlays
     const fadeMask = document.createElement("div");
     fadeMask.className = "holo-carousel-eye-fade-mask";
 
-    // Horizontal scanline
     const scanlineHoriz = document.createElement("div");
     scanlineHoriz.className = "holo-carousel-eye-scanline-horiz";
 
-    // Glitch overlay
     const glitchOverlay = document.createElement("div");
     glitchOverlay.className = "holo-carousel-eye-glitch-overlay";
 
-    // Assemble eye
+    // 10. Final Assembly
     eyeOuter.appendChild(eyeSclera);
     eyeOuter.appendChild(fadeMask);
     eyeOuter.appendChild(scanlineHoriz);
@@ -137,12 +147,18 @@ class UltimateMatrixEye {
     eyeContainer.appendChild(eyeOuter);
     this.eyeElement.appendChild(eyeContainer);
 
-    // Add to DOM
+    // Mount to host
     this.container.appendChild(this.eyeElement);
   }
 
+  /**
+   * Generates a vertical string of random Matrix-style characters.
+   * 
+   * @param {number} length - Number of characters to generate.
+   * @returns {string} - Line-broken character stream.
+   */
   generateMatrixCode(length) {
-    // Mix of binary and katakana
+    // Mixture of binary (logic) and Katakana (aesthetic)
     const chars = "01010110アイウエオカキクケコサシスセソタチツテトナニヌネハヒフヘホマミムメモヤユヨラリルレロワヲン";
     const charsLength = chars.length;
     let code = "";
@@ -152,116 +168,80 @@ class UltimateMatrixEye {
     return code;
   }
 
+  // ====================================================================================================================================
+  //  ANIMATION CONTROLLERS
+  // ====================================================================================================================================
+
+  /**
+   * Starts all asynchronous animation cycles (Matrix rain, focus, glitch, eye movement).
+   */
   startAnimations() {
-    // Update matrix code frequently for intense rain
+    // 1. High-frequency Matrix Rain update
     setInterval(() => {
       this.matrixColumns.forEach((column) => {
+        // Stochastic update to keep it feeling organic rather than mechanical
         if (Math.random() > 0.4) {
-          // More frequent updates
           column.textContent = this.generateMatrixCode(25);
         }
       });
-    }, 1500); // Faster updates
+    }, 1500);
 
-    // AGGRESSIVE looking around
+    // 2. Behavioral cycles
     this.startAggressiveLooking();
-
-    // Random focus changes
     this.startFocusChanges();
-
-    // Random glitch effects
     this.startGlitchEffects();
   }
 
+  /**
+   * Procedurally generates "aggressive" looking around behaviors.
+   * Simulates a scanning AI by combining quick snaps and jittery stares.
+   */
   startAggressiveLooking() {
     const aggressiveLook = () => {
+      // Define a set of potential movement patterns
       const actions = [
-        // Quick snaps
+        // Directional snaps
         { x: -30, y: 0, duration: 150 }, // SNAP left
-        { x: 30, y: 0, duration: 150 }, // SNAP right
-        { x: 0, y: 0, duration: 200 }, // SNAP center
-        { x: -25, y: -12, duration: 180 }, // Quick up-left
-        { x: 25, y: -12, duration: 180 }, // Quick up-right
+        { x: 30, y: 0, duration: 150 },  // SNAP right
+        { x: 0, y: 0, duration: 200 },   // SNAP center
+        { x: -25, y: -12, duration: 180 }, 
+        { x: 25, y: -12, duration: 180 },
 
-        // Aggressive sequences
-        { x: -30, y: 0, duration: 100, then: { x: 30, y: 0, duration: 100 } }, // Left SNAP right
-        { x: 30, y: 0, duration: 100, then: { x: -30, y: 0, duration: 100 } }, // Right SNAP left
-        { x: 0, y: -15, duration: 120, then: { x: 0, y: 0, duration: 120 } }, // Up SNAP center
-
-        // Triple aggressive moves
+        // Complex sequences (linked transforms)
+        { x: -30, y: 0, duration: 100, then: { x: 30, y: 0, duration: 100 } },
+        { x: 30, y: 0, duration: 100, then: { x: -30, y: 0, duration: 100 } },
+        
+        // Triple snap chains
         {
-          x: -30,
-          y: 0,
-          duration: 90,
-          then: {
-            x: 0,
-            y: 0,
-            duration: 90,
-            final: { x: 30, y: 0, duration: 90 },
-          },
+          x: -30, y: 0, duration: 90,
+          then: { x: 0, y: 0, duration: 90, final: { x: 30, y: 0, duration: 90 } },
         },
+        
+        // Micro-jitter stare
         {
-          x: 30,
-          y: 0,
-          duration: 90,
-          then: {
-            x: 0,
-            y: -12,
-            duration: 90,
-            final: { x: -30, y: 0, duration: 90 },
-          },
-        },
-
-        // Jittery stare
-        {
-          x: -2,
-          y: 0,
-          duration: 80,
-          then: {
-            x: 2,
-            y: 0,
-            duration: 80,
-            final: { x: 0, y: 0, duration: 80 },
-          },
-        },
-
-        // Slow menacing turn
-        { x: -35, y: 0, duration: 400, then: { x: 0, y: 0, duration: 300 } },
-        { x: 35, y: 0, duration: 400, then: { x: 0, y: 0, duration: 300 } },
+          x: -2, y: 0, duration: 80,
+          then: { x: 2, y: 0, duration: 80, final: { x: 0, y: 0, duration: 80 } },
+        }
       ];
 
       const randomAction = actions[Math.floor(Math.random() * actions.length)];
 
-      // First movement - FAST
-      this.moveEyeFast(
-        randomAction.x,
-        randomAction.y,
-        randomAction.duration || 150,
-      );
+      // Execute sequence
+      this.moveEyeFast(randomAction.x, randomAction.y, randomAction.duration || 150);
 
-      // Second movement if defined
       if (randomAction.then) {
         setTimeout(() => {
-          this.moveEyeFast(
-            randomAction.then.x,
-            randomAction.then.y,
-            randomAction.then.duration || 150,
-          );
+          this.moveEyeFast(randomAction.then.x, randomAction.then.y, randomAction.then.duration || 150);
 
-          // Third movement if defined
           if (randomAction.final) {
             setTimeout(() => {
-              this.moveEyeFast(
-                randomAction.final.x,
-                randomAction.final.y,
-                randomAction.final.duration || 150,
-              );
+              this.moveEyeFast(randomAction.final.x, randomAction.final.y, randomAction.final.duration || 150);
             }, randomAction.then.duration || 150);
           }
         }, randomAction.duration || 150);
       }
 
-      // Schedule next look
+      // Schedule next sequence with randomized interval
       const nextDelay = this.getRandomInt(800, 2500);
       setTimeout(aggressiveLook, nextDelay);
     };
@@ -269,21 +249,16 @@ class UltimateMatrixEye {
     setTimeout(aggressiveLook, 1000);
   }
 
+  /**
+   * Randomly cycles the eye through different focus depth states.
+   */
   startFocusChanges() {
     const changeFocus = () => {
-      const focusStates = [
-        "focused",
-        "normal",
-        "unfocused",
-        "normal",
-        "focused",
-      ];
-      const randomState =
-        focusStates[Math.floor(Math.random() * focusStates.length)];
+      const focusStates = ["focused", "normal", "unfocused", "normal", "focused"];
+      const randomState = focusStates[Math.floor(Math.random() * focusStates.length)];
 
       this.setFocus(randomState);
 
-      // Faster focus changes
       const nextDelay = this.getRandomInt(2500, 5500);
       setTimeout(changeFocus, nextDelay);
     };
@@ -291,16 +266,17 @@ class UltimateMatrixEye {
     setTimeout(changeFocus, 2000);
   }
 
+  /**
+   * Triggers randomized visual "malfunctions" (RGB splitting, jitters, flickering).
+   */
   startGlitchEffects() {
     const triggerGlitch = () => {
       if (!this.isGlitching) {
         this.isGlitching = true;
-
-        // Random glitch type
         const glitchType = Math.random();
 
+        // 1. RGB Split Glitch (Chromatic Aberration)
         if (glitchType > 0.7) {
-          // RGB split glitch
           this.eyeElement.style.filter =
             "drop-shadow(0 0 50px rgba(0, 255, 136, 0.9)) " +
             "drop-shadow(4px 0 rgba(255, 0, 100, 0.9)) " +
@@ -310,29 +286,25 @@ class UltimateMatrixEye {
             this.eyeElement.style.filter = "";
             this.isGlitching = false;
           }, 80);
-        } else if (glitchType > 0.4) {
-          // Position jitter
+        } 
+        // 2. Geometric Jitter
+        else if (glitchType > 0.4) {
           const origTransform = this.eyeElement.style.transform;
-          this.eyeElement.style.transform =
-            "translate(-50%, -50%) translate(3px, -2px)";
+          this.eyeElement.style.transform = "translate(-50%, -50%) translate(3px, -2px)";
 
           setTimeout(() => {
-            this.eyeElement.style.transform =
-              "translate(-50%, -50%) translate(-2px, 1px)";
-
+            this.eyeElement.style.transform = "translate(-50%, -50%) translate(-2px, 1px)";
             setTimeout(() => {
-              this.eyeElement.style.transform =
-                origTransform || "translate(-50%, -50%)";
+              this.eyeElement.style.transform = origTransform || "translate(-50%, -50%)";
               this.isGlitching = false;
             }, 60);
           }, 60);
-        } else {
-          // Brightness flicker
+        } 
+        // 3. Brightness/Contrast Flicker
+        else {
           this.eyeElement.style.filter = "brightness(1.5) contrast(1.3)";
-
           setTimeout(() => {
             this.eyeElement.style.filter = "brightness(0.7)";
-
             setTimeout(() => {
               this.eyeElement.style.filter = "";
               this.isGlitching = false;
@@ -341,7 +313,6 @@ class UltimateMatrixEye {
         }
       }
 
-      // Random glitch timing
       const nextDelay = this.getRandomInt(4000, 12000);
       setTimeout(triggerGlitch, nextDelay);
     };
@@ -349,39 +320,50 @@ class UltimateMatrixEye {
     setTimeout(triggerGlitch, 5000);
   }
 
+  // ====================================================================================================================================
+  //  PUBLIC UTILITIES
+  // ====================================================================================================================================
+
+  /**
+   * Rapidly moves the iris to a target coordinate.
+   * 
+   * @param {number} x - Horizontal offset in pixels.
+   * @param {number} y - Vertical offset in pixels.
+   * @param {number} duration - Transition speed in ms.
+   */
   moveEyeFast(x, y, duration = 150) {
     if (this.irisContainer) {
-      // Get current scale
+      // Preserve current scale (focus level) while translating
       const currentTransform = this.irisContainer.style.transform;
       const scaleMatch = currentTransform.match(/scale\(([^)]+)\)/);
       const currentScale = scaleMatch ? scaleMatch[1] : "1";
 
-      // Override transition for fast movement
       this.irisContainer.style.transition = `transform ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
-
       this.irisContainer.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${currentScale})`;
     }
   }
 
+  /**
+   * Updates the eye's class and scale based on focus state.
+   * 
+   * @param {'focused'|'normal'|'unfocused'} state - The target focus depth.
+   */
   setFocus(state) {
     if (this.currentFocusState === state) return;
 
     this.currentFocusState = state;
 
-    // Remove all focus classes
     this.eyeElement.classList.remove(
       "holo-carousel-eye-focused",
       "holo-carousel-eye-unfocused",
     );
 
-    // Add appropriate class
     if (state === "focused") {
       this.eyeElement.classList.add("holo-carousel-eye-focused");
     } else if (state === "unfocused") {
       this.eyeElement.classList.add("holo-carousel-eye-unfocused");
     }
 
-    // Update transform
     if (this.irisContainer) {
       const currentTransform = this.irisContainer.style.transform;
       const translateMatch = currentTransform.match(/translate\(([^)]+)\)/);
@@ -397,10 +379,16 @@ class UltimateMatrixEye {
     }
   }
 
+  /**
+   * Standard random integer generator.
+   */
   getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
+  /**
+   * Cleanly removes the component from the DOM.
+   */
   destroy() {
     if (this.eyeElement && this.eyeElement.parentNode) {
       this.eyeElement.parentNode.removeChild(this.eyeElement);

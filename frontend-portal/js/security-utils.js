@@ -1,19 +1,21 @@
 // ====================================================================================================================================
+//  security-utils.js
+//
 //  SECURITY UTILITIES
 //
-//  Shared logic for:
-//   - XSS prevention (HTML escaping)
+//  Centralized logic for security-sensitive operations:
+//   - XSS prevention via HTML escaping
 //   - Input validation (Username/Password rules mirroring server-side)
-//   - CSRF token fetching
-//   - Common error handling (Rate limiting)
+//   - CSRF token acquisition
+//   - Toast notification system
+//   - Modal lifecycle management
 // ====================================================================================================================================
 
 /**
- * Escapes HTML characters in a string to prevent XSS.
- * Safe to use on any user-supplied content before rendering it to the DOM.
+ * Escapes HTML special characters in a string to prevent XSS attacks.
  * 
- * @param {string} str - Raw string
- * @returns {string} - HTML-safe string
+ * @param {string} str - The raw input string to escape.
+ * @returns {string} - The safely escaped HTML string.
  */
 function escapeHtml(str) {
   const div = document.createElement("div");
@@ -22,10 +24,10 @@ function escapeHtml(str) {
 }
 
 /**
- * Fetches a fresh CSRF token from the backend.
+ * Fetches a fresh CSRF token from the backend for use in POST/PUT/DELETE requests.
  * 
- * @returns {Promise<string>} - The CSRF token string
- * @throws {Error} - If fetch fails or token is missing
+ * @returns {Promise<string>} - A promise that resolves to the CSRF token string.
+ * @throws {Error} - Rethrows errors if the server response is invalid or missing the token.
  */
 async function fetchCsrfToken() {
   const response = await fetch("/api/csrf-token.php", {
@@ -45,18 +47,19 @@ async function fetchCsrfToken() {
   return data.csrf_token;
 }
 
-// ==========================
-// TOAST NOTIFICATION SYSTEM
-// ==========================
+// ====================================================================================================================================
+//  TOAST NOTIFICATION SYSTEM
+// ====================================================================================================================================
 
 /**
- * showToast(message, type, duration)
- * @param {string} message  - Text to display
- * @param {'success'|'info'|'error'} type - Visual variant (maps to CSS class)
- * @param {number} duration - Auto-dismiss time in ms (default 3500)
+ * Displays a non-intrusive toast notification to the user.
+ * 
+ * @param {string} message  - The localized message to display.
+ * @param {'success'|'info'|'error'} type - The visual variant (controls CSS class).
+ * @param {number} duration - Auto-dismiss delay in milliseconds (default: 3500).
  */
 function showToast(message, type = "success", duration = 3500) {
-  // Remove any existing toast
+  // Clear any active toast to prevent stacking overlaps
   const existing = document.getElementById("app-toast");
   if (existing) {
     existing.remove();
@@ -71,14 +74,14 @@ function showToast(message, type = "success", duration = 3500) {
 
   document.body.appendChild(toast);
 
-  // Trigger enter transition on next paint
+  // Trigger CSS transitions via double requestAnimationFrame for stability
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       toast.classList.add("toast--visible");
     });
   });
 
-  // Trigger exit transition then remove
+  // Schedule removal based on duration
   setTimeout(() => {
     toast.classList.remove("toast--visible");
     toast.addEventListener("transitionend", () => toast.remove(), {
@@ -87,32 +90,29 @@ function showToast(message, type = "success", duration = 3500) {
   }, duration);
 }
 
-// ==========================
-// VALIDATION LOGIC
-// ==========================
+// ====================================================================================================================================
+//  VALIDATION LOGIC
+// ====================================================================================================================================
 
+/** @constant {Object} Validation constraints shared with backend logic */
 const VAL_RULES = {
   username_min: 3,
   username_max: 30,
-  password_min: 12, // Parity with backend
+  password_min: 12,
   password_max: 128,
 };
 
 /**
- * Validates a username against strict allowlist rules.
+ * Validates a username input field against strict alphanumeric and length rules.
  * 
- * Rules:
- * - 3-30 chars
- * - Alphanumeric, hyphen, underscore only
- * 
- * @param {HTMLInputElement} input 
- * @param {HTMLElement} errorDiv 
- * @returns {boolean} - Valid or not
+ * @param {HTMLInputElement} input - The input element containing the username.
+ * @param {HTMLElement} errorDiv - The display element for validation errors.
+ * @returns {boolean} - True if the username is valid, false otherwise.
  */
 function validateUsername(input, errorDiv) {
   const value = input.value.trim();
   
-  // Reset state
+  // Clear previous validation states
   input.classList.remove("error", "success");
   errorDiv.classList.remove("show");
 
@@ -129,7 +129,7 @@ function validateUsername(input, errorDiv) {
   }
 
   if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
-    showError(input, errorDiv, "Only letters, numbers, - and _ allowed");
+    showError(input, errorDiv, "Only letters, numbers, hyphens and underscores allowed");
     return false;
   }
 
@@ -138,21 +138,24 @@ function validateUsername(input, errorDiv) {
 }
 
 /**
- * Validates password strength and updates UI indicators.
+ * Validates password complexity requirements and updates strength indicators.
  * 
- * Rules:
- * - 12-128 chars
- * - Upper, Lower, Digit, Special char required
+ * Complexity rules:
+ * - Minimum 12 characters
+ * - At least one uppercase letter
+ * - At least one lowercase letter
+ * - At least one digit
+ * - At least one special character
  * 
- * @param {HTMLInputElement} input 
- * @param {HTMLElement} errorDiv 
- * @param {NodeListOf<Element>} strengthBars - Optional UI bars
- * @returns {boolean}
+ * @param {HTMLInputElement} input - The input element containing the password.
+ * @param {HTMLElement} errorDiv - The display element for validation errors.
+ * @param {NodeListOf<Element>} strengthBars - Optional list of bars for visual strength feedback.
+ * @returns {boolean} - True if the password meets all requirements.
  */
 function validatePassword(input, errorDiv, strengthBars = null) {
   const value = input.value;
 
-  // Reset state
+  // Reset UI states
   input.classList.remove("error", "success");
   if (errorDiv) errorDiv.classList.remove("show");
   if (strengthBars) {
@@ -161,55 +164,61 @@ function validatePassword(input, errorDiv, strengthBars = null) {
 
   if (value === "") return false;
 
-  // 1. Length Min
+  // 1. Minimum Length Check
   if (value.length < VAL_RULES.password_min) {
     showError(input, errorDiv, `Password must be at least ${VAL_RULES.password_min} characters`);
     updateStrength(strengthBars, 1, "weak");
     return false;
   }
 
-  // 2. Length Max
+  // 2. Maximum Length Check
   if (value.length > VAL_RULES.password_max) {
     showError(input, errorDiv, `Password must not exceed ${VAL_RULES.password_max} characters`);
     updateStrength(strengthBars, 1, "weak");
     return false;
   }
 
-  // 3. Uppercase
+  // 3. Uppercase Presence
   if (!/[A-Z]/.test(value)) {
-    showError(input, errorDiv, "Password must contain an uppercase letter");
+    showError(input, errorDiv, "Password must contain at least one uppercase letter");
     updateStrength(strengthBars, 1, "weak");
     return false;
   }
 
-  // 4. Lowercase
+  // 4. Lowercase Presence
   if (!/[a-z]/.test(value)) {
-    showError(input, errorDiv, "Password must contain a lowercase letter");
+    showError(input, errorDiv, "Password must contain at least one lowercase letter");
     updateStrength(strengthBars, 2, "weak");
     return false;
   }
 
-  // 5. Digit
+  // 5. Digit Presence
   if (!/[0-9]/.test(value)) {
-    showError(input, errorDiv, "Password must contain a number");
+    showError(input, errorDiv, "Password must contain at least one number");
     updateStrength(strengthBars, 2, "medium");
     return false;
   }
 
-  // 6. Special Char
+  // 6. Special Character Presence
   if (!/[!@#$%^&*()\-_=+\[\]{};:'",.<>?\/\\|`~]/.test(value)) {
-    showError(input, errorDiv, "Password must contain a special character");
+    showError(input, errorDiv, "Password must contain at least one special character");
     updateStrength(strengthBars, 3, "medium");
     return false;
   }
 
-  // Valid
+  // Final Valid State
   input.classList.add("success");
   updateStrength(strengthBars, 4, "strong");
   return true;
 }
 
-// Helper: Show error on input
+/**
+ * Helper: Applies error styling and message to an input field.
+ * 
+ * @param {HTMLInputElement} input - Target input element.
+ * @param {HTMLElement} errorDiv - Target error message container.
+ * @param {string} msg - The error message to display.
+ */
 function showError(input, errorDiv, msg) {
   input.classList.add("error");
   if (errorDiv) {
@@ -218,7 +227,13 @@ function showError(input, errorDiv, msg) {
   }
 }
 
-// Helper: Update strength bars
+/**
+ * Helper: Updates visual strength bar UI.
+ * 
+ * @param {NodeListOf<Element>} bars - List of bar elements.
+ * @param {number} count - How many bars to activate.
+ * @param {string} level - CSS class defining the strength color (weak, medium, strong).
+ */
 function updateStrength(bars, count, level) {
   if (!bars) return;
   for (let i = 0; i < count; i++) {
@@ -226,22 +241,27 @@ function updateStrength(bars, count, level) {
   }
 }
 
-// ==========================
-// MODAL MANAGER
-// ==========================
+// ====================================================================================================================================
+//  MODAL MANAGER
+// ====================================================================================================================================
 
+/**
+ * Provides generic lifecycle management for application modals.
+ */
 const ModalManager = {
   /**
-   * Set up common modal listeners: close on ESC and click-outside.
-   * @param {HTMLElement} overlay - The full-screen overlay element.
-   * @param {Function} closeFn - Function to call to close the modal.
-   * @param {string} activeClass - Class representing the open state (default 'active').
+   * Orchestrates standard modal listeners (Close button, ESC key, Click-outside).
+   * 
+   * @param {HTMLElement|string} overlayOrId - The modal overlay element or its ID.
+   * @param {Function} closeFn - The callback function to invoke for closing.
+   * @param {string} activeClass - The class toggled for visibility (default: 'active').
+   * @returns {Function} - A cleanup function to remove global listeners.
    */
   setup(overlayOrId, closeFn, activeClass = "active") {
     const overlay = typeof overlayOrId === "string" ? document.getElementById(overlayOrId) : overlayOrId;
     if (!overlay) return;
 
-    // Find and bind close button
+    // Locate and bind the internal close button
     const closeBtn = overlay.querySelector(".mx-modal-close");
     if (closeBtn) {
       closeBtn.onclick = (e) => {
@@ -250,12 +270,12 @@ const ModalManager = {
       };
     }
 
-    // Click outside
+    // Dismiss on clicking the background (dimmed) area
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) closeFn();
     });
 
-    // ESC key
+    // Global Escape key listener for accessibility
     const escHandler = (e) => {
       if (e.key === "Escape" && overlay.classList.contains(activeClass)) {
         closeFn();
@@ -267,7 +287,11 @@ const ModalManager = {
   },
 
   /**
-   * Generic open helper with focus support.
+   * Opens a modal and sets initial focus for accessibility.
+   * 
+   * @param {HTMLElement} overlay - Modal overlay element.
+   * @param {string} activeClass - Visibility class.
+   * @param {string|null} focusSelector - Optional CSS selector to auto-focus.
    */
   open(overlay, activeClass = "active", focusSelector = null) {
     if (!overlay) return;
@@ -281,7 +305,10 @@ const ModalManager = {
   },
 
   /**
-   * Generic close helper.
+   * Closes a modal by removing its visibility class.
+   * 
+   * @param {HTMLElement} overlay - Modal overlay element.
+   * @param {string} activeClass - Visibility class.
    */
   close(overlay, activeClass = "active") {
     if (!overlay) return;
@@ -289,7 +316,10 @@ const ModalManager = {
   }
 };
 
-// Expose to global scope for non-module scripts
+// ====================================================================================================================================
+//  GLOBAL EXPORTS
+// ====================================================================================================================================
+
 window.SecurityUtils = {
   escapeHtml,
   fetchCsrfToken,
@@ -300,4 +330,5 @@ window.SecurityUtils = {
   ModalManager
 };
 
+// Legacy shorthand support
 window.showToast = showToast;

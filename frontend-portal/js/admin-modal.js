@@ -1,14 +1,18 @@
 /**
  * admin-modal.js
- *
- * Admin Panel modal for user and session management.
- * Only accessible to users with role === 'admin'.
+ * 
+ * Logic for the Administrative Control Panel.
+ * Handles user list management, session revocation, and data fetching from the admin API.
+ * Uses role-based access control (Admin only).
  */
-
-(function () {
+(function() {
   "use strict";
 
-  /* ── HTML Template ──────────────────────────────────────── */
+  // ====================================================================================================================================
+  //  CONSTANTS & UI TEMPLATES
+  // ====================================================================================================================================
+
+  /** @type {string} The structural HTML for the admin interface. */
   const MODAL_HTML = `
     <div id="adminOverlay" class="mx-modal-overlay">
       <div class="mx-modal-container admin-modal-custom">
@@ -24,10 +28,11 @@
 
         <div class="mx-modal-content">
           <div class="mx-tabs" role="tablist">
-            <button class="mx-tab active" data-tab="users" role="tab" aria-selected="true" aria-controls="adminPanelUsers" id="tab-users">USERS</button>
-            <button class="mx-tab" data-tab="tokens" role="tab" aria-selected="false" aria-controls="adminPanelTokens" id="tab-tokens">SESSIONS</button>
+            <button class="mx-tab active" data-tab="users" role="tab" aria-selected="true" id="tab-users">USERS</button>
+            <button class="mx-tab" data-tab="tokens" role="tab" aria-selected="false" id="tab-tokens">SESSIONS</button>
           </div>
 
+          <!-- User Management Panel -->
           <div id="adminPanelUsers" class="mx-tab-panel active" data-panel="users" role="tabpanel" aria-labelledby="tab-users">
             <div class="admin-section-header">
               <p class="admin-section-label">▸ Registered Users</p>
@@ -39,6 +44,7 @@
             </div>
           </div>
 
+          <!-- Session Management Panel -->
           <div id="adminPanelTokens" class="mx-tab-panel" data-panel="tokens" role="tabpanel" aria-labelledby="tab-tokens">
             <div class="admin-section-header">
               <p class="admin-section-label">▸ Active Sessions</p>
@@ -54,32 +60,59 @@
     </div>
   `;
 
+  // ====================================================================================================================================
+  //  MODULE STATE
+  // ====================================================================================================================================
+
   let injected = false;
   let currentUserId = null;
 
+  // ====================================================================================================================================
+  //  UTILITY FUNCTIONS
+  // ====================================================================================================================================
+
+  /**
+   * Formats an ISO date string into a localized readable format.
+   * @param {string} str - ISO Date string.
+   * @returns {string} Formatted string or placeholder.
+   */
   function fmtDate(str) {
     if (!str) return "—";
     const d = new Date(str);
-    if (isNaN(d)) return window.SecurityUtils.escapeHtml(str);
+    if (isNaN(d)) return window.SecurityUtils?.escapeHtml(str) || str;
     return d.toLocaleString("en-GB", {
       day: "2-digit", month: "2-digit", year: "numeric",
       hour: "2-digit", minute: "2-digit",
     });
   }
 
+  /**
+   * Truncates long strings for table displays.
+   * @param {string} str - Original string.
+   * @param {number} max - Max length.
+   */
   function truncate(str, max) {
     if (!str) return "—";
     return str.length > max ? str.slice(0, max) + "…" : str;
   }
 
+  // ====================================================================================================================================
+  //  RENDERING LOGIC
+  // ====================================================================================================================================
+
+  /**
+   * Builds the User Management table.
+   * @param {Array} users - List of user objects.
+   */
   function renderUsers(users) {
     const wrap = document.getElementById("adminUsersBody");
     const count = document.getElementById("adminUserCount");
-    const esc = window.SecurityUtils.escapeHtml;
+    const esc = window.SecurityUtils?.escapeHtml || (s => s);
+    
     count.textContent = `(${users.length})`;
 
     if (users.length === 0) {
-      wrap.innerHTML = '<p class="mx-status-msg">No users found.</p>';
+      wrap.innerHTML = '<p class="mx-status-msg">No entries found.</p>';
       return;
     }
 
@@ -103,10 +136,15 @@
     wrap.innerHTML = html;
   }
 
+  /**
+   * Builds the Active Sessions table.
+   * @param {Array} tokens - List of session token objects.
+   */
   function renderTokens(tokens) {
     const wrap = document.getElementById("adminTokensBody");
     const count = document.getElementById("adminTokenCount");
-    const esc = window.SecurityUtils.escapeHtml;
+    const esc = window.SecurityUtils?.escapeHtml || (s => s);
+    
     count.textContent = `(${tokens.length})`;
 
     if (tokens.length === 0) {
@@ -131,29 +169,46 @@
     wrap.innerHTML = html;
   }
 
+  // ====================================================================================================================================
+  //  API INTERACTION
+  // ====================================================================================================================================
+
+  /**
+   * Fetches the latest system data from the backend.
+   */
   async function loadData() {
     const usersBody = document.getElementById("adminUsersBody");
     const tokensBody = document.getElementById("adminTokensBody");
-    usersBody.innerHTML = '<p class="mx-status-msg loading">▸ Loading users...</p>';
-    tokensBody.innerHTML = '<p class="mx-status-msg loading">▸ Loading sessions...</p>';
+
+    const loadingMsg = '<p class="mx-status-msg loading">▸ Accessing secure node...</p>';
+    usersBody.innerHTML = loadingMsg;
+    tokensBody.innerHTML = loadingMsg;
 
     try {
       const res = await fetch("/api/admin.php", { credentials: "same-origin" });
       if (res.status === 403) {
-        usersBody.innerHTML = '<p class="mx-status-msg error">▸ Access denied.</p>';
+        usersBody.innerHTML = '<p class="mx-status-msg error">▸ ACCESS DENIED: Insufficient permissions.</p>';
         return;
       }
       if (!res.ok) throw new Error("HTTP " + res.status);
+      
       const data = await res.json();
       currentUserId = data.currentUserId || null;
       renderUsers(data.users || []);
       renderTokens(data.tokens || []);
     } catch (err) {
-      console.error("Admin panel load error:", err);
-      usersBody.innerHTML = '<p class="mx-status-msg error">▸ Failed to load data.</p>';
+      console.error("[ADMIN] Load Error:", err);
+      const errorMsg = '<p class="mx-status-msg error">▸ CRITICAL: Node fetch failed.</p>';
+      usersBody.innerHTML = errorMsg;
+      tokensBody.innerHTML = errorMsg;
     }
   }
 
+  /**
+   * Executes administrative actions (Delete/Revoke).
+   * @param {string} actionType - 'delete-user' or 'revoke-token'.
+   * @param {number|string} id - The ID of the target resource.
+   */
   async function handleAction(actionType, id) {
     const endpoint = actionType === "delete-user"
         ? `/api/admin.php?action=user&id=${id}`
@@ -163,25 +218,40 @@
       const res = await fetch(endpoint, { method: "DELETE", credentials: "same-origin" });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        if (window.showToast) window.showToast(data.error || "Action failed", "error");
+        if (window.showToast) window.showToast(data.error || "Request rejected.", "error");
         return;
       }
+      
       await loadData();
-      if (window.showToast) window.showToast(actionType === "delete-user" ? "User deleted." : "Session revoked.", "success");
+      if (window.showToast) {
+        window.showToast(actionType === "delete-user" ? "User purged." : "Access revoked.", "success");
+      }
     } catch (err) {
-      if (window.showToast) window.showToast("Connection error.", "error");
+      if (window.showToast) window.showToast("Network disruption.", "error");
     }
   }
 
+  // ====================================================================================================================================
+  //  MODAL MANAGEMENT
+  // ====================================================================================================================================
+
+  /**
+   * Injects the Modal HTML into the DOM and binds common manager events.
+   */
   function injectModal() {
     if (injected) return;
     document.body.insertAdjacentHTML("beforeend", MODAL_HTML);
+    
     const overlay = document.getElementById("adminOverlay");
-    window.SecurityUtils.ModalManager.setup(overlay, closeModal);
-    bindEvents();
+    window.SecurityUtils?.ModalManager?.setup(overlay, closeModal);
+    
+    bindLocalEvents();
     injected = true;
   }
 
+  /**
+   * Opens the admin interface and triggers initial data load.
+   */
   function openModal() {
     injectModal();
     const overlay = document.getElementById("adminOverlay");
@@ -190,6 +260,9 @@
     loadData();
   }
 
+  /**
+   * Closes the admin interface.
+   */
   function closeModal() {
     const overlay = document.getElementById("adminOverlay");
     if (overlay) {
@@ -198,27 +271,37 @@
     }
   }
 
-  function bindEvents() {
+  /**
+   * Binds internal events such as Tab switching and action triggers.
+   */
+  function bindLocalEvents() {
     const overlay = document.getElementById("adminOverlay");
 
-    // Tabs
+    // 1. Tab Navigation Logic
     overlay.addEventListener("click", (e) => {
       const tab = e.target.closest(".mx-tab");
       if (!tab) return;
+      
       const tabName = tab.dataset.tab;
+      
+      // Update Tab Styles
       overlay.querySelectorAll(".mx-tab").forEach((t) => {
         const isActive = t === tab;
         t.classList.toggle("active", isActive);
         t.setAttribute("aria-selected", isActive);
       });
+      
+      // Toggle Visibility
       overlay.querySelectorAll(".mx-tab-panel").forEach((p) => {
         p.classList.toggle("active", p.dataset.panel === tabName);
       });
     });
 
+    // 2. Global Refresh Handlers
     document.getElementById("adminRefreshUsers").addEventListener("click", loadData);
     document.getElementById("adminRefreshTokens").addEventListener("click", loadData);
 
+    // 3. Command Action Bubbling (DELETE/REVOKE)
     overlay.addEventListener("click", (e) => {
       const btn = e.target.closest("[data-action]");
       if (!btn || btn.disabled) return;
@@ -226,6 +309,11 @@
     });
   }
 
+  // ====================================================================================================================================
+  //  EXPORTS
+  // ====================================================================================================================================
+
   window.AdminModal = { open: openModal, close: closeModal };
   window.openAdminModal = openModal;
+
 })();

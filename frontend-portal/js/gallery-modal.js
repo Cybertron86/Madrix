@@ -1,12 +1,14 @@
-// ====================================================================================================================================
-//   GALLERY MODAL MODULE
-// ====================================================================================================================================
-
-(function() {
+/**
+ * gallery-modal.js
+ * Project Gallery modal.
+ * Lazy-initialised on first open; fetches project data once and caches it
+ * for subsequent opens. Exposes openGalleryModal globally.
+ */
+(function () {
   "use strict";
 
   let galleryModal = null;
-  let galleryProjects = null;
+  let galleryProjects = null; // cached after first successful fetch
 
   const MODAL_HTML = `
     <div id="galleryOverlay" class="mx-modal-overlay">
@@ -20,18 +22,18 @@
     </div>
   `;
 
+  // Inject HTML once and wire up close/keyboard/overlay-click via ModalManager
   function createGalleryModal() {
     if (galleryModal) return;
     document.body.insertAdjacentHTML("beforeend", MODAL_HTML);
     galleryModal = document.getElementById("galleryOverlay");
-
     window.SecurityUtils.ModalManager.setup(galleryModal, closeGalleryModal);
   }
 
   async function openGalleryModal() {
     createGalleryModal();
-    
-    // UI Adjustments for mobile
+
+    // Footer overlaps the modal on mobile — hide it on larger screens only
     const footerBar = document.getElementById("site-footer");
     if (window.matchMedia("(max-width: 480px)").matches) {
       footerBar.style.visibility = "visible";
@@ -42,8 +44,9 @@
     }
 
     galleryModal.classList.add("active");
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = "hidden"; // prevent background scroll
 
+    // Skip the fetch if projects are already cached from a previous open
     if (!galleryProjects) {
       try {
         await loadGalleryProjects();
@@ -61,6 +64,7 @@
     galleryModal.classList.remove("active");
     document.body.style.overflow = "";
 
+    // Restore footer visibility on close — only needed above mobile breakpoint
     const footerBar = document.getElementById("site-footer");
     if (!window.matchMedia("(max-width: 480px)").matches) {
       footerBar.style.visibility = "visible";
@@ -77,6 +81,7 @@
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
       const data = await response.json();
+      // API may return a bare array or a wrapped { data: [] } shape
       galleryProjects = Array.isArray(data) ? data : data.data || [];
 
       if (galleryProjects.length === 0) throw new Error("No projects found");
@@ -115,6 +120,7 @@
 
     contentDiv.innerHTML = gridHTML;
 
+    // Attach click and keyboard handlers so items are accessible without a mouse
     contentDiv.querySelectorAll(".gallery-item").forEach((item) => {
       const openDetail = () => openProjectDetail(parseInt(item.dataset.projectIndex));
       item.addEventListener("click", openDetail);
@@ -128,16 +134,19 @@
   }
 
   function openProjectDetail(projectIndex) {
+    // Delay so the gallery close animation finishes before the detail overlay opens
     setTimeout(() => {
       if (window.hologramCarousel && typeof window.hologramCarousel.openOverlay === "function") {
         window.hologramCarousel.openOverlay(projectIndex);
       } else {
+        // Fallback if the carousel component hasn't initialised yet
         createProjectOverlay(galleryProjects[projectIndex]);
       }
     }, 400);
   }
 
   function createProjectOverlay(project) {
+    // Reuse an existing overlay element if one is already in the DOM
     let overlay = document.querySelector(".holo-carousel-overlay");
     if (!overlay) {
       overlay = document.createElement("div");
@@ -170,6 +179,7 @@
     overlay.innerHTML = html;
     overlay.classList.add("holo-carousel-active");
 
+    // Close on button click or backdrop click
     const close = () => overlay.classList.remove("holo-carousel-active");
     overlay.querySelector(".holo-carousel-close").addEventListener("click", close);
     overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });

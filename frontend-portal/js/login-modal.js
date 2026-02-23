@@ -1,9 +1,16 @@
-(function() {
+/**
+ * login-modal.js
+ * 
+ * Lazy-initialised on first open; exposes openLoginModal and closeLoginModal
+ * globally so other modules (e.g. register modal) can trigger them directly.
+ */
+(function () {
   "use strict";
 
   const loginBtn = document.getElementById("btn_login");
   let loginModal = null;
 
+  // Inject HTML, wire up all inputs and events — runs only once
   function createLoginModal() {
     if (loginModal) return;
 
@@ -81,26 +88,22 @@
     const passwordToggle = loginModal.querySelector(".mx-pw-toggle");
     const registerBtn = loginModal.querySelector(".login-register-btn");
 
-    // Shared Modal setup
+    // Wire up close/keyboard/overlay-click via ModalManager
     window.SecurityUtils.ModalManager.setup(loginModal, closeLoginModal);
-
-    // Close button
     closeBtn.addEventListener("click", closeLoginModal);
 
-    // Password toggle
+    // Toggle between password/text and swap the eye icon accordingly
     passwordToggle.addEventListener("click", () => {
       const isVisible = passwordInput.type === "text";
-      const type = isVisible ? "password" : "text";
-      passwordInput.type = type;
+      passwordInput.type = isVisible ? "password" : "text";
       passwordToggle.textContent = isVisible ? "👁️" : "🙈";
       passwordToggle.setAttribute("aria-label", isVisible ? "Show password" : "Hide password");
       passwordToggle.setAttribute("aria-pressed", !isVisible);
     });
 
-    // Form submission
     form.addEventListener("submit", handleLoginSubmit);
 
-    // Register button
+    // Delay opening register so the close animation can finish first
     registerBtn.addEventListener("click", () => {
       closeLoginModal();
       setTimeout(() => {
@@ -117,6 +120,7 @@
   function closeLoginModal() {
     if (!loginModal) return;
     window.SecurityUtils.ModalManager.close(loginModal, "active");
+    // Reset form and clear visual validation state on every close
     const form = loginModal.querySelector("#loginForm");
     if (form) {
       form.reset();
@@ -124,7 +128,7 @@
     }
   }
 
-  // Clears ALL red borders and ALL error message texts
+  // Removes all red/green borders, error texts, and any lingering clear handlers
   function clearAllErrors() {
     const inputs = loginModal.querySelectorAll(".mx-input");
     const errors = loginModal.querySelectorAll(".mx-error-message");
@@ -142,20 +146,16 @@
     });
   }
 
-  // Attaches a listener on BOTH fields — first interaction with either clears ALL errors
+  // First keystroke in either field after a failed attempt wipes all errors at once
   function attachClearOnAnyInput() {
     const usernameInput = loginModal.querySelector("#login-username");
     const passwordInput = loginModal.querySelector("#login-password");
 
-    const handler = () => {
-      clearAllErrors();
-    };
+    const handler = () => clearAllErrors();
 
-    // Clean up old handlers first
-    if (usernameInput._clearHandler)
-      usernameInput.removeEventListener("input", usernameInput._clearHandler);
-    if (passwordInput._clearHandler)
-      passwordInput.removeEventListener("input", passwordInput._clearHandler);
+    // Remove stale handlers before attaching fresh ones to avoid duplicates
+    if (usernameInput._clearHandler) usernameInput.removeEventListener("input", usernameInput._clearHandler);
+    if (passwordInput._clearHandler) passwordInput.removeEventListener("input", passwordInput._clearHandler);
 
     usernameInput._clearHandler = handler;
     passwordInput._clearHandler = handler;
@@ -170,23 +170,16 @@
     const passwordInput = loginModal.querySelector("#login-password");
     const usernameError = loginModal.querySelector('[data-error="username"]');
 
-    // Clear previous errors first
     clearAllErrors();
 
-    // Empty check — mark BOTH fields red if either is empty
+    // Mark both fields red if either is empty — single error message covers both
     const usernameEmpty = !usernameInput.value.trim();
     const passwordEmpty = !passwordInput.value;
 
     if (usernameEmpty || passwordEmpty) {
       if (usernameEmpty) usernameInput.classList.add("error");
       if (passwordEmpty) passwordInput.classList.add("error");
-      
-      window.SecurityUtils.showError(
-        usernameInput, 
-        usernameError, 
-        "Please enter username and password"
-      );
-      
+      window.SecurityUtils.showError(usernameInput, usernameError, "Please enter username and password");
       attachClearOnAnyInput();
       return;
     }
@@ -209,6 +202,7 @@
       const data = await response.json();
 
       if (!response.ok) {
+        // Map HTTP status to a user-facing message; fall back to the API's own error string
         let message = "Login failed";
         if (response.status === 401) {
           message = "Username or Password do not match";
@@ -226,11 +220,10 @@
       }
 
       closeLoginModal();
-      if (typeof window.updateAuthButton === "function") {
-        await window.updateAuthButton();
-      }
+      if (typeof window.updateAuthButton === "function") await window.updateAuthButton();
 
       if (typeof window.showToast === "function") {
+        // Prefer the username returned by the API; fall back to what the user typed
         const username = data.user?.username ?? usernameInput.value.trim();
         window.showToast(`Welcome back, ${username}!`, "success");
       }
@@ -242,6 +235,7 @@
     }
   }
 
+  // Expose globally so register modal and other modules can open/close this modal
   window.openLoginModal = openLoginModal;
   window.closeLoginModal = closeLoginModal;
 })();

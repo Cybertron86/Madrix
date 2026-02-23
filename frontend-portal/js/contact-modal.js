@@ -1,8 +1,9 @@
-// ====================================================================================================================================
-//  CONTACT MODAL MODULE
-// ====================================================================================================================================
-
-(function() {
+/**
+ * Contact modal.
+ * Lazy-initialised on first open; exposes initContactTrigger globally
+ * so it can be called after the DOM is ready.
+ */
+(function () {
   "use strict";
 
   let contactModal = null;
@@ -20,58 +21,55 @@
             <strong>Email:</strong> <a href="mailto:contact@cybertron.sys" class="footer-link">contact@cybertron.sys</a><br>
             <strong>GitHub:</strong> <a href="https://github.com/cybertron86" target="_blank" class="footer-link">github.com/cybertron86</a><br>
           </p>
-
           <h3 class="footer-modal-h3">Location</h3>
           <p>Karlsruhe, Germany / Remote</p>
           
           <form id="contact-form" class="footer-contact-form" aria-label="Contact Form">
-             <input type="text" class="mx-input" placeholder="NAME / ALIAS" required aria-label="Your Name or Alias">
-             <input type="email" class="mx-input" placeholder="EMAIL ADDRESS" required aria-label="Your Email Address">
-             <textarea class="mx-input" placeholder="YOUR MESSAGE" rows="5" required aria-label="Your Message"></textarea>
-             <button type="button" class="mx-btn" id="contact-submit-btn">INITIATE TRANSMISSION</button>
+            <input type="text" class="mx-input" placeholder="NAME / ALIAS" required aria-label="Your Name or Alias">
+            <input type="email" class="mx-input" placeholder="EMAIL ADDRESS" required aria-label="Your Email Address">
+            <textarea class="mx-input" placeholder="YOUR MESSAGE" rows="5" required aria-label="Your Message"></textarea>
+            <button type="button" class="mx-btn" id="contact-submit-btn">INITIATE TRANSMISSION</button>
           </form>
         </div>
       </div>
     </div>
   `;
 
+  // Inject HTML once and wire up close/keyboard/overlay-click via ModalManager
   function createContactModal() {
     if (contactModal) return;
     document.body.insertAdjacentHTML("beforeend", MODAL_HTML);
     contactModal = document.getElementById("contactOverlay");
-
     window.SecurityUtils.ModalManager.setup(contactModal, closeContactModal);
-    
-    // Mock Submit
+
+    // Form submission is simulated — no real API call yet
     const submitBtn = contactModal.querySelector("#contact-submit-btn");
     submitBtn.addEventListener("click", () => {
-        if (window.showToast) window.showToast("Message transmission simulated. End of line.", "success");
-        else alert("Message transmission simulated. End of line.");
-        closeContactModal();
+      if (window.showToast) window.showToast("Message transmission simulated. End of line.", "success");
+      else alert("Message transmission simulated. End of line.");
+      closeContactModal();
     });
   }
 
   function openContactModal(e) {
-    if(e) e.preventDefault();
+    if (e) e.preventDefault();
     createContactModal();
     contactModal.classList.add("active");
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden"; // prevent background scroll
   }
 
   function closeContactModal() {
     if (!contactModal) return;
     contactModal.classList.remove("active");
-    document.body.style.overflow = '';
+    document.body.style.overflow = "";
   }
 
   window.openContactModal = openContactModal;
 
+  // Bind the footer link; called after DOM is ready
   function initContactTrigger() {
     const contactBtn = document.getElementById("footer-btn-contact");
-    if (contactBtn) {
-      contactBtn.addEventListener("click", openContactModal);
-    }
+    if (contactBtn) contactBtn.addEventListener("click", openContactModal);
   }
-
   window.initContactTrigger = initContactTrigger;
 })();

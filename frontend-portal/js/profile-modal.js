@@ -1,32 +1,35 @@
 /**
- * profile-modal.js  v2
- *
- * Improvements:
- *  - Password validation identical to register-modal.js
- *    (min. 12 chars, upper/lowercase, number, special char + strength indicator)
- *  - Profile button appears/disappears live via userLoggedIn / userLoggedOut events
- *  - XSS Protection: all user inputs are escaped, no innerHTML with user data
- *  - Input Sanitization: Whitelist regex, maxlength enforcement
- *  - Debounce on submit buttons (prevents multiple submissions)
- *  - Content Security: no eval(), no unsafe DOM injections
- *
- * Include in index.html:
- *   <link rel="stylesheet" href="css/profile-modal.css" />
- *   <script src="js/profile-modal.js" defer></script>
+ * profile-modal.js
+ * 
+ * Logic for the User Profile Management interface.
+ * Handles username changes, secure password updates with strength detection,
+ * and account deletion workflows.
+ * 
+ * Integrates with SecurityUtils for validation and CSRF protection.
  */
-
-(function () {
+(function() {
   "use strict";
 
-  /* ── Input-Sanitization ──────────────────────────────────── */
+  // ====================================================================================================================================
+  //  CONSTANTS & CONFIG
+  // ====================================================================================================================================
+
+  /** @type {RegExp} Valid characters for usernames. */
   const USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
   const USERNAME_MAX = 32;
 
+  /**
+   * Simple sanitization for username inputs.
+   * @param {string} value 
+   */
   function sanitizeUsername(value) {
     return String(value).trim().slice(0, USERNAME_MAX);
   }
 
-  /* ── HTML-Template ──── */
+  // ====================================================================================================================================
+  //  UI TEMPLATES
+  // ====================================================================================================================================
+
   const MODAL_HTML = `
     <div id="profileOverlay" class="mx-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="profile-title">
       <div class="mx-modal-container profile-modal-custom">
@@ -136,32 +139,59 @@
     </div>
   `;
 
-  /* ── State ───────────────────────────────────────────────── */
-  let injected = false;
-  let submitLock = {}; // Debounce-lock per action
+  // ====================================================================================================================================
+  //  MODULE STATE
+  // ====================================================================================================================================
 
-  /* ── Feedback Helper ─────────────────────────────────────── */
+  let injected = false;
+  let submitLock = {}; // Prevents double submissions
+
+  // ====================================================================================================================================
+  //  UI FEEDBACK HELPERS
+  // ====================================================================================================================================
+
+  /**
+   * Sets the visual feedback for an input group.
+   * @param {HTMLElement} el - Feedback element.
+   * @param {string} message - Message to display.
+   * @param {'error'|'success'|'loading'} type - Feedback type.
+   */
   function setFeedback(el, message, type) {
     el.textContent = message;
     el.className = "mx-feedback " + type;
   }
 
+  /**
+   * Clears feedback text and classes.
+   */
   function clearFeedback(el) {
     el.textContent = "";
     el.className = "mx-feedback";
   }
 
+  /**
+   * Updates the visual border state of an input.
+   */
   function setInputState(input, state) {
     input.classList.remove("error", "success");
     if (state === "error") input.classList.add("error");
     if (state === "success") input.classList.add("success");
   }
 
-  /* ── Password Validation ── */
+  // ====================================================================================================================================
+  //  VALIDATION LOGIC
+  // ====================================================================================================================================
+
+  /**
+   * Wraps SecurityUtils password validation.
+   */
   function validateNewPassword(pwInput, bars, feedbackEl) {
-    return window.SecurityUtils.validatePassword(pwInput, feedbackEl, bars);
+    return window.SecurityUtils?.validatePassword(pwInput, feedbackEl, bars);
   }
 
+  /**
+   * Checks if password confirmation matches.
+   */
   function validatePasswordMatch(pwInput, confirmInput, feedbackEl) {
     setInputState(confirmInput, null);
     if (confirmInput.value === "") return false;
@@ -176,39 +206,47 @@
     return true;
   }
 
-  /* ── Modal Lifecycle ─────────────────────────────────────── */
+  // ====================================================================================================================================
+  //  MODAL LIFECYCLE
+  // ====================================================================================================================================
+
+  /**
+   * Injects structural HTML if not present.
+   */
   function injectModal() {
     if (injected) return;
     document.body.insertAdjacentHTML("beforeend", MODAL_HTML);
-    bindEvents();
+    bindLocalEvents();
     injected = true;
   }
 
+  /**
+   * Opens the profile modal with focus management.
+   */
   function openModal() {
     injectModal();
     const overlay = document.getElementById("profileOverlay");
-    window.SecurityUtils.ModalManager.open(overlay, "active", "#profileNewUsername");
+    window.SecurityUtils?.ModalManager?.open(overlay, "active", "#profileNewUsername");
   }
 
+  /**
+   * Closes the profile modal and triggers cleanup.
+   */
   function closeModal() {
     const overlay = document.getElementById("profileOverlay");
     if (!overlay) return;
-    window.SecurityUtils.ModalManager.close(overlay, "active");
-    setTimeout(resetModal, 350);
+    window.SecurityUtils?.ModalManager?.close(overlay, "active");
+    setTimeout(resetModalState, 350);
   }
 
-  function resetModal() {
-    const ids = [
-      "profileNewUsername",
-      "profileNewPassword",
-      "profileConfirmPassword",
-    ];
-    ids.forEach((id) => {
+  /**
+   * Resets all inputs and feedback fields to their default state.
+   */
+  function resetModalState() {
+    const ids = ["profileNewUsername", "profileNewPassword", "profileConfirmPassword"];
+    ids.forEach(id => {
       const el = document.getElementById(id);
-      if (el) {
-        el.value = "";
-        setInputState(el, null);
-      }
+      if (el) { el.value = ""; setInputState(el, null); }
     });
 
     const confirmPanel = document.getElementById("profileConfirmPanel");
@@ -218,13 +256,9 @@
     if (deleteBtn) deleteBtn.style.display = "";
 
     const bars = document.querySelectorAll(".mx-strength-bar");
-    bars.forEach((bar) => bar.classList.remove("active", "weak", "medium", "strong"));
+    bars.forEach(bar => bar.className = "mx-strength-bar");
 
-    [
-      "profileUsernameFeedback",
-      "profilePasswordFeedback",
-      "profileDeleteFeedback",
-    ].forEach((id) => {
+    ["profileUsernameFeedback", "profilePasswordFeedback", "profileDeleteFeedback"].forEach(id => {
       const el = document.getElementById(id);
       if (el) clearFeedback(el);
     });
@@ -232,8 +266,14 @@
     submitLock = {};
   }
 
-  /* ── Bind Events ───────────────────────────────────────── */
-  function bindEvents() {
+  // ====================================================================================================================================
+  //  EVENT BINDING
+  // ====================================================================================================================================
+
+  /**
+   * Sets up internal listeners for inputs and buttons.
+   */
+  function bindLocalEvents() {
     const overlay = document.getElementById("profileOverlay");
     const closeBtn = document.getElementById("profileCloseBtn");
     const saveUsernameBtn = document.getElementById("profileSaveUsernameBtn");
@@ -248,13 +288,13 @@
     const bars = document.querySelectorAll(".mx-strength-bar");
     const feedbackPw = document.getElementById("profilePasswordFeedback");
 
-    // Modal Manager setup
-    window.SecurityUtils.ModalManager.setup(overlay, closeModal);
+    // Modal Manager Integration
+    window.SecurityUtils?.ModalManager?.setup(overlay, closeModal);
 
-    // Close button
+    // Header close
     closeBtn.addEventListener("click", closeModal);
 
-    // Password Toggles
+    // Password Visibility Toggles
     const togglePw = (input, btn) => {
       const isVisible = input.type === "text";
       input.type = isVisible ? "password" : "text";
@@ -266,40 +306,34 @@
     pwToggle1.addEventListener("click", () => togglePw(pwInput, pwToggle1));
     pwToggle2.addEventListener("click", () => togglePw(pwConfirm, pwToggle2));
 
-    // Live password validation
+    // Dynamic Validation Listeners
     pwInput.addEventListener("input", () => {
       validateNewPassword(pwInput, bars, feedbackPw);
-      if (pwConfirm.value)
-        validatePasswordMatch(pwInput, pwConfirm, feedbackPw);
+      if (pwConfirm.value) validatePasswordMatch(pwInput, pwConfirm, feedbackPw);
     });
     pwConfirm.addEventListener("input", () => {
       validatePasswordMatch(pwInput, pwConfirm, feedbackPw);
     });
 
-    // Save username
+    // Submission Handlers
     saveUsernameBtn.addEventListener("click", handleSaveUsername);
-    document
-      .getElementById("profileNewUsername")
-      .addEventListener("keydown", (e) => {
-        if (e.key === "Enter") handleSaveUsername();
-      });
+    document.getElementById("profileNewUsername").addEventListener("keydown", e => {
+      if (e.key === "Enter") handleSaveUsername();
+    });
 
-    // Save password
     savePasswordBtn.addEventListener("click", handleSavePassword);
-    pwConfirm.addEventListener("keydown", (e) => {
+    pwConfirm.addEventListener("keydown", e => {
       if (e.key === "Enter") handleSavePassword();
     });
 
-    // Delete-Flow
+    // Account Deletion Workflow
     deleteBtn.addEventListener("click", () => {
       document.getElementById("profileConfirmPanel").classList.add("visible");
       deleteBtn.style.display = "none";
     });
 
     cancelDeleteBtn.addEventListener("click", () => {
-      document
-        .getElementById("profileConfirmPanel")
-        .classList.remove("visible");
+      document.getElementById("profileConfirmPanel").classList.remove("visible");
       document.getElementById("profileDeleteBtn").style.display = "";
       clearFeedback(document.getElementById("profileDeleteFeedback"));
     });
@@ -307,7 +341,13 @@
     confirmDeleteBtn.addEventListener("click", handleDeleteAccount);
   }
 
-  /* ── Save Username ──────────────────────────────────── */
+  // ====================================================================================================================================
+  //  FORM ACTIONS (XHR)
+  // ====================================================================================================================================
+
+  /**
+   * Processes username update requests.
+   */
   async function handleSaveUsername() {
     if (submitLock.username) return;
 
@@ -319,18 +359,17 @@
     clearFeedback(feedback);
     setInputState(input, null);
 
-    // Client-side validation using SecurityUtils
     if (!raw) {
       setInputState(input, "error");
-      setFeedback(feedback, "▸ Username cannot be empty.", "error");
+      setFeedback(feedback, "▸ Username required.", "error");
       return;
     }
     
-    if (!window.SecurityUtils.validateUsername(input, feedback)) return;
+    if (!window.SecurityUtils?.validateUsername(input, feedback)) return;
 
     submitLock.username = true;
     btn.disabled = true;
-    setFeedback(feedback, "▸ Checking availability...", "loading");
+    setFeedback(feedback, "▸ Verifying identity...", "loading");
 
     try {
       const csrf_token = await window.SecurityUtils.fetchCsrfToken();
@@ -342,31 +381,30 @@
       });
 
       if (!response.ok) throw new Error("HTTP " + response.status);
-
       const data = await response.json();
 
       if (data.success) {
         setInputState(input, "success");
-        setFeedback(feedback, "▸ Username updated successfully.", "success");
+        setFeedback(feedback, "▸ System ID updated.", "success");
         input.value = "";
-        document.dispatchEvent(
-          new CustomEvent("usernameChanged", { detail: { username: raw } }),
-        );
+        document.dispatchEvent(new CustomEvent("usernameChanged", { detail: { username: raw } }));
       } else if (data.error === "username_taken") {
         setInputState(input, "error");
-        setFeedback(feedback, "▸ Username already taken.", "error");
+        setFeedback(feedback, "▸ Identifier already in use.", "error");
       } else {
-        setFeedback(feedback, "▸ An error occurred. Please try again.", "error");
+        setFeedback(feedback, "▸ Kernel rejection. Try again.", "error");
       }
     } catch (err) {
-      setFeedback(feedback, "▸ Connection error.", "error");
+      setFeedback(feedback, "▸ Connection dropped.", "error");
     } finally {
       btn.disabled = false;
       setTimeout(() => { submitLock.username = false; }, 1500);
     }
   }
 
-  /* ── Save Password ──────────────────────────────────── */
+  /**
+   * Processes password update requests.
+   */
   async function handleSavePassword() {
     if (submitLock.password) return;
 
@@ -383,7 +421,7 @@
 
     submitLock.password = true;
     btn.disabled = true;
-    setFeedback(feedback, "▸ Updating password...", "loading");
+    setFeedback(feedback, "▸ Re-encrypting access keys...", "loading");
 
     try {
       const csrf_token = await window.SecurityUtils.fetchCsrfToken();
@@ -395,28 +433,29 @@
       });
 
       if (!response.ok) throw new Error("HTTP " + response.status);
-
       const data = await response.json();
 
       if (data.success) {
-        setFeedback(feedback, "▸ Password updated. All sessions terminated.", "success");
+        setFeedback(feedback, "▸ Uplink secure. Sessions purged.", "success");
         pwInput.value = "";
         pwConfirm.value = "";
         setInputState(pwInput, null);
         setInputState(pwConfirm, null);
-        bars.forEach(bar => bar.classList.remove("active", "weak", "medium", "strong"));
+        bars.forEach(bar => bar.className = "mx-strength-bar");
       } else {
-        setFeedback(feedback, "▸ An error occurred.", "error");
+        setFeedback(feedback, "▸ Encryption failed.", "error");
       }
     } catch (err) {
-      setFeedback(feedback, "▸ Connection error.", "error");
+      setFeedback(feedback, "▸ Network failure.", "error");
     } finally {
       btn.disabled = false;
       setTimeout(() => { submitLock.password = false; }, 1500);
     }
   }
 
-  /* ── Delete Account ─────────────────────────────────────── */
+  /**
+   * Processes account termination requests.
+   */
   async function handleDeleteAccount() {
     if (submitLock.delete) return;
 
@@ -427,7 +466,7 @@
     submitLock.delete = true;
     confirmBtn.disabled = true;
     cancelBtn.disabled = true;
-    setFeedback(feedback, "▸ Deleting account...", "loading");
+    setFeedback(feedback, "▸ Initiating self-destruct...", "loading");
 
     try {
       const csrf_token = await window.SecurityUtils.fetchCsrfToken();
@@ -439,51 +478,43 @@
       });
 
       if (!response.ok) throw new Error("HTTP " + response.status);
-
       const data = await response.json();
 
       if (data.deleted) {
-        setFeedback(feedback, "▸ Account deleted. Goodbye.", "success");
+        setFeedback(feedback, "▸ Account purged. Connection lost.", "success");
         setTimeout(() => {
           closeModal();
           onAccountDeleted();
         }, 1800);
       } else {
-        setFeedback(feedback, "▸ Deletion failed.", "error");
+        setFeedback(feedback, "▸ Deletion aborted.", "error");
         confirmBtn.disabled = false;
         cancelBtn.disabled = false;
         submitLock.delete = false;
       }
     } catch (err) {
-      setFeedback(feedback, "▸ Connection error.", "error");
+      setFeedback(feedback, "▸ Uplink error.", "error");
       confirmBtn.disabled = false;
       cancelBtn.disabled = false;
       submitLock.delete = false;
     }
   }
 
-  /* ── Post-Delete ───────────────────── */
+  /**
+   * Cleanup logic after successful deletion.
+   */
   function onAccountDeleted() {
     if (typeof updateAuthButton === "function") {
       updateAuthButton();
-    } else {
-      const loginBtn = document.getElementById("btn_login");
-      if (loginBtn) {
-        loginBtn.textContent = "LOGIN";
-        loginBtn.disabled = false;
-      }
     }
     document.dispatchEvent(new CustomEvent("userLoggedOut", { detail: { reason: "account_deleted" } }));
   }
 
-  /* ── Sync State ──────────────────── */
-  function syncProfileButton(visible) {
-    document.querySelectorAll('.dropdown-item[data-action="profile"]').forEach((el) => {
-      el.style.display = visible ? "" : "none";
-    });
-  }
+  // ====================================================================================================================================
+  //  EXPORTS
+  // ====================================================================================================================================
 
-  /* ── Init Trigger ─────────────────────── */
   window.ProfileModal = { open: openModal, close: closeModal };
   window.openProfileModal = openModal;
+
 })();

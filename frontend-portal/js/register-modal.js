@@ -1,8 +1,15 @@
-(function() {
+/**
+ * register-modal.js
+ * 
+ * Lazy-initialised on first open; exposes openRegisterModal and closeRegisterModal
+ * globally so other modules (e.g. login modal) can trigger them directly.
+ */
+(function () {
   "use strict";
 
   let registerModal = null;
 
+  // Inject HTML, wire up all inputs and events — runs only once
   function createRegisterModal() {
     if (registerModal) return;
 
@@ -109,13 +116,11 @@
     const passwordToggleConfirm = registerModal.querySelector("#regPwConfirmToggle");
     const loginBtn = registerModal.querySelector(".register-login-btn");
 
-    // Modal setup
+    // Wire up close/keyboard/overlay-click via ModalManager
     window.SecurityUtils.ModalManager.setup(registerModal, closeRegisterModal);
-
-    // Close button
     closeBtn.addEventListener("click", closeRegisterModal);
 
-    // Password visibility toggles
+    // Toggle between password/text and swap the eye icon accordingly
     const toggleVisibility = (input, btn) => {
       const isVisible = input.type === "text";
       input.type = isVisible ? "password" : "text";
@@ -127,7 +132,7 @@
     passwordToggle.addEventListener("click", () => toggleVisibility(passwordInput, passwordToggle));
     passwordToggleConfirm.addEventListener("click", () => toggleVisibility(passwordConfirmInput, passwordToggleConfirm));
 
-    // Inline validation
+    // Re-check match on every password keystroke so the confirm error stays in sync
     usernameInput.addEventListener("input", () => validateRegisterUsername(usernameInput));
     passwordInput.addEventListener("input", () => {
       validateRegisterPassword(passwordInput);
@@ -137,7 +142,7 @@
 
     form.addEventListener("submit", handleRegisterSubmit);
 
-    // Switch to login
+    // Delay opening login so the close animation can finish first
     loginBtn.addEventListener("click", () => {
       closeRegisterModal();
       setTimeout(() => {
@@ -154,6 +159,7 @@
   function closeRegisterModal() {
     if (!registerModal) return;
     window.SecurityUtils.ModalManager.close(registerModal, "active");
+    // Reset form and clear visual validation state on every close
     const form = registerModal.querySelector("#registerForm");
     if (form) {
       form.reset();
@@ -176,13 +182,16 @@
     const password = passwordInput.value;
     const confirm = confirmInput.value;
     const errorDiv = registerModal.querySelector('[data-error="password-confirm"]');
+
     confirmInput.classList.remove("error", "success");
     errorDiv.classList.remove("show");
-    if (confirm === "") return false;
+
+    if (confirm === "") return false; // skip until the user starts typing
     if (password !== confirm) {
       window.SecurityUtils.showError(confirmInput, errorDiv, "Passwords do not match");
       return false;
     }
+
     confirmInput.classList.add("success");
     return true;
   }
@@ -198,15 +207,20 @@
 
   async function handleRegisterSubmit(e) {
     e.preventDefault();
+
     const usernameInput = registerModal.querySelector("#register-username");
     const passwordInput = registerModal.querySelector("#register-password");
     const passwordConfirmInput = registerModal.querySelector("#register-password-confirm");
 
-    if (!validateRegisterUsername(usernameInput) || 
-        !validateRegisterPassword(passwordInput) || 
-        !validatePasswordMatch(passwordInput, passwordConfirmInput)) return;
+    // Bail early if any field is invalid — errors are shown by each validator
+    if (
+      !validateRegisterUsername(usernameInput) ||
+      !validateRegisterPassword(passwordInput) ||
+      !validatePasswordMatch(passwordInput, passwordConfirmInput)
+    ) return;
 
     const username = usernameInput.value.trim();
+
     try {
       const csrfToken = await window.SecurityUtils.fetchCsrfToken();
       const response = await fetch("/api/register.php", {
@@ -223,7 +237,9 @@
       });
 
       const data = await response.json();
+
       if (!response.ok) {
+        // API may return a single error string or an array — normalise to string
         const errorMessage = Array.isArray(data.error) ? data.error[0] : data.error || "Registration failed";
         window.SecurityUtils.showError(usernameInput, registerModal.querySelector('[data-error="username"]'), errorMessage);
         return;
@@ -238,6 +254,7 @@
     }
   }
 
+  // Expose globally so login modal and other modules can open/close this modal
   window.openRegisterModal = openRegisterModal;
   window.closeRegisterModal = closeRegisterModal;
 })();
