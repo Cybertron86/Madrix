@@ -26,6 +26,7 @@ class HologramCarousel {
     // State
     this.items = [];
     this.currentIndex = 0;
+    this.virtualIndex = 0; // Continuous index for smooth rotation math
     this.isAnimating = false;
     this.autoPlayTimeout = null;
     this.glitchInterval = null;
@@ -399,9 +400,12 @@ class HologramCarousel {
 
     this.isAnimating = true;
 
+    // Update continuous virtual index (maintains direction logic of original)
+    this.virtualIndex -= direction;
+    
+    // Derived current index for logic (modulo stays internal)
     const totalItems = this.items.length;
-    this.currentIndex =
-      (this.currentIndex - direction + totalItems) % totalItems;
+    this.currentIndex = ((this.currentIndex - direction + totalItems) % totalItems);
 
     // Add transition class
     this.sphere.classList.add("holo-carousel-transitioning");
@@ -424,19 +428,25 @@ class HologramCarousel {
     const radius = 600; // Distance from center
 
     items.forEach((item, index) => {
-      const relativeIndex =
-        (index - this.currentIndex + totalItems) % totalItems;
-      const angle = relativeIndex * angleStep;
+      // Calculate 3D position based on continuous virtual index
+      const angle = (index - (this.virtualIndex % totalItems) + totalItems) % totalItems * angleStep;
+      
+      // But we need the rotation itself to be continuous to avoid the flip
+      // We use a base rotation that follows the virtual index
+      const relativeIndex = (index - this.currentIndex + totalItems) % totalItems;
+      
+      // To fix the flip: we need the angle used in transform to be continuous
+      // We'll use the virtualIndex to offset the item positions
+      const continuousAngle = (index - this.virtualIndex) * angleStep;
 
-      // Calculate 3D position
-      const x = Math.sin(angle) * radius;
-      const z = Math.cos(angle) * radius - radius;
-      const y = 0; // Vertical offset
+      const x = Math.sin(continuousAngle) * radius;
+      const z = Math.cos(continuousAngle) * radius - radius;
+      const y = 0;
 
-      // Calculate rotation
-      const rotationY = (angle * 180) / Math.PI;
+      // Continuous rotation value
+      const rotationY = (continuousAngle * 180) / Math.PI;
 
-      // Calculate opacity and scale based on position
+      // RESTORE ORIGINAL STYLE LOGIC
       let opacity = 1;
       let scale = 1;
 
