@@ -18,124 +18,117 @@
 (function () {
   "use strict";
 
-  /* ── Security: XSS-Escape ──────────────────────────────── */
-  function escapeHtml(str) {
-    const div = document.createElement("div");
-    div.appendChild(document.createTextNode(String(str)));
-    return div.innerHTML;
-  }
-
   /* ── Input-Sanitization ──────────────────────────────────── */
   const USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
   const USERNAME_MAX = 32;
-  const PASSWORD_MIN = 12;
 
   function sanitizeUsername(value) {
-    // Trim + limit to allowed characters + maxlength
     return String(value).trim().slice(0, USERNAME_MAX);
   }
 
-  /* ── HTML-Template (static – no user input within) ──── */
+  /* ── HTML-Template ──── */
   const MODAL_HTML = `
-    <div id="profileOverlay" class="profile-overlay" role="dialog" aria-modal="true" aria-labelledby="profile-title">
-      <div class="profile-modal">
+    <div id="profileOverlay" class="mx-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+      <div class="mx-modal-container profile-modal-custom">
 
         <div class="profile-modal-corner-br"></div>
 
         <!-- Header -->
-        <div class="profile-modal-header">
-          <h2 class="profile-modal-title" id="profile-title">
+        <div class="mx-modal-header">
+          <h2 class="mx-modal-title" id="profile-title">
             PROFILE
-            <span>// SYSTEM ACCESS</span>
+            <span class="mx-title-sub">// SYSTEM ACCESS</span>
           </h2>
-          <button id="profileCloseBtn" class="profile-close-btn" aria-label="Close Profile Modal">✕</button>
+          <button id="profileCloseBtn" class="mx-modal-close" aria-label="Close Profile Modal">✕</button>
         </div>
 
-        <!-- Section: Change Username -->
-        <div class="profile-section" role="region" aria-labelledby="section-username-title">
-          <p class="profile-section-label" id="section-username-title">▸ Change Username</p>
-          <div class="profile-input-row">
-            <input
-              id="profileNewUsername"
-              class="profile-input"
-              type="text"
-              placeholder="NEW USERNAME"
-              autocomplete="username"
-              maxlength="32"
-              spellcheck="false"
-              aria-describedby="profileUsernameFeedback"
-            />
-            <button id="profileSaveUsernameBtn" class="profile-btn" aria-label="Save Username">SAVE</button>
-          </div>
-          <div id="profileUsernameFeedback" class="profile-feedback" aria-live="polite"></div>
-        </div>
-
-        <!-- Section: Change Password -->
-        <div class="profile-section" role="region" aria-labelledby="section-password-title">
-          <p class="profile-section-label" id="section-password-title">▸ Change Password</p>
-
-          <div class="profile-pw-wrapper">
-            <input
-              id="profileNewPassword"
-              class="profile-input"
-              type="password"
-              placeholder="NEW PASSWORD"
-              autocomplete="new-password"
-              maxlength="128"
-              aria-describedby="profile-pw-hint profilePasswordFeedback"
-            />
-            <button type="button" class="profile-pw-toggle" id="profilePwToggle1" aria-label="Show password" aria-pressed="false">👁️</button>
-          </div>
-
-          <!-- Strength indicator -->
-          <div class="profile-pw-strength" id="profilePwStrength" aria-label="Password strength indicator">
-            <div class="profile-pw-strength-bar" data-bar="0"></div>
-            <div class="profile-pw-strength-bar" data-bar="1"></div>
-            <div class="profile-pw-strength-bar" data-bar="2"></div>
-            <div class="profile-pw-strength-bar" data-bar="3"></div>
-          </div>
-
-          <p class="profile-pw-hint" id="profile-pw-hint">Min. 12 chars · uppercase · lowercase · number · special character</p>
-
-          <div class="profile-pw-wrapper">
-            <input
-              id="profileConfirmPassword"
-              class="profile-input"
-              type="password"
-              placeholder="CONFIRM PASSWORD"
-              autocomplete="new-password"
-              maxlength="128"
-              aria-describedby="profilePasswordFeedback"
-            />
-            <button type="button" class="profile-pw-toggle" id="profilePwToggle2" aria-label="Show confirm password" aria-pressed="false">👁️</button>
-          </div>
-
-          <div style="margin-top:0.6rem;">
-            <button id="profileSavePasswordBtn" class="profile-btn">SAVE PASSWORD</button>
-          </div>
-          <div id="profilePasswordFeedback" class="profile-feedback" aria-live="polite"></div>
-        </div>
-
-        <!-- Section: Delete Account -->
-        <div class="profile-section profile-delete-zone" role="region" aria-labelledby="section-delete-title">
-          <p class="profile-section-label" id="section-delete-title">▸ Danger Zone</p>
-          <p class="profile-delete-description">
-            Permanently remove your account and all associated data from the system.
-          </p>
-          <button id="profileDeleteBtn" class="profile-btn-delete" aria-haspopup="true">DELETE ACCOUNT</button>
-
-          <!-- Confirmation Panel -->
-          <div id="profileConfirmPanel" class="profile-confirm-panel" role="alert" aria-hidden="true">
-            <p class="profile-confirm-text">
-              <strong>⚠ WARNING</strong>
-              Are you really sure you want to delete your account?
-              This action cannot be undone!
-            </p>
-            <div class="profile-confirm-actions">
-              <button id="profileConfirmDeleteBtn" class="profile-btn-delete">YES, DELETE PERMANENTLY</button>
-              <button id="profileCancelDeleteBtn" class="profile-btn-cancel">CANCEL</button>
+        <div class="mx-modal-content">
+          <!-- Section: Change Username -->
+          <div class="profile-section" role="region" aria-labelledby="section-username-title">
+            <p class="profile-section-label" id="section-username-title">▸ Change Username</p>
+            <div class="profile-input-row">
+              <input
+                id="profileNewUsername"
+                class="mx-input"
+                type="text"
+                placeholder="NEW USERNAME"
+                autocomplete="username"
+                maxlength="32"
+                spellcheck="false"
+                aria-describedby="profileUsernameFeedback"
+              />
+              <button id="profileSaveUsernameBtn" class="mx-btn profile-save-btn" aria-label="Save Username">SAVE</button>
             </div>
-            <div id="profileDeleteFeedback" class="profile-feedback" aria-live="polite"></div>
+            <div id="profileUsernameFeedback" class="mx-feedback" aria-live="polite"></div>
+          </div>
+
+          <!-- Section: Change Password -->
+          <div class="profile-section" role="region" aria-labelledby="section-password-title">
+            <p class="profile-section-label" id="section-password-title">▸ Change Password</p>
+
+            <div class="mx-input-wrapper">
+              <input
+                id="profileNewPassword"
+                class="mx-input"
+                type="password"
+                placeholder="NEW PASSWORD"
+                autocomplete="new-password"
+                maxlength="128"
+                aria-describedby="profile-pw-hint profilePasswordFeedback"
+              />
+              <button type="button" class="mx-pw-toggle" id="profilePwToggle1" aria-label="Show password" aria-pressed="false">👁️</button>
+            </div>
+
+            <!-- Strength indicator -->
+            <div class="mx-strength-meter" id="profilePwStrength" aria-label="Password strength indicator">
+              <div class="mx-strength-bar"></div>
+              <div class="mx-strength-bar"></div>
+              <div class="mx-strength-bar"></div>
+              <div class="mx-strength-bar"></div>
+            </div>
+
+            <p class="profile-pw-hint" id="profile-pw-hint">Min. 12 chars · uppercase · lowercase · number · special character</p>
+
+            <div class="mx-input-wrapper">
+              <input
+                id="profileConfirmPassword"
+                class="mx-input"
+                type="password"
+                placeholder="CONFIRM PASSWORD"
+                autocomplete="new-password"
+                maxlength="128"
+                aria-describedby="profilePasswordFeedback"
+              />
+              <button type="button" class="mx-pw-toggle" id="profilePwToggle2" aria-label="Show confirm password" aria-pressed="false">👁️</button>
+            </div>
+
+            <div style="margin-top:1rem;">
+              <button id="profileSavePasswordBtn" class="mx-btn">SAVE PASSWORD</button>
+            </div>
+            <div id="profilePasswordFeedback" class="mx-feedback" aria-live="polite"></div>
+          </div>
+
+          <!-- Section: Delete Account -->
+          <div class="profile-section profile-delete-zone" role="region" aria-labelledby="section-delete-title">
+            <p class="profile-section-label" id="section-delete-title">▸ Danger Zone</p>
+            <p class="profile-delete-description">
+              Permanently remove your account and all associated data from the system.
+            </p>
+            <button id="profileDeleteBtn" class="mx-btn profile-btn-delete" aria-haspopup="true">DELETE ACCOUNT</button>
+
+            <!-- Confirmation Panel -->
+            <div id="profileConfirmPanel" class="profile-confirm-panel" role="alert" aria-hidden="true">
+              <p class="profile-confirm-text">
+                <strong>⚠ WARNING</strong>
+                Are you really sure you want to delete your account?
+                This action cannot be undone!
+              </p>
+              <div class="profile-confirm-actions">
+                <button id="profileConfirmDeleteBtn" class="mx-btn profile-btn-delete">YES, DELETE PERMANENTLY</button>
+                <button id="profileCancelDeleteBtn" class="mx-btn profile-btn-cancel">CANCEL</button>
+              </div>
+              <div id="profileDeleteFeedback" class="mx-feedback" aria-live="polite"></div>
+            </div>
           </div>
         </div>
 
@@ -149,99 +142,28 @@
 
   /* ── Feedback Helper ─────────────────────────────────────── */
   function setFeedback(el, message, type) {
-    // message is always a fixed string – no user input → no escapeHtml needed
     el.textContent = message;
-    el.className = "profile-feedback " + type;
+    el.className = "mx-feedback " + type;
   }
 
   function clearFeedback(el) {
     el.textContent = "";
-    el.className = "profile-feedback";
+    el.className = "mx-feedback";
   }
 
   function setInputState(input, state) {
-    input.classList.remove("input-error", "input-success");
-    if (state === "error") input.classList.add("input-error");
-    if (state === "success") input.classList.add("input-success");
+    input.classList.remove("error", "success");
+    if (state === "error") input.classList.add("error");
+    if (state === "success") input.classList.add("success");
   }
 
-  /* ── Password Strength ─────────────────────────────────────── */
-  function updatePasswordStrength(bars, count, strength) {
-    bars.forEach((bar) => bar.classList.remove("weak", "medium", "strong"));
-    for (let i = 0; i < count; i++) {
-      bars[i].classList.add(strength);
-    }
-  }
-
-  function resetPasswordStrength(bars) {
-    bars.forEach((bar) => bar.classList.remove("weak", "medium", "strong"));
-  }
-
-  /* ── Password Validation (same rules as register-modal.js) ── */
+  /* ── Password Validation ── */
   function validateNewPassword(pwInput, bars, feedbackEl) {
-    const value = pwInput.value;
-
-    setInputState(pwInput, null);
-    clearFeedback(feedbackEl);
-    resetPasswordStrength(bars);
-
-    if (value === "") return false;
-
-    if (value.length < PASSWORD_MIN) {
-      setInputState(pwInput, "error");
-      setFeedback(
-        feedbackEl,
-        `▸ Password must be at least ${PASSWORD_MIN} characters.`,
-        "error",
-      );
-      updatePasswordStrength(bars, 1, "weak");
-      return false;
-    }
-    if (!/[A-Z]/.test(value)) {
-      setInputState(pwInput, "error");
-      setFeedback(
-        feedbackEl,
-        "▸ Password must contain an uppercase letter.",
-        "error",
-      );
-      updatePasswordStrength(bars, 1, "weak");
-      return false;
-    }
-    if (!/[a-z]/.test(value)) {
-      setInputState(pwInput, "error");
-      setFeedback(
-        feedbackEl,
-        "▸ Password must contain a lowercase letter.",
-        "error",
-      );
-      updatePasswordStrength(bars, 2, "weak");
-      return false;
-    }
-    if (!/[0-9]/.test(value)) {
-      setInputState(pwInput, "error");
-      setFeedback(feedbackEl, "▸ Password must contain a number.", "error");
-      updatePasswordStrength(bars, 2, "medium");
-      return false;
-    }
-    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/.test(value)) {
-      setInputState(pwInput, "error");
-      setFeedback(
-        feedbackEl,
-        "▸ Password must contain a special character.",
-        "error",
-      );
-      updatePasswordStrength(bars, 3, "medium");
-      return false;
-    }
-
-    setInputState(pwInput, "success");
-    updatePasswordStrength(bars, 4, "strong");
-    return true;
+    return window.SecurityUtils.validatePassword(pwInput, feedbackEl, bars);
   }
 
   function validatePasswordMatch(pwInput, confirmInput, feedbackEl) {
     setInputState(confirmInput, null);
-
     if (confirmInput.value === "") return false;
 
     if (pwInput.value !== confirmInput.value) {
@@ -265,20 +187,13 @@
   function openModal() {
     injectModal();
     const overlay = document.getElementById("profileOverlay");
-    overlay.classList.add("open");
-    document.body.style.overflow = "hidden";
-
-    setTimeout(() => {
-      const firstInput = overlay.querySelector(".profile-input");
-      if (firstInput) firstInput.focus();
-    }, 350);
+    window.SecurityUtils.ModalManager.open(overlay, "active", "#profileNewUsername");
   }
 
   function closeModal() {
     const overlay = document.getElementById("profileOverlay");
     if (!overlay) return;
-    overlay.classList.remove("open");
-    document.body.style.overflow = "";
+    window.SecurityUtils.ModalManager.close(overlay, "active");
     setTimeout(resetModal, 350);
   }
 
@@ -302,8 +217,8 @@
     const deleteBtn = document.getElementById("profileDeleteBtn");
     if (deleteBtn) deleteBtn.style.display = "";
 
-    const bars = document.querySelectorAll(".profile-pw-strength-bar");
-    resetPasswordStrength([...bars]);
+    const bars = document.querySelectorAll(".mx-strength-bar");
+    bars.forEach((bar) => bar.classList.remove("active", "weak", "medium", "strong"));
 
     [
       "profileUsernameFeedback",
@@ -330,23 +245,26 @@
     const pwConfirm = document.getElementById("profileConfirmPassword");
     const pwToggle1 = document.getElementById("profilePwToggle1");
     const pwToggle2 = document.getElementById("profilePwToggle2");
-    const bars = [...document.querySelectorAll(".profile-pw-strength-bar")];
+    const bars = document.querySelectorAll(".mx-strength-bar");
     const feedbackPw = document.getElementById("profilePasswordFeedback");
 
-    // Schließen
+    // Modal Manager setup
+    window.SecurityUtils.ModalManager.setup(overlay, closeModal);
+
+    // Close button
     closeBtn.addEventListener("click", closeModal);
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) closeModal();
-    });
-    document.addEventListener("keydown", handleKeydown);
 
     // Password Toggles
-    pwToggle1.addEventListener("click", () =>
-      togglePwVisibility(pwInput, pwToggle1),
-    );
-    pwToggle2.addEventListener("click", () =>
-      togglePwVisibility(pwConfirm, pwToggle2),
-    );
+    const togglePw = (input, btn) => {
+      const isVisible = input.type === "text";
+      input.type = isVisible ? "password" : "text";
+      btn.textContent = isVisible ? "👁️" : "🙈";
+      btn.setAttribute("aria-label", isVisible ? "Show password" : "Hide password");
+      btn.setAttribute("aria-pressed", !isVisible);
+    };
+
+    pwToggle1.addEventListener("click", () => togglePw(pwInput, pwToggle1));
+    pwToggle2.addEventListener("click", () => togglePw(pwConfirm, pwToggle2));
 
     // Live password validation
     pwInput.addEventListener("input", () => {
@@ -389,21 +307,6 @@
     confirmDeleteBtn.addEventListener("click", handleDeleteAccount);
   }
 
-  function handleKeydown(e) {
-    if (e.key === "Escape") {
-      const overlay = document.getElementById("profileOverlay");
-      if (overlay && overlay.classList.contains("open")) closeModal();
-    }
-  }
-
-  function togglePwVisibility(input, btn) {
-    const isVisible = input.type === "text";
-    input.type = isVisible ? "password" : "text";
-    btn.textContent = isVisible ? "👁️" : "🙈";
-    btn.setAttribute("aria-label", isVisible ? "Show password" : "Hide password");
-    btn.setAttribute("aria-pressed", !isVisible);
-  }
-
   /* ── Save Username ──────────────────────────────────── */
   async function handleSaveUsername() {
     if (submitLock.username) return;
@@ -416,48 +319,29 @@
     clearFeedback(feedback);
     setInputState(input, null);
 
-    // Client-side validation
+    // Client-side validation using SecurityUtils
     if (!raw) {
       setInputState(input, "error");
       setFeedback(feedback, "▸ Username cannot be empty.", "error");
       return;
     }
-    if (raw.length < 3) {
-      setInputState(input, "error");
-      setFeedback(
-        feedback,
-        "▸ Username must be at least 3 characters.",
-        "error",
-      );
-      return;
-    }
-    if (!USERNAME_REGEX.test(raw)) {
-      setInputState(input, "error");
-      setFeedback(
-        feedback,
-        "▸ Only letters, numbers, - and _ allowed.",
-        "error",
-      );
-      return;
-    }
+    
+    if (!window.SecurityUtils.validateUsername(input, feedback)) return;
 
-    // Debounce
     submitLock.username = true;
     btn.disabled = true;
     setFeedback(feedback, "▸ Checking availability...", "loading");
 
     try {
+      const csrf_token = await window.SecurityUtils.fetchCsrfToken();
       const response = await fetch("/api/profile_update.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Sanitized value is sent – no raw HTML
-        body: JSON.stringify({ username: raw }),
+        body: JSON.stringify({ username: raw, csrf_token }),
         credentials: "same-origin",
       });
 
-      if (!response.ok) {
-        throw new Error("HTTP " + response.status);
-      }
+      if (!response.ok) throw new Error("HTTP " + response.status);
 
       const data = await response.json();
 
@@ -465,32 +349,20 @@
         setInputState(input, "success");
         setFeedback(feedback, "▸ Username updated successfully.", "success");
         input.value = "";
-        // Dispatch event for other modules
         document.dispatchEvent(
           new CustomEvent("usernameChanged", { detail: { username: raw } }),
         );
       } else if (data.error === "username_taken") {
         setInputState(input, "error");
-        setFeedback(
-          feedback,
-          "▸ Username already taken. Choose another.",
-          "error",
-        );
+        setFeedback(feedback, "▸ Username already taken.", "error");
       } else {
-        setFeedback(
-          feedback,
-          "▸ An error occurred. Please try again.",
-          "error",
-        );
+        setFeedback(feedback, "▸ An error occurred. Please try again.", "error");
       }
     } catch (err) {
-      setFeedback(feedback, "▸ Connection error. Please try again.", "error");
+      setFeedback(feedback, "▸ Connection error.", "error");
     } finally {
       btn.disabled = false;
-      // Lift lock after a short cooldown period
-      setTimeout(() => {
-        submitLock.username = false;
-      }, 1500);
+      setTimeout(() => { submitLock.username = false; }, 1500);
     }
   }
 
@@ -502,61 +374,45 @@
     const pwConfirm = document.getElementById("profileConfirmPassword");
     const feedback = document.getElementById("profilePasswordFeedback");
     const btn = document.getElementById("profileSavePasswordBtn");
-    const bars = [...document.querySelectorAll(".profile-pw-strength-bar")];
+    const bars = document.querySelectorAll(".mx-strength-bar");
 
     clearFeedback(feedback);
 
-    // Full validation before request    const isPwValid = validateNewPassword(pwInput, bars, feedback);
-    if (!isPwValid) return;
+    if (!validateNewPassword(pwInput, bars, feedback)) return;
+    if (!validatePasswordMatch(pwInput, pwConfirm, feedback)) return;
 
-    const isMatchValid = validatePasswordMatch(pwInput, pwConfirm, feedback);
-    if (!isMatchValid) return;
-
-    // Debounce
     submitLock.password = true;
     btn.disabled = true;
     setFeedback(feedback, "▸ Updating password...", "loading");
 
     try {
+      const csrf_token = await window.SecurityUtils.fetchCsrfToken();
       const response = await fetch("/api/profile_update.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Password is sent as plain string – no escaping needed (JSON.stringify handles it)
-        body: JSON.stringify({ password: pwInput.value }),
+        body: JSON.stringify({ password: pwInput.value, csrf_token }),
         credentials: "same-origin",
       });
 
-      if (!response.ok) {
-        throw new Error("HTTP " + response.status);
-      }
+      if (!response.ok) throw new Error("HTTP " + response.status);
 
       const data = await response.json();
 
       if (data.success) {
-        setFeedback(
-          feedback,
-          "▸ Password updated. All sessions terminated.",
-          "success",
-        );
+        setFeedback(feedback, "▸ Password updated. All sessions terminated.", "success");
         pwInput.value = "";
         pwConfirm.value = "";
         setInputState(pwInput, null);
         setInputState(pwConfirm, null);
-        resetPasswordStrength(bars);
+        bars.forEach(bar => bar.classList.remove("active", "weak", "medium", "strong"));
       } else {
-        setFeedback(
-          feedback,
-          "▸ An error occurred. Please try again.",
-          "error",
-        );
+        setFeedback(feedback, "▸ An error occurred.", "error");
       }
     } catch (err) {
-      setFeedback(feedback, "▸ Connection error. Please try again.", "error");
+      setFeedback(feedback, "▸ Connection error.", "error");
     } finally {
       btn.disabled = false;
-      setTimeout(() => {
-        submitLock.password = false;
-      }, 1500);
+      setTimeout(() => { submitLock.password = false; }, 1500);
     }
   }
 
@@ -574,15 +430,15 @@
     setFeedback(feedback, "▸ Deleting account...", "loading");
 
     try {
+      const csrf_token = await window.SecurityUtils.fetchCsrfToken();
       const response = await fetch("/api/profile_delete.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ csrf_token }),
         credentials: "same-origin",
       });
 
-      if (!response.ok) {
-        throw new Error("HTTP " + response.status);
-      }
+      if (!response.ok) throw new Error("HTTP " + response.status);
 
       const data = await response.json();
 
@@ -593,105 +449,41 @@
           onAccountDeleted();
         }, 1800);
       } else {
-        setFeedback(feedback, "▸ Deletion failed. Please try again.", "error");
+        setFeedback(feedback, "▸ Deletion failed.", "error");
         confirmBtn.disabled = false;
         cancelBtn.disabled = false;
         submitLock.delete = false;
       }
     } catch (err) {
-      setFeedback(feedback, "▸ Connection error. Please try again.", "error");
+      setFeedback(feedback, "▸ Connection error.", "error");
       confirmBtn.disabled = false;
       cancelBtn.disabled = false;
       submitLock.delete = false;
     }
   }
 
-  /* ── Post-Delete: UI Reset without Reload ───────────────────── */
+  /* ── Post-Delete ───────────────────── */
   function onAccountDeleted() {
-    // Instantly reset login button to "LOGIN" – identical to login-modal.js
     if (typeof updateAuthButton === "function") {
       updateAuthButton();
     } else {
-      // Fallback if updateAuthButton hasn't loaded yet
       const loginBtn = document.getElementById("btn_login");
       if (loginBtn) {
         loginBtn.textContent = "LOGIN";
         loginBtn.disabled = false;
       }
     }
-
-    // Custom event for all other modules (e.g. profile-modal syncProfileButton)
-    document.dispatchEvent(
-      new CustomEvent("userLoggedOut", {
-        detail: { reason: "account_deleted" },
-      }),
-    );
+    document.dispatchEvent(new CustomEvent("userLoggedOut", { detail: { reason: "account_deleted" } }));
   }
 
-  /* ── Login/Logout State Synchronization ──────────────────── */
+  /* ── Sync State ──────────────────── */
   function syncProfileButton(visible) {
-    document
-      .querySelectorAll('.dropdown-item[data-action="profile"]')
-      .forEach((el) => {
-        el.style.display = visible ? "" : "none";
-      });
+    document.querySelectorAll('.dropdown-item[data-action="profile"]').forEach((el) => {
+      el.style.display = visible ? "" : "none";
+    });
   }
 
-  /* ── Trigger Dropdown Item "Profile" ─────────────────────── */
-  function initTrigger() {
-    // Delegated click listener (works for dynamically rendered elements)
-    document.addEventListener("click", (e) => {
-      const item = e.target.closest('.dropdown-item[data-action="profile"]');
-      if (item) {
-        e.preventDefault();
-        openModal();
-      }
-    });
-
-    // React to login events (fired by app.js / login-modal.js)
-    document.addEventListener("userLoggedIn", () => {
-      syncProfileButton(true);
-    });
-
-    // React to logout events
-    document.addEventListener("userLoggedOut", () => {
-      syncProfileButton(false);
-      // If modal is open: close it
-      const overlay = document.getElementById("profileOverlay");
-      if (overlay && overlay.classList.contains("open")) closeModal();
-    });
-
-    // Initial State: Show profile button only if session is active
-    // Check if btn_login shows "LOGOUT" as a heuristic
-    // (Cleaner: a data attribute or session variable from the server)
-    const loginBtn = document.getElementById("btn_login");
-    if (loginBtn) {
-      const isLoggedIn = loginBtn.textContent.trim().toUpperCase() === "LOGOUT";
-      syncProfileButton(isLoggedIn);
-
-      // MutationObserver on login button text for reliable synchronization
-      const observer = new MutationObserver(() => {
-        const loggedIn = loginBtn.textContent.trim().toUpperCase() === "LOGOUT";
-        syncProfileButton(loggedIn);
-      });
-      observer.observe(loginBtn, {
-        childList: true,
-        subtree: true,
-        characterData: true,
-      });
-    }
-  }
-
-  /* ── Public API ─────────────────────────────────────── */
-  window.ProfileModal = {
-    open: openModal,
-    close: closeModal,
-  };
-
-  /* ── Init ────────────────────────────────────────────────── */
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initTrigger);
-  } else {
-    initTrigger();
-  }
+  /* ── Init Trigger ─────────────────────── */
+  window.ProfileModal = { open: openModal, close: closeModal };
+  window.openProfileModal = openModal;
 })();

@@ -1,90 +1,14 @@
 /* ==========================================================================
-   ADMIN DASHBOARD MODAL
-   System management interface with a Matrix/Tron inspired aesthetic.
-   Consistent with profile-modal.css in layout and interactive elements.
+   ADMIN DASHBOARD MODAL (MINIMIZED)
+   Unique styles for user and session management tables.
    ========================================================================== */
 
-/* --- Primary Modal Overlay --- */
-.admin-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.9);
-  z-index: 20000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  overflow-y: auto;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.35s ease, visibility 0.35s ease;
-}
-
-.admin-overlay.open {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* --- Modal Box Styling --- */
-.admin-modal {
-  background: rgba(0, 0, 0, 0.97);
-  border: 2px solid var(--color-primary);
-  /* Rich layered glow effect */
-  box-shadow:
-    0 0 30px rgba(var(--color-primary-rgb), 0.35),
-    0 0 80px rgba(var(--color-primary-rgb), 0.1),
-    inset 0 0 60px rgba(var(--color-primary-rgb), 0.03);
-
-  width: 100%;
+/* --- Custom Modal Adjustments --- */
+.admin-modal-custom {
   max-width: 750px;
-  padding: 2rem 2rem 1.8rem;
-  position: relative;
-  margin: auto;
-
-  transform: translateY(-20px) scale(0.97);
-  transition: transform 0.35s ease;
-
-  font-family: "Orbitron", monospace;
-  color: var(--color-primary);
-}
-
-.admin-overlay.open .admin-modal {
-  transform: translateY(0) scale(1);
-}
-
-/* =========================================
-   DECORATIVE ELEMENTS
-   ========================================= */
-
-/* --- CRT Scanline Shimmer --- */
-.admin-modal::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 3px,
-    rgba(var(--color-primary-rgb), 0.018) 3px,
-    rgba(var(--color-primary-rgb), 0.018) 4px
-  );
-  pointer-events: none;
-  z-index: 1;
 }
 
 /* --- Corner Highlighting Accents --- */
-.admin-modal::after {
-  content: "";
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  width: 24px;
-  height: 24px;
-  border-top: 3px solid var(--color-primary);
-  border-left: 3px solid var(--color-primary);
-  filter: drop-shadow(0 0 6px var(--color-primary));
-}
-
 .admin-modal-corner-br {
   position: absolute;
   bottom: -2px;
@@ -97,123 +21,9 @@
   z-index: 2;
 }
 
-/* Ensure content stays above scanlines */
-.admin-modal > *:not(.admin-modal-corner-br) {
-  position: relative;
-  z-index: 2;
-}
-
 /* =========================================
-   HEADER & NAVIGATION
+   DASHBOARD SECTIONS
    ========================================= */
-
-.admin-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.6rem;
-  border-bottom: 1px solid rgba(var(--color-primary-rgb), 0.25);
-  padding-bottom: 1rem;
-  gap: 0.5rem;
-}
-
-.admin-modal-title {
-  font-size: 1rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  text-shadow: 0 0 10px var(--color-primary);
-  margin: 0;
-  flex: 1;
-  min-width: 0;
-}
-
-.admin-modal-title span {
-  color: rgba(var(--color-primary-rgb), 0.5);
-  font-size: 0.65rem;
-  display: block;
-  letter-spacing: 2px;
-  margin-top: 3px;
-}
-
-.admin-close-btn {
-  background: transparent;
-  border: 1px solid rgba(var(--color-primary-rgb), 0.4);
-  color: var(--color-primary);
-  font-size: 1rem;
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Orbitron", monospace;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.admin-close-btn:hover {
-  background: var(--color-primary);
-  color: black;
-  box-shadow: 0 0 12px var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-/* =========================================
-   DASHBOARD SECTIONS & TABS
-   ========================================= */
-
-.admin-tabs {
-  display: flex;
-  gap: 0;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(var(--color-primary-rgb), 0.2);
-}
-
-.admin-tab {
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: rgba(var(--color-primary-rgb), 0.4);
-  padding: 0.6rem 1.2rem;
-  font-family: "Orbitron", monospace;
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  text-transform: uppercase;
-}
-
-.admin-tab:hover {
-  color: rgba(var(--color-primary-rgb), 0.7);
-  background: rgba(var(--color-primary-rgb), 0.05);
-}
-
-.admin-tab.active {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
-  text-shadow: 0 0 8px var(--color-primary);
-}
-
-.admin-tab-panel {
-  display: none;
-}
-
-.admin-tab-panel.active {
-  display: block;
-}
-
-.admin-section {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(var(--color-primary-rgb), 0.12);
-}
-
-.admin-section:last-of-type {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
 
 .admin-section-header {
   display: flex;
@@ -229,6 +39,11 @@
   text-transform: uppercase;
 }
 
+.admin-count {
+  font-size: 0.62rem;
+  color: var(--color-primary);
+}
+
 /* =========================================
    DATA TABLES
    ========================================= */
@@ -241,7 +56,7 @@
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  font-family: "Orbitron", monospace;
+  font-family: var(--font-primary);
   font-size: 0.68rem;
   letter-spacing: 0.5px;
 }
@@ -269,10 +84,6 @@
   white-space: nowrap;
 }
 
-.admin-table tr:hover td {
-  background: rgba(var(--color-primary-rgb), 0.04);
-}
-
 /* --- Status & Action Components --- */
 .admin-role-badge {
   display: inline-block;
@@ -286,7 +97,6 @@
 .admin-role-badge.role-admin {
   color: var(--color-warning);
   border-color: rgba(var(--color-warning-rgb), 0.4);
-  text-shadow: 0 0 6px rgba(var(--color-warning-rgb), 0.5);
 }
 
 .admin-role-badge.role-user {
@@ -296,10 +106,10 @@
 
 .admin-btn-delete {
   background: transparent;
-  border: 1px solid rgba(var(--color-error-red-rgb), 0.5);
-  color: var(--color-error-red);
+  border: 1px solid rgba(255, 100, 100, 0.5);
+  color: #ff6464;
   padding: 0.3rem 0.6rem;
-  font-family: "Orbitron", monospace;
+  font-family: var(--font-primary);
   font-size: 0.58rem;
   letter-spacing: 1px;
   cursor: pointer;
@@ -309,9 +119,9 @@
 }
 
 .admin-btn-delete:hover:not(:disabled) {
-  background: var(--color-error-red);
+  background: #ff6464;
   color: black;
-  box-shadow: 0 0 10px rgba(var(--color-error-red-rgb), 0.5);
+  box-shadow: 0 0 10px rgba(255, 100, 100, 0.5);
 }
 
 .admin-btn-refresh {
@@ -319,7 +129,7 @@
   border: 1px solid rgba(var(--color-primary-rgb), 0.4);
   color: rgba(var(--color-primary-rgb), 0.7);
   padding: 0.35rem 0.8rem;
-  font-family: "Orbitron", monospace;
+  font-family: var(--font-primary);
   font-size: 0.6rem;
   letter-spacing: 1.5px;
   cursor: pointer;
@@ -332,55 +142,16 @@
   border-color: var(--color-primary);
   color: var(--color-primary);
   background: rgba(var(--color-primary-rgb), 0.08);
-  box-shadow: 0 0 8px rgba(var(--color-primary-rgb), 0.3);
 }
 
-/* =========================================
-   STATUS MESSAGES & ANIMATIONS
-   ========================================= */
-
-.admin-status-msg {
-  text-align: center;
-  padding: 2rem 1rem;
-  font-size: 0.68rem;
-  letter-spacing: 1.5px;
-  color: rgba(var(--color-primary-rgb), 0.4);
-}
-
-.admin-status-msg.loading {
-  animation: admin-blink 0.8s ease infinite;
-}
-
-.admin-status-msg.error {
-  color: var(--color-error-red);
-}
-
-@keyframes admin-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-
-/* =========================================
-   RESPONSIVE DESIGN
-   ========================================= */
-
+/* --- Responsive Adjustments --- */
 @media (max-width: 700px) {
-  .admin-modal { padding: 1.5rem 1rem 1.4rem; max-width: 100%; }
-  .admin-modal-title { font-size: 0.88rem; }
+  .admin-modal-custom { max-width: 100%; }
   .admin-table { font-size: 0.6rem; }
-  .admin-table th, .admin-table td { padding: 0.45rem 0.5rem; }
+  .admin-table td { max-width: 150px; }
 }
 
 @media (max-width: 480px) {
-  .admin-overlay { padding: 0.5rem; align-items: flex-start; }
-  .admin-modal { padding: 1.2rem 0.8rem 1.2rem; margin-top: 0.5rem; }
-  .admin-tab { padding: 0.5rem 0.8rem; font-size: 0.6rem; letter-spacing: 1px; }
-  .admin-table td { max-width: 120px; }
-}
-
-@media (max-height: 500px) {
-  .admin-overlay { align-items: flex-start; padding: 0.4rem; }
-  .admin-modal { padding: 0.9rem 1rem; margin: 0 auto; }
-  .admin-modal-header { margin-bottom: 0.8rem; padding-bottom: 0.6rem; }
-  .admin-modal-title span { display: none; }
+  .admin-modal-custom { margin-top: 0.5rem; }
+  .admin-table td { max-width: 100px; }
 }

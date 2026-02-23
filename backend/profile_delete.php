@@ -1,36 +1,32 @@
 <?php
-require_once __DIR__ . '/config/bootstrap.php';
 
-header('Content-Type: application/json');
+require_once __DIR__ . '/utils.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    header('Allow: POST');
-    echo json_encode(['error' => 'Method not allowed']);
-    exit;
+    Response::json(['error' => 'Method not allowed'], 405);
 }
 
-if (!isset($_SESSION['user'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
-    exit;
+if (!isset($_SESSION['user_id'])) {
+    Response::json(['error' => 'Unauthorized'], 401);
 }
 
-$id = $_SESSION['user']['id'];
+$data = json_decode(file_get_contents("php://input"), true);
+Security::validateCsrf($data);
 
-// Delete Remember Token
+$id = (int)$_SESSION['user_id'];
+
+// 1. Delete Remember Tokens
 if (!empty($_COOKIE[REMEMBER_COOKIE])) {
-    $tokenHash = hash('sha256', $_COOKIE[REMEMBER_COOKIE]);
-    $stmt = $pdo->prepare("DELETE FROM remember_tokens WHERE token_hash = ?");
-    $stmt->execute([$tokenHash]);
+    $tokenHash = hash('sha256', (string)$_COOKIE[REMEMBER_COOKIE]);
+    $pdo->prepare("DELETE FROM remember_tokens WHERE token = ?")->execute([$tokenHash]);
     setcookie(REMEMBER_COOKIE, '', time() - 3600, '/');
 }
 
-// Delete User
+// 2. Delete User Account
 $pdo->prepare("DELETE FROM users WHERE id=?")->execute([$id]);
 
-// Destroy session
+// 3. Cleanup Session
 session_unset();
 session_destroy();
 
-echo json_encode(['deleted' => true]);
+Response::json(['deleted' => true]);

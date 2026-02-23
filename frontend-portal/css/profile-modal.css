@@ -1,75 +1,16 @@
 /* ==========================================================================
-   USER PROFILE MODAL
-   Interfaces for account management, security settings, and data export.
-   Features progressive disclosure (Confirmation panels) and validation feedback.
+   USER PROFILE MODAL - UNIQUE STYLES
+   Styles specific to account management not covered by shared-modals.css
    ========================================================================== */
 
-/* --- Primary Modal Overlay --- */
-.profile-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.88);
-  z-index: 20000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  overflow-y: auto;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.35s ease, visibility 0.35s ease;
-}
-
-.profile-overlay.open {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* --- Modal Box Styling --- */
-.profile-modal {
-  background: rgba(0, 0, 0, 0.97);
-  border: 2px solid var(--color-primary);
-  /* Themed glow effect with depth */
-  box-shadow:
-    0 0 30px rgba(var(--color-primary-rgb), 0.35),
-    0 0 80px rgba(var(--color-primary-rgb), 0.1),
-    inset 0 0 60px rgba(var(--color-primary-rgb), 0.03);
-
-  width: 100%;
+/* --- Custom Modal Container Tweaks --- */
+.profile-modal-custom {
   max-width: 480px;
-  padding: 2rem 2rem 1.8rem;
-  position: relative;
-  margin: auto;
-
-  transform: translateY(-20px) scale(0.97);
-  transition: transform 0.35s ease;
-
-  font-family: "Orbitron", monospace;
-  color: var(--color-primary);
+  padding: 2rem 2.5rem 1.5rem;
 }
 
-.profile-overlay.open .profile-modal {
-  transform: translateY(0) scale(1);
-}
-
-/* Scanline effect */
-.profile-modal::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 3px,
-    rgba(0, 255, 136, 0.018) 3px,
-    rgba(0, 255, 136, 0.018) 4px
-  );
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Corner accent top-left */
-.profile-modal::after {
+/* Corner accents */
+.profile-modal-custom::after {
   content: "";
   position: absolute;
   top: -2px;
@@ -81,7 +22,6 @@
   filter: drop-shadow(0 0 6px var(--color-primary));
 }
 
-/* Corner accent bottom-right */
 .profile-modal-corner-br {
   position: absolute;
   bottom: -2px;
@@ -94,70 +34,7 @@
   z-index: 2;
 }
 
-/* All content above scanlines */
-.profile-modal > *:not(.profile-modal-corner-br) {
-  position: relative;
-  z-index: 2;
-}
-
-/* =========================================
-   HEADER & NAVIGATION
-   ========================================= */
-
-.profile-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.6rem;
-  border-bottom: 1px solid rgba(0, 255, 136, 0.25);
-  padding-bottom: 1rem;
-  gap: 0.5rem;
-}
-
-.profile-modal-title {
-  font-size: 1rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  text-shadow: 0 0 10px var(--color-primary);
-  margin: 0;
-  flex: 1;
-  min-width: 0;
-}
-
-.profile-modal-title span {
-  color: rgba(0, 255, 136, 0.5);
-  font-size: 0.65rem;
-  display: block;
-  letter-spacing: 2px;
-  margin-top: 3px;
-}
-
-/* CLOSE BUTTON */
-.profile-close-btn {
-  background: transparent;
-  border: 1px solid rgba(0, 255, 136, 0.4);
-  color: var(--color-primary);
-  font-size: 1rem;
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Orbitron", monospace;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.profile-close-btn:hover {
-  background: var(--color-primary);
-  color: black;
-  box-shadow: 0 0 12px var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-/* SECTIONS */
+/* --- Sections --- */
 .profile-section {
   margin-bottom: 1.5rem;
   padding-bottom: 1.5rem;
@@ -178,108 +55,22 @@
   text-transform: uppercase;
 }
 
-/* --- Input Groups & Fields --- */
-.profile-input {
-  width: 100%;
-  background: rgba(0, 255, 136, 0.05);
-  border: 1px solid rgba(0, 255, 136, 0.35);
-  color: var(--color-primary);
-  padding: 0.6rem 0.9rem;
-  font-family: "Orbitron", monospace;
-  font-size: 0.78rem;
-  letter-spacing: 1px;
-  outline: none;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-  margin-bottom: 0.5rem;
-  -webkit-appearance: none;
-  appearance: none;
-  border-radius: 0;
-}
-
-.profile-input::placeholder {
-  color: rgba(0, 255, 136, 0.3);
-  letter-spacing: 1px;
-}
-
-.profile-input:focus {
-  border-color: var(--color-primary);
-  background: rgba(0, 255, 136, 0.08);
-  box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
-}
-
-.profile-input.input-error {
-  border-color: var(--color-error-red);
-  box-shadow: 0 0 8px rgba(255, 68, 68, 0.3);
-}
-
-.profile-input.input-success {
-  border-color: rgba(0, 255, 136, 0.7);
-}
-
-/* Password wrapper for toggle button */
-.profile-pw-wrapper {
-  position: relative;
-  width: 100%;
-  margin-bottom: 0.5rem;
-}
-
-.profile-pw-wrapper .profile-input {
-  margin-bottom: 0;
-  padding-right: 2.6rem;
-  width: 100%;
-}
-
-.profile-pw-toggle {
-  position: absolute;
-  right: 0.6rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-  line-height: 1;
-  padding: 0;
-  color: rgba(0, 255, 136, 0.5);
-  transition: color 0.2s ease;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.profile-pw-toggle:hover {
-  color: var(--color-primary);
-}
-
-/* =========================================
-   SPECIAL FEATURE COMPONENTS
-   ========================================= */
-
-/* --- Password Strength Indicator --- */
-.profile-pw-strength {
+/* Row layout: input + button side by side */
+.profile-input-row {
   display: flex;
-  gap: 4px;
-  margin-bottom: 0.4rem;
+  gap: 0.6rem;
+  align-items: flex-start;
 }
 
-.profile-pw-strength-bar {
+.profile-input-row .mx-input {
   flex: 1;
-  height: 3px;
-  background: rgba(var(--color-primary-rgb), 0.15);
-  transition: all 0.3s ease;
+  min-width: 0;
 }
 
-.profile-pw-strength-bar.weak {
-  background: var(--color-error-red);
-  box-shadow: 0 0 4px var(--color-error-red);
-}
-.profile-pw-strength-bar.medium {
-  background: var(--color-warning);
-  box-shadow: 0 0 4px var(--color-warning);
-}
-.profile-pw-strength-bar.strong {
-  background: var(--color-primary);
-  box-shadow: 0 0 4px var(--color-primary);
+.profile-save-btn {
+  width: auto;
+  padding: 0.6rem 1.1rem;
+  font-size: 0.72rem;
 }
 
 /* Password hint text */
@@ -291,141 +82,37 @@
   margin-bottom: 0.5rem;
 }
 
-/* BUTTONS – primary */
-.profile-btn {
-  background: transparent;
-  border: 2px solid var(--color-primary);
-  color: var(--color-primary);
-  padding: 0.55rem 1.1rem;
-  font-family: "Orbitron", monospace;
-  font-size: 0.72rem;
-  letter-spacing: 1.5px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  text-transform: uppercase;
-  white-space: nowrap;
-  -webkit-appearance: none;
-  appearance: none;
-
-  border-radius: 0;
-}
-
-.profile-btn:hover:not(:disabled) {
-  background: var(--color-primary);
-  color: black;
-  box-shadow:
-    0 0 15px var(--color-primary),
-    0 0 30px rgba(var(--color-primary-rgb), 0.4);
-}
-
-.profile-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* Row layout: input + button side by side */
-.profile-input-row {
-  display: flex;
-  gap: 0.6rem;
-  align-items: flex-start;
-}
-
-.profile-input-row .profile-input {
-  flex: 1;
-  min-width: 0;
-  margin-bottom: 0;
-}
-
-/* FEEDBACK MESSAGES */
-.profile-feedback {
-  font-size: 0.68rem;
-  letter-spacing: 1px;
-  min-height: 1rem;
-  transition: all 0.2s ease;
-  margin-top: 0.4rem;
-}
-
-.profile-feedback.success {
-  color: var(--color-primary);
-  text-shadow: 0 0 6px var(--color-primary);
-}
-
-.profile-feedback.error {
-  color: var(--color-error-red);
-  text-shadow: 0 0 6px rgba(255, 68, 68, 0.6);
-}
-
-.profile-feedback.loading {
-  color: rgba(var(--color-primary-rgb), 0.5);
-  animation: profile-blink 0.8s ease infinite;
-}
-
-@keyframes profile-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.3;
-  }
-}
-
 /* --- Account Actions (Destructive) --- */
-/* DELETE ZONE */
 .profile-delete-zone {
-  border: 1px solid rgba(var(--color-error-red-rgb), 0.25);
+  border: 1px solid rgba(var(--color-error-pink-rgb), 0.25);
   padding: 1.2rem;
   transition: border-color 0.3s ease;
 }
 
 .profile-delete-zone:hover {
-  border-color: rgba(var(--color-error-red-rgb), 0.45);
+  border-color: rgba(var(--color-error-pink-rgb), 0.45);
 }
 
 .profile-delete-zone .profile-section-label {
-  color: rgba(var(--color-error-red-rgb), 0.6);
+  color: rgba(var(--color-error-pink-rgb), 0.6);
 }
 
 .profile-delete-description {
   font-size: 0.66rem;
-  color: rgba(var(--color-error-red-rgb), 0.55);
+  color: rgba(var(--color-error-pink-rgb), 0.55);
   letter-spacing: 1px;
   line-height: 1.65;
   margin-bottom: 1rem;
-  font-family: "Orbitron", monospace;
 }
 
-/* DELETE BUTTON */
 .profile-btn-delete {
-  background: transparent;
-  border: 2px solid var(--color-error-red);
-  color: var(--color-error-red);
-  padding: 0.55rem 1.1rem;
-  font-family: "Orbitron", monospace;
-  font-size: 0.72rem;
-  letter-spacing: 1.5px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  text-transform: uppercase;
-  text-shadow: 0 0 6px rgba(var(--color-error-red-rgb), 0.5);
-  -webkit-appearance: none;
-  appearance: none;
-
-  border-radius: 0;
+  border-color: var(--color-error-pink);
+  color: var(--color-error-pink);
 }
 
 .profile-btn-delete:hover:not(:disabled) {
-  background: var(--color-error-red);
-  color: black;
-  box-shadow:
-    0 0 15px var(--color-error-red),
-    0 0 30px rgba(var(--color-error-red-rgb), 0.4);
-  text-shadow: none;
-}
-
-.profile-btn-delete:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+  background: var(--color-error-pink);
+  box-shadow: 0 0 15px var(--color-error-pink);
 }
 
 /* --- Confirmation Overlay Panels --- */
@@ -433,34 +120,26 @@
   display: none;
   margin-top: 1rem;
   padding: 1rem;
-  border: 1px solid rgba(var(--color-error-red-rgb), 0.5);
-  background: rgba(var(--color-error-red-rgb), 0.05);
-  animation: profile-fade-in 0.25s ease;
+  border: 1px solid rgba(var(--color-error-pink-rgb), 0.5);
+  background: rgba(var(--color-error-pink-rgb), 0.05);
+  animation: profileFadeIn 0.25s ease;
 }
 
 .profile-confirm-panel.visible {
   display: block;
 }
 
-@keyframes profile-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes profileFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .profile-confirm-text {
   font-size: 0.68rem;
-  color: var(--color-error-red);
+  color: var(--color-error-pink);
   letter-spacing: 1px;
   line-height: 1.75;
   margin-bottom: 1rem;
-  font-family: "Orbitron", monospace;
-  text-shadow: 0 0 4px rgba(var(--color-error-red-rgb), 0.3);
 }
 
 .profile-confirm-text strong {
@@ -476,115 +155,12 @@
   flex-wrap: wrap;
 }
 
-/* CANCEL BUTTON */
 .profile-btn-cancel {
-  background: transparent;
-  border: 2px solid rgba(var(--color-primary-rgb), 0.5);
+  border-color: rgba(var(--color-primary-rgb), 0.5);
   color: rgba(var(--color-primary-rgb), 0.7);
-  padding: 0.5rem 1rem;
-  font-family: "Orbitron", monospace;
-  font-size: 0.7rem;
-  letter-spacing: 1.2px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  text-transform: uppercase;
-  -webkit-appearance: none;
-  appearance: none;
-  border-radius: 0;
 }
 
 .profile-btn-cancel:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
-  background: rgba(var(--color-primary-rgb), 0.08);
-}
-
-/* =========================================
-   RESPONSIVE DESIGN
-   ========================================= */
-
-/* Tablet */
-@media (max-width: 600px) {
-  .profile-modal {
-    padding: 1.5rem 1.2rem 1.4rem;
-    max-width: 100%;
-  }
-  .profile-modal-title {
-    font-size: 0.88rem;
-  }
-}
-
-/* Mobile Portrait */
-@media (max-width: 420px) {
-  .profile-overlay {
-    padding: 0.5rem;
-    align-items: flex-start;
-  }
-  .profile-modal {
-    padding: 1.2rem 1rem 1.2rem;
-    margin-top: 3.1rem;
-    margin-bottom: 0.5rem;
-  }
-  .profile-input-row {
-    flex-direction: column;
-  }
-  .profile-input-row .profile-btn {
-    width: 100%;
-  }
-  .profile-btn,
-  .profile-btn-delete,
-  .profile-btn-cancel {
-    width: 100%;
-    padding: 0.65rem 1rem;
-  }
-  .profile-confirm-actions {
-    flex-direction: column;
-  }
-}
-
-/* Mobile Landscape (height-based) */
-@media (max-height: 500px) {
-  .profile-overlay {
-    align-items: flex-start;
-    padding: 0.4rem;
-  }
-  .profile-modal {
-    padding: 0.9rem 1rem;
-    margin: 0 auto;
-  }
-  .profile-modal-header {
-    margin-bottom: 0.8rem;
-    padding-bottom: 0.6rem;
-  }
-  .profile-section {
-    margin-bottom: 0.8rem;
-    padding-bottom: 0.8rem;
-  }
-  .profile-section-label {
-    margin-bottom: 0.4rem;
-  }
-  .profile-modal-title span {
-    display: none;
-  }
-  .profile-delete-description {
-    display: none;
-  }
-  .profile-pw-hint {
-    display: none;
-  }
-}
-
-/* Very small screens */
-@media (max-width: 360px) {
-  .profile-modal-title {
-    font-size: 0.76rem;
-    letter-spacing: 1.5px;
-  }
-  .profile-input {
-    font-size: 0.72rem;
-    padding: 0.5rem 0.7rem;
-  }
-  .profile-section-label {
-    font-size: 0.56rem;
-  }
 }

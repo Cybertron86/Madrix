@@ -1,377 +1,243 @@
-// ====================================================================================================================================
-//  REGISTER MODAL MODULE
-//
-//  Security measures implemented in this file:
-//    - CSRF token is fetched from /api/csrf-token.php and included in every submission
-//    - navigator.userAgent is sent as "device" for server-side UA binding (session hijack detection)
-//    - Username is HTML-escaped before being interpolated into the toast message (XSS prevention)
-//    - Password validation mirrors server-side rules exactly (12 chars min + special character)
-//    - CSRF token is stored only in memory (a local variable), never in localStorage/sessionStorage
-// ====================================================================================================================================
+(function() {
+  "use strict";
 
-let registerModal = null;
+  let registerModal = null;
 
-function createRegisterModal() {
-  if (registerModal) return;
+  function createRegisterModal() {
+    if (registerModal) return;
 
-  registerModal = document.createElement("div");
-  registerModal.className = "register-modal";
-  registerModal.setAttribute("role", "dialog");
-  registerModal.setAttribute("aria-modal", "true");
-  registerModal.setAttribute("aria-labelledby", "register-title");
-  registerModal.innerHTML = `
-      <div class="register-modal-container">
-        <button class="register-modal-close" aria-label="Close Registration Modal">×</button>
-        <h2 class="register-modal-title" id="register-title">REGISTER</h2>
-        
-        <form class="register-form" id="registerForm" novalidate>
-          <!-- Username Field -->
-          <div class="register-form-group">
-            <label for="register-username" class="register-form-label">Username</label>
-            <div class="register-form-input-wrapper">
-              <input 
-                type="text" 
-                id="register-username" 
-                class="register-form-input" 
-                placeholder="Choose username"
-                autocomplete="username"
-                required
-                aria-describedby="register-username-error"
-              >
-            </div>
-            <div class="register-error-message" id="register-username-error" data-error="username" aria-live="polite"></div>
-          </div>
+    registerModal = document.createElement("div");
+    registerModal.className = "register-modal mx-modal-overlay";
+    registerModal.setAttribute("role", "dialog");
+    registerModal.setAttribute("aria-modal", "true");
+    registerModal.setAttribute("aria-labelledby", "register-title");
+    registerModal.innerHTML = `
+        <div class="mx-modal-container">
+          <button class="mx-modal-close" aria-label="Close Registration Modal">×</button>
+          <h2 class="mx-modal-title" id="register-title">REGISTER</h2>
+          
+          <div class="mx-modal-content">
+            <form class="mx-form" id="registerForm" novalidate>
+              <!-- Username Field -->
+              <div class="mx-form-group">
+                <label for="register-username" class="mx-label">Username</label>
+                <div class="mx-input-wrapper">
+                  <input 
+                    type="text" 
+                    id="register-username" 
+                    class="mx-input" 
+                    placeholder="Choose username"
+                    autocomplete="username"
+                    required
+                    aria-describedby="register-username-error"
+                  >
+                </div>
+                <div class="mx-error-message" id="register-username-error" data-error="username" aria-live="polite"></div>
+              </div>
 
-          <!-- Password Field -->
-          <div class="register-form-group">
-            <label for="register-password" class="register-form-label">Password</label>
-            <div class="register-form-input-wrapper">
-              <input 
-                type="password" 
-                id="register-password" 
-                class="register-form-input" 
-                placeholder="Create password"
-                autocomplete="new-password"
-                required
-                aria-describedby="register-password-strength register-password-error"
-              >
-              <button type="button" class="register-password-toggle" aria-label="Show password" aria-pressed="false">
-                👁️
+              <!-- Password Field -->
+              <div class="mx-form-group">
+                <label for="register-password" class="mx-label">Password</label>
+                <div class="mx-input-wrapper">
+                  <input 
+                    type="password" 
+                    id="register-password" 
+                    class="mx-input" 
+                    placeholder="Create password"
+                    autocomplete="new-password"
+                    required
+                    aria-describedby="register-password-strength register-password-error"
+                  >
+                  <button type="button" class="mx-pw-toggle" id="regPwToggle" aria-label="Show password" aria-pressed="false">
+                    👁️
+                  </button>
+                </div>
+                <div class="mx-strength-meter" id="register-password-strength" aria-label="Password strength indicator">
+                  <div class="mx-strength-bar"></div>
+                  <div class="mx-strength-bar"></div>
+                  <div class="mx-strength-bar"></div>
+                  <div class="mx-strength-bar"></div>
+                </div>
+                <div class="mx-error-message" id="register-password-error" data-error="password" aria-live="polite"></div>
+              </div>
+
+              <!-- Confirm Password Field -->
+              <div class="mx-form-group">
+                <label for="register-password-confirm" class="mx-label">Confirm Password</label>
+                <div class="mx-input-wrapper">
+                  <input 
+                    type="password" 
+                    id="register-password-confirm" 
+                    class="mx-input" 
+                    placeholder="Confirm password"
+                    autocomplete="new-password"
+                    required
+                    aria-describedby="register-password-confirm-error"
+                  >
+                  <button type="button" class="mx-pw-toggle" id="regPwConfirmToggle" aria-label="Show confirm password" aria-pressed="false">
+                    👁️
+                  </button>
+                </div>
+                <div class="mx-error-message" id="register-password-confirm-error" data-error="password-confirm" aria-live="polite"></div>
+              </div>
+
+              <!-- Submit Button -->
+              <button type="submit" class="mx-btn">
+                Register
+              </button>
+            </form>
+
+            <!-- Login Link -->
+            <div class="register-login-link">
+              Already have an account?
+              <button type="button" class="register-login-btn" aria-label="Switch to login">
+                👉 Login here 👈
               </button>
             </div>
-            <div class="register-password-strength" id="register-password-strength" aria-label="Password strength indicator">
-              <div class="register-password-strength-bar"></div>
-              <div class="register-password-strength-bar"></div>
-              <div class="register-password-strength-bar"></div>
-              <div class="register-password-strength-bar"></div>
-            </div>
-            <div class="register-error-message" id="register-password-error" data-error="password" aria-live="polite"></div>
           </div>
-
-          <!-- Confirm Password Field -->
-          <div class="register-form-group">
-            <label for="register-password-confirm" class="register-form-label">Confirm Password</label>
-            <div class="register-form-input-wrapper">
-              <input 
-                type="password" 
-                id="register-password-confirm" 
-                class="register-form-input" 
-                placeholder="Confirm password"
-                autocomplete="new-password"
-                required
-                aria-describedby="register-password-confirm-error"
-              >
-              <button type="button" class="register-password-toggle-confirm" aria-label="Show confirm password" aria-pressed="false">
-                👁️
-              </button>
-            </div>
-            <div class="register-error-message" id="register-password-confirm-error" data-error="password-confirm" aria-live="polite"></div>
-          </div>
-
-          <!-- Submit Button -->
-          <button type="submit" class="register-submit-btn">
-            <span style="position: relative; z-index: 1;">Register</span>
-          </button>
-        </form>
-
-        <!-- Login Link -->
-        <div class="register-login-link">
-          Already have an account?
-          <button type="button" class="register-login-btn" aria-label="Switch to login">
-            👉 Login here 👈
-          </button>
         </div>
-      </div>
-    `;
+      `;
 
-  document.body.appendChild(registerModal);
+    document.body.appendChild(registerModal);
 
-  // Get elements
-  const closeBtn = registerModal.querySelector(".register-modal-close");
-  const form = registerModal.querySelector("#registerForm");
-  const usernameInput = registerModal.querySelector("#register-username");
-  const passwordInput = registerModal.querySelector("#register-password");
-  const passwordConfirmInput = registerModal.querySelector(
-    "#register-password-confirm",
-  );
-  const passwordToggle = registerModal.querySelector(
-    ".register-password-toggle",
-  );
-  const passwordToggleConfirm = registerModal.querySelector(
-    ".register-password-toggle-confirm",
-  );
-  const loginBtn = registerModal.querySelector(".register-login-btn");
+    const closeBtn = registerModal.querySelector(".mx-modal-close");
+    const form = registerModal.querySelector("#registerForm");
+    const usernameInput = registerModal.querySelector("#register-username");
+    const passwordInput = registerModal.querySelector("#register-password");
+    const passwordConfirmInput = registerModal.querySelector("#register-password-confirm");
+    const passwordToggle = registerModal.querySelector("#regPwToggle");
+    const passwordToggleConfirm = registerModal.querySelector("#regPwConfirmToggle");
+    const loginBtn = registerModal.querySelector(".register-login-btn");
 
-  // Close button
-  closeBtn.addEventListener("click", closeRegisterModal);
+    // Modal setup
+    window.SecurityUtils.ModalManager.setup(registerModal, closeRegisterModal);
 
-  // Click outside the modal container to close
-  registerModal.addEventListener("click", (e) => {
-    if (e.target === registerModal) closeRegisterModal();
-  });
+    // Close button
+    closeBtn.addEventListener("click", closeRegisterModal);
 
-  // ESC key closes the modal
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && registerModal.classList.contains("active")) {
-      closeRegisterModal();
-    }
-  });
+    // Password visibility toggles
+    const toggleVisibility = (input, btn) => {
+      const isVisible = input.type === "text";
+      input.type = isVisible ? "password" : "text";
+      btn.textContent = isVisible ? "👁️" : "🙈";
+      btn.setAttribute("aria-label", isVisible ? "Show password" : "Hide password");
+      btn.setAttribute("aria-pressed", !isVisible);
+    };
 
-  // Password visibility toggles for both password fields
-  passwordToggle.addEventListener("click", () => {
-    const isVisible = passwordInput.type === "text";
-    const type = isVisible ? "password" : "text";
-    passwordInput.type = type;
-    passwordToggle.textContent = isVisible ? "👁️" : "🙈";
-    passwordToggle.setAttribute("aria-label", isVisible ? "Show password" : "Hide password");
-    passwordToggle.setAttribute("aria-pressed", !isVisible);
-  });
+    passwordToggle.addEventListener("click", () => toggleVisibility(passwordInput, passwordToggle));
+    passwordToggleConfirm.addEventListener("click", () => toggleVisibility(passwordConfirmInput, passwordToggleConfirm));
 
-  passwordToggleConfirm.addEventListener("click", () => {
-    const isVisible = passwordConfirmInput.type === "text";
-    const type = isVisible ? "password" : "text";
-    passwordConfirmInput.type = type;
-    passwordToggleConfirm.textContent = isVisible ? "👁️" : "🙈";
-    passwordToggleConfirm.setAttribute("aria-label", isVisible ? "Show confirm password" : "Hide confirm password");
-    passwordToggleConfirm.setAttribute("aria-pressed", !isVisible);
-  });
-
-  // Real-time inline validation on input events
-  usernameInput.addEventListener("input", () =>
-    validateRegisterUsername(usernameInput),
-  );
-
-  passwordInput.addEventListener("input", () => {
-    validateRegisterPassword(passwordInput);
-    validatePasswordMatch(passwordInput, passwordConfirmInput);
-  });
-
-  passwordConfirmInput.addEventListener("input", () =>
-    validatePasswordMatch(passwordInput, passwordConfirmInput),
-  );
-
-  // Form submission handler
-  form.addEventListener("submit", handleRegisterSubmit);
-
-  // Switch to login modal
-  loginBtn.addEventListener("click", () => {
-    closeRegisterModal();
-    setTimeout(() => openLoginModal(), 400);
-  });
-}
-
-function openRegisterModal() {
-  createRegisterModal();
-  setTimeout(() => registerModal.classList.add("active"), 10);
-}
-
-function closeRegisterModal() {
-  if (!registerModal) return;
-  registerModal.classList.remove("active");
-
-  const form = registerModal.querySelector("#registerForm");
-  if (form) {
-    form.reset();
-    clearRegisterValidationErrors();
-  }
-}
-
-// ==========================
-// XSS Prevention Utility
-//
-// Shared utility now loaded from security-utils.js
-// ==========================
-
-// ==========================
-// Username Validation
-// Uses shared SecurityUtils
-// ==========================
-function validateRegisterUsername(input) {
-  const errorDiv = registerModal.querySelector('[data-error="username"]');
-  return window.SecurityUtils.validateUsername(input, errorDiv);
-}
-
-// ==========================
-// Password Validation
-// Uses shared SecurityUtils
-// ==========================
-function validateRegisterPassword(input) {
-  const errorDiv = registerModal.querySelector('[data-error="password"]');
-  const strengthBars = registerModal.querySelectorAll(".register-password-strength-bar");
-  return window.SecurityUtils.validatePassword(input, errorDiv, strengthBars);
-}
-
-// ==========================
-// Password Confirmation Validation
-// ==========================
-function validatePasswordMatch(passwordInput, confirmInput) {
-  const password = passwordInput.value;
-  const confirm = confirmInput.value;
-  const errorDiv = registerModal.querySelector('[data-error="password-confirm"]');
-
-  // Reset state
-  confirmInput.classList.remove("error", "success");
-  errorDiv.classList.remove("show");
-
-  if (confirm === "") return false;
-
-  if (password !== confirm) {
-    showRegisterError(confirmInput, errorDiv, "Passwords do not match");
-    return false;
-  }
-
-  confirmInput.classList.add("success");
-  return true;
-}
-
-// Attaches error state styling and message to an input field
-function showRegisterError(input, errorDiv, message) {
-  window.SecurityUtils.showError(input, errorDiv, message);
-}
-
-// Clears all validation error states and strength indicator after modal close/reset
-function clearRegisterValidationErrors() {
-  const inputs = registerModal.querySelectorAll(".register-form-input");
-  const errors = registerModal.querySelectorAll(".register-error-message");
-  const strengthBars = registerModal.querySelectorAll(".register-password-strength-bar");
-
-  inputs.forEach((input) => input.classList.remove("error", "success"));
-  errors.forEach((error) => error.classList.remove("show"));
-  strengthBars.forEach((bar) =>
-    bar.classList.remove("active", "weak", "medium", "strong"),
-  );
-}
-
-// ==========================
-// Form Submission Handler
-//
-// Flow:
-//   1. Run all client-side validations — abort early if any fail.
-//   2. Fetch a fresh CSRF token from /api/csrf-token.php.
-//      The token is stored in a local variable only — never in localStorage or
-//      sessionStorage, which are accessible to any script on the same origin
-//      and therefore vulnerable to XSS-based token theft.
-//   3. POST the registration payload including the CSRF token and the client
-//      User-Agent (navigator.userAgent) as "device".
-//      The server uses "device" for UA-binding in the session and remember token,
-//      which helps detect session hijacking if the UA changes mid-session.
-//   4. Handle success/failure and update the UI accordingly.
-// ==========================
-async function handleRegisterSubmit(e) {
-  e.preventDefault();
-
-  const usernameInput = registerModal.querySelector("#register-username");
-  const passwordInput = registerModal.querySelector("#register-password");
-  const passwordConfirmInput = registerModal.querySelector(
-    "#register-password-confirm",
-  );
-
-  // Run all validators — all must pass before we attempt a server request
-  const isUsernameValid = validateRegisterUsername(usernameInput);
-  const isPasswordValid = validateRegisterPassword(passwordInput);
-  const isPasswordMatchValid = validatePasswordMatch(
-    passwordInput,
-    passwordConfirmInput,
-  );
-
-  if (!isUsernameValid || !isPasswordValid || !isPasswordMatchValid) return;
-
-  const username = usernameInput.value.trim();
-
-  try {
-    // ==========================
-    // Step 1: Fetch CSRF Token
-    // Uses shared utility
-    // ==========================
-    const csrfToken = await window.SecurityUtils.fetchCsrfToken();
-
-    // ==========================
-    // Step 2: Submit Registration
-    //
-    // Included in the payload:
-    //   - username: trimmed, validated
-    //   - password: validated (not logged anywhere)
-    //   - remember: hardcoded true (persistent session)
-    //   - csrf_token: the single-use token fetched above
-    //   - device: navigator.userAgent — the exact browser string as reported by JS.
-    //     The server stores a hash of this for session hijacking detection.
-    //     Using the JS-supplied value (rather than relying solely on the HTTP header)
-    //     ensures consistency between what is stored in the remember_tokens table
-    //     and what the session validation logic compares against.
-    // ==========================
-    const response = await fetch("/api/register.php", {
-      method: "POST",
-      credentials: "same-origin", // Required: sends the session cookie for CSRF validation
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username,
-        password: passwordInput.value,
-        remember: true,
-        csrf_token: csrfToken, // Single-use CSRF token — rotated by server after use
-        device: navigator.userAgent, // Client User-Agent for server-side UA binding
-      }),
+    // Inline validation
+    usernameInput.addEventListener("input", () => validateRegisterUsername(usernameInput));
+    passwordInput.addEventListener("input", () => {
+      validateRegisterPassword(passwordInput);
+      validatePasswordMatch(passwordInput, passwordConfirmInput);
     });
+    passwordConfirmInput.addEventListener("input", () => validatePasswordMatch(passwordInput, passwordConfirmInput));
 
-    const data = await response.json();
+    form.addEventListener("submit", handleRegisterSubmit);
 
-    if (!response.ok) {
-      // Surface the first error from the server's error array, or fall back to a generic message
-      const errorMessage = Array.isArray(data.error)
-        ? data.error[0]
-        : data.error || "Registration failed";
-
-      showRegisterError(
-        usernameInput,
-        registerModal.querySelector('[data-error="username"]'),
-        errorMessage,
-      );
-      return;
-    }
-
-    // Registration successful — close modal and update UI
-    closeRegisterModal();
-
-    // Update navbar auth button state (LOGIN → LOGOUT) if the function exists
-    if (typeof updateAuthButton === "function") {
-      updateAuthButton();
-    }
-
-    // ==========================
-    // XSS-Safe Welcome Toast
-    // Uses shared utility
-    // ==========================
-    showToast(
-      `Registration successful. Welcome ${username}!`,
-      "success",
-    );
-  } catch (err) {
-    // Catch network errors, CSRF fetch failures, and unexpected exceptions
-    console.error("Register error:", err);
-
-    showRegisterError(
-      usernameInput,
-      registerModal.querySelector('[data-error="username"]'),
-      "Server not reachable. Please try again.",
-    );
+    // Switch to login
+    loginBtn.addEventListener("click", () => {
+      closeRegisterModal();
+      setTimeout(() => {
+        if (typeof window.openLoginModal === "function") window.openLoginModal();
+      }, 400);
+    });
   }
-}
+
+  function openRegisterModal() {
+    createRegisterModal();
+    window.SecurityUtils.ModalManager.open(registerModal, "active", "#register-username");
+  }
+
+  function closeRegisterModal() {
+    if (!registerModal) return;
+    window.SecurityUtils.ModalManager.close(registerModal, "active");
+    const form = registerModal.querySelector("#registerForm");
+    if (form) {
+      form.reset();
+      clearRegisterValidationErrors();
+    }
+  }
+
+  function validateRegisterUsername(input) {
+    const errorDiv = registerModal.querySelector('[data-error="username"]');
+    return window.SecurityUtils.validateUsername(input, errorDiv);
+  }
+
+  function validateRegisterPassword(input) {
+    const errorDiv = registerModal.querySelector('[data-error="password"]');
+    const strengthBars = registerModal.querySelectorAll(".mx-strength-bar");
+    return window.SecurityUtils.validatePassword(input, errorDiv, strengthBars);
+  }
+
+  function validatePasswordMatch(passwordInput, confirmInput) {
+    const password = passwordInput.value;
+    const confirm = confirmInput.value;
+    const errorDiv = registerModal.querySelector('[data-error="password-confirm"]');
+    confirmInput.classList.remove("error", "success");
+    errorDiv.classList.remove("show");
+    if (confirm === "") return false;
+    if (password !== confirm) {
+      window.SecurityUtils.showError(confirmInput, errorDiv, "Passwords do not match");
+      return false;
+    }
+    confirmInput.classList.add("success");
+    return true;
+  }
+
+  function clearRegisterValidationErrors() {
+    const inputs = registerModal.querySelectorAll(".mx-input");
+    const errors = registerModal.querySelectorAll(".mx-error-message");
+    const strengthBars = registerModal.querySelectorAll(".mx-strength-bar");
+    inputs.forEach((input) => input.classList.remove("error", "success"));
+    errors.forEach((error) => error.classList.remove("show"));
+    strengthBars.forEach((bar) => bar.classList.remove("active", "weak", "medium", "strong"));
+  }
+
+  async function handleRegisterSubmit(e) {
+    e.preventDefault();
+    const usernameInput = registerModal.querySelector("#register-username");
+    const passwordInput = registerModal.querySelector("#register-password");
+    const passwordConfirmInput = registerModal.querySelector("#register-password-confirm");
+
+    if (!validateRegisterUsername(usernameInput) || 
+        !validateRegisterPassword(passwordInput) || 
+        !validatePasswordMatch(passwordInput, passwordConfirmInput)) return;
+
+    const username = usernameInput.value.trim();
+    try {
+      const csrfToken = await window.SecurityUtils.fetchCsrfToken();
+      const response = await fetch("/api/register.php", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username,
+          password: passwordInput.value,
+          remember: true,
+          csrf_token: csrfToken,
+          device: navigator.userAgent,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        const errorMessage = Array.isArray(data.error) ? data.error[0] : data.error || "Registration failed";
+        window.SecurityUtils.showError(usernameInput, registerModal.querySelector('[data-error="username"]'), errorMessage);
+        return;
+      }
+
+      closeRegisterModal();
+      if (typeof window.updateAuthButton === "function") window.updateAuthButton();
+      if (typeof window.showToast === "function") window.showToast(`Registration successful. Welcome ${username}!`, "success");
+    } catch (err) {
+      console.error("Register error:", err);
+      window.SecurityUtils.showError(usernameInput, registerModal.querySelector('[data-error="username"]'), "Server not reachable");
+    }
+  }
+
+  window.openRegisterModal = openRegisterModal;
+  window.closeRegisterModal = closeRegisterModal;
+})();

@@ -1,121 +1,27 @@
 /* ==========================================================================
-   GALLERY MODAL
-   Project showcase grid with interactive hover effects and RGB split animations.
+   GALLERY MODAL (MINIMIZED)
+   Unique styles for the project showcase grid and interactive cards.
    ========================================================================== */
 
-/* --- Primary Modal Overlay --- */
-.gallery-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.95);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  z-index: 999; 
-  opacity: 0;
-  visibility: hidden;
-
-  transition:
-    opacity 0.4s ease,
-    visibility 0.4s ease;
-}
-
-.gallery-modal.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* --- Modal Container --- */
-.gallery-modal-container {
-  position: relative;
-  width: 90%;
+/* --- Custom Modal Adjustments --- */
+.gallery-modal-custom {
   max-width: 1400px;
   max-height: 85vh;
   margin-top: 13vh;
   margin-bottom: 4vh;
-
-  background: rgba(0, 0, 0, 0.9);
-  border: 2px solid var(--color-primary);
-  /* Primary themed glow effect */
-  box-shadow:
-    0 0 30px rgba(var(--color-primary-rgb), 0.4),
-    0 0 60px rgba(var(--color-primary-rgb), 0.2),
-    inset 0 0 30px rgba(var(--color-primary-rgb), 0.1);
-
-  padding: 2rem 2rem 2rem 1rem;
-  overflow: hidden;
-
-  animation: gallerySlideIn 0.5s ease;
-}
-
-/* --- Header & Navigation --- */
-.gallery-modal-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  padding-left: 0.3rem;
-  width: 45px;
-  height: 45px;
-  background: transparent;
-  border: 2px solid var(--color-primary);
-  color: var(--color-primary);
-  font-family: "Orbitron", monospace;
-  font-size: 2rem;
-  line-height: 1;
-  cursor: pointer;
-  z-index: 10;
-  text-shadow: 0 0 10px var(--color-primary);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.gallery-modal-close:hover {
-  background: var(--color-primary);
-  color: black;
-  padding-bottom: 0.3rem;
-  box-shadow: 0 0 20px var(--color-primary), 0 0 40px var(--color-primary);
-  transform: rotate(90deg);
-}
-
-.gallery-modal-title {
-  font-family: "Orbitron", monospace;
-  font-size: 2.5rem;
-  color: var(--color-primary);
-  text-align: center;
-  margin: 0 0 2rem 0;
-  letter-spacing: 3px;
-  text-shadow: 0 0 10px var(--color-primary), 0 0 20px var(--color-primary);
-  animation: glitchText 3s infinite;
 }
 
 /* =========================================
    SCROLLABLE GRID LAYOUT
    ========================================= */
 
-.gallery-modal-content {
-  max-height: calc(90vh - 8rem);
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 1rem;
-}
-
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
-  padding-left: 2rem;
+  padding-left: 1rem;
   padding-top: 1rem;
-  padding-bottom: 12vh;
-  margin-top: 2%;
+  padding-bottom: 5vh;
 }
 
 /* --- Project Item Card --- */
@@ -124,19 +30,14 @@
   aspect-ratio: 4/3;
   cursor: pointer;
   overflow: hidden;
-  border: 2px solid var(--color-primary);
-  box-shadow:
-    0 0 15px rgba(var(--color-primary-rgb), 0.3),
-    inset 0 0 15px rgba(var(--color-primary-rgb), 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.1);
   transition: all 0.3s ease;
 }
 
 .gallery-item:hover {
   transform: scale(1.05) translateZ(0);
-  box-shadow:
-    0 0 30px rgba(var(--color-primary-rgb), 0.6),
-    0 0 60px rgba(var(--color-primary-rgb), 0.3),
-    inset 0 0 30px rgba(var(--color-primary-rgb), 0.2);
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
   border-color: var(--color-primary);
   z-index: 1;
 }
@@ -152,7 +53,6 @@
 .gallery-item:hover .gallery-item-image {
   filter: brightness(1) contrast(1.2);
   transform: scale(1.1);
-  animation: rgbSplit 0.3s ease;
 }
 
 /* --- Item Details Overlay --- */
@@ -161,10 +61,10 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.7), transparent);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
   padding: 1.5rem 1rem 1rem;
   opacity: 0;
-  transform: translateY(100%);
+  transform: translateY(20px);
   transition: all 0.3s ease;
 }
 
@@ -174,109 +74,17 @@
 }
 
 .gallery-item-title {
-  font-family: "Orbitron", monospace;
-  font-size: 1.1rem;
+  font-family: var(--font-primary);
+  font-size: 1rem;
   color: var(--color-primary);
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.3rem 0;
   letter-spacing: 1px;
-  text-shadow: 0 0 8px var(--color-primary);
 }
 
 .gallery-item-date {
-  font-family: "Orbitron", monospace;
-  font-size: 0.85rem;
-  color: rgba(var(--color-primary-rgb), 0.7);
-  letter-spacing: 1px;
-}
-
-/* =========================================
-   DECORATIVE ELEMENTS & STATES
-   ========================================= */
-
-/* --- Card Scanline Effect --- */
-.gallery-item::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(var(--color-primary-rgb), 0.05) 50%,
-    transparent 100%
-  );
-  background-size: 100% 4px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.gallery-item:hover::before {
-  opacity: 1;
-  animation: scanline 4s linear infinite;
-}
-
-.gallery-loading {
-  text-align: center;
-  padding: 4rem 2rem;
-  font-family: "Orbitron", monospace;
-  font-size: 1.5rem;
-  color: var(--color-primary);
-  letter-spacing: 2px;
-  text-shadow: 0 0 10px var(--color-primary);
-  animation: pulse 1.5s ease infinite;
-}
-
-.gallery-error {
-  text-align: center;
-  padding: 4rem 2rem;
-  font-family: "Orbitron", monospace;
-  font-size: 1.2rem;
-  color: var(--color-error-pink);
-  letter-spacing: 2px;
-  text-shadow: 0 0 10px var(--color-error-pink);
-}
-
-/* =========================================
-   ANIMATIONS
-   ========================================= */
-
-@keyframes gallerySlideIn {
-  from { transform: translateY(-50px) scale(0.9); opacity: 0; }
-  to { transform: translateY(0) scale(1); opacity: 1; }
-}
-
-@keyframes glitchText {
-  0%, 100% { text-shadow: 0 0 10px var(--color-primary), 0 0 20px var(--color-primary); }
-  50% { text-shadow: -2px 0 10px var(--color-error-pink), 2px 0 10px var(--color-error-pink), 0 0 20px var(--color-primary); }
-}
-
-@keyframes scanline {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 100%; }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-@keyframes rgbSplit {
-  0%, 100% { filter: brightness(1) contrast(1.2); }
-  25% { filter: brightness(1.1) contrast(1.3) drop-shadow(-2px 0 0 rgba(255, 0, 0, 0.3)) drop-shadow(2px 0 0 rgba(0, 255, 255, 0.3)); }
-  50% { filter: brightness(0.9) contrast(1.1) drop-shadow(2px 0 0 rgba(255, 0, 0, 0.3)) drop-shadow(-2px 0 0 rgba(0, 255, 255, 0.3)); }
-  75% { filter: brightness(1.1) contrast(1.2) drop-shadow(-1px 0 0 rgba(255, 0, 0, 0.2)) drop-shadow(1px 0 0 rgba(0, 255, 255, 0.2)); }
-}
-
-/* Open Modal Shiver */
-.gallery-modal.active .gallery-modal-container {
-  animation: gallerySlideIn 0.5s ease, glitchShake 0.2s ease 0.3s;
-}
-
-@keyframes glitchShake {
-  0%, 100% { transform: translateY(0) scale(1); }
-  25% { transform: translateX(-5px) scale(1.01); }
-  50% { transform: translateX(5px) scale(0.99); }
-  75% { transform: translateX(-3px) scale(1.01); }
+  font-family: var(--font-primary);
+  font-size: 0.75rem;
+  color: rgba(var(--color-primary-rgb), 0.6);
 }
 
 /* =========================================
@@ -284,28 +92,32 @@
    ========================================= */
 
 @media (max-width: 1200px) {
-  .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
-  .gallery-modal-container { margin-top: 0; margin-bottom: 0; }
-  .gallery-modal-title { font-size: 1.6rem; padding: 0.8rem; margin-bottom: 0; }
-  .gallery-item-overlay { opacity: 1; transform: translateY(0); }
-  .gallery-modal-close { width: 35px; height: 35px; font-size: 1.5rem; margin-top: 8vh; }
+  .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  .gallery-modal-custom { margin-top: 5vh; }
 }
 
 @media (max-width: 768px) {
-  .gallery-modal-container { width: 95%; padding: 1.5rem; }
-  .gallery-modal-title { font-size: 1.8rem; margin-bottom: 1.5rem; margin-right: 45px; }
-  .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
-  .gallery-item-title { font-size: 0.95rem; }
-  .gallery-item-date { font-size: 0.75rem; }
+  .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
   .gallery-item-overlay { opacity: 1; transform: translateY(0); }
-  .gallery-modal-close { width: 40px; height: 40px; font-size: 1.8rem; }
 }
 
 @media (max-width: 480px) {
-  .gallery-modal-container { width: 98%; padding-top: 1.5rem; padding-bottom: 1rem; margin-top: 0; margin-bottom: 0; }
-  .gallery-modal-title { font-size: 1.2rem; margin-right: 40px; margin-bottom: 0; }
+  .gallery-modal-custom { width: 98%; max-height: 90vh; margin-top: 2vh; }
   .gallery-grid { grid-template-columns: 1fr; }
-  .gallery-modal-content { padding-right: 0.5rem; }
-  .gallery-item-overlay { opacity: 1; transform: translateY(0); }
-  .gallery-modal-close { width: 35px; height: 35px; font-size: 1.5rem; position: fixed; }
+}
+
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .gallery-modal-custom {
+    margin-top: 2vh !important;
+    margin-bottom: 2vh !important;
+    max-height: 95vh !important;
+    max-width: 95vw !important;
+    width: 95% !important;
+  }
+  
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    padding-bottom: 2rem;
+  }
 }

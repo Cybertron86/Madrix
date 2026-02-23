@@ -46,6 +46,48 @@ async function fetchCsrfToken() {
 }
 
 // ==========================
+// TOAST NOTIFICATION SYSTEM
+// ==========================
+
+/**
+ * showToast(message, type, duration)
+ * @param {string} message  - Text to display
+ * @param {'success'|'info'|'error'} type - Visual variant (maps to CSS class)
+ * @param {number} duration - Auto-dismiss time in ms (default 3500)
+ */
+function showToast(message, type = "success", duration = 3500) {
+  // Remove any existing toast
+  const existing = document.getElementById("app-toast");
+  if (existing) {
+    existing.remove();
+  }
+
+  const toast = document.createElement("div");
+  toast.id = "app-toast";
+  toast.textContent = message;
+  toast.classList.add(`toast--${type}`);
+  toast.setAttribute("role", "status");
+  toast.setAttribute("aria-live", "polite");
+
+  document.body.appendChild(toast);
+
+  // Trigger enter transition on next paint
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      toast.classList.add("toast--visible");
+    });
+  });
+
+  // Trigger exit transition then remove
+  setTimeout(() => {
+    toast.classList.remove("toast--visible");
+    toast.addEventListener("transitionend", () => toast.remove(), {
+      once: true,
+    });
+  }, duration);
+}
+
+// ==========================
 // VALIDATION LOGIC
 // ==========================
 
@@ -184,11 +226,78 @@ function updateStrength(bars, count, level) {
   }
 }
 
+// ==========================
+// MODAL MANAGER
+// ==========================
+
+const ModalManager = {
+  /**
+   * Set up common modal listeners: close on ESC and click-outside.
+   * @param {HTMLElement} overlay - The full-screen overlay element.
+   * @param {Function} closeFn - Function to call to close the modal.
+   * @param {string} activeClass - Class representing the open state (default 'active').
+   */
+  setup(overlayOrId, closeFn, activeClass = "active") {
+    const overlay = typeof overlayOrId === "string" ? document.getElementById(overlayOrId) : overlayOrId;
+    if (!overlay) return;
+
+    // Find and bind close button
+    const closeBtn = overlay.querySelector(".mx-modal-close");
+    if (closeBtn) {
+      closeBtn.onclick = (e) => {
+        e.preventDefault();
+        closeFn();
+      };
+    }
+
+    // Click outside
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeFn();
+    });
+
+    // ESC key
+    const escHandler = (e) => {
+      if (e.key === "Escape" && overlay.classList.contains(activeClass)) {
+        closeFn();
+      }
+    };
+    document.addEventListener("keydown", escHandler);
+
+    return () => document.removeEventListener("keydown", escHandler);
+  },
+
+  /**
+   * Generic open helper with focus support.
+   */
+  open(overlay, activeClass = "active", focusSelector = null) {
+    if (!overlay) return;
+    overlay.classList.add(activeClass);
+    if (focusSelector) {
+      setTimeout(() => {
+        const el = overlay.querySelector(focusSelector);
+        if (el) el.focus();
+      }, 100);
+    }
+  },
+
+  /**
+   * Generic close helper.
+   */
+  close(overlay, activeClass = "active") {
+    if (!overlay) return;
+    overlay.classList.remove(activeClass);
+  }
+};
+
 // Expose to global scope for non-module scripts
 window.SecurityUtils = {
   escapeHtml,
   fetchCsrfToken,
   validateUsername,
   validatePassword,
-  showError
+  showError,
+  showToast,
+  ModalManager
 };
+
+window.showToast = showToast;

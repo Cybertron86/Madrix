@@ -2,7 +2,10 @@
 //  MATRIX_RAIN MODULE (FULL GLITCH EFFECTS + BROWSER OPTIMIZATIONS)
 // ====================================================================================================================================
 const canvas = document.getElementById("matrixGlitch");
-const ctx = canvas.getContext("2d", { willReadFrequently: true });
+let ctx = null;
+if (canvas) {
+    ctx = canvas.getContext("2d", { willReadFrequently: true });
+}
 
 const isEdge = /Edg\//.test(navigator.userAgent);
 const isChrome = /Chrome/.test(navigator.userAgent) && !isEdge;
@@ -124,6 +127,11 @@ function triggerShake() {
   setTimeout(triggerShake, Math.random() * 5000 + 10000);
 }
 
-resizeCanvas();
-drawMatrix();
-triggerShake();
+function initMatrixRain() {
+  if (!canvas || !ctx) return;
+  resizeCanvas();
+  drawMatrix();
+  triggerShake();
+}
+
+window.initMatrixRain = initMatrixRain;

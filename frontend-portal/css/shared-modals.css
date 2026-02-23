@@ -1,0 +1,414 @@
+/* ==========================================================================
+   SHARED MODAL STYLES
+   Consolidated styles for all system modals (Login, Register, Profile, etc.)
+   ========================================================================== */
+
+/* --- Modal Overlay --- */
+.mx-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  padding: 1rem;
+  overflow-y: auto; /* Fallback for very short screens */
+}
+
+.mx-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* --- Modal Container --- */
+.mx-modal-container {
+  position: relative;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid var(--color-primary);
+  box-shadow: 
+    0 0 30px rgba(var(--color-primary-rgb), 0.4),
+    inset 0 0 30px rgba(var(--color-primary-rgb), 0.1);
+  padding: 3rem 2.5rem;
+  font-family: "Orbitron", monospace;
+  color: var(--color-primary);
+  animation: modalSlideIn 0.5s ease;
+  overflow: hidden; /* Enforce containment */
+  flex-shrink: 0;
+}
+
+/* --- Animations --- */
+@keyframes modalSlideIn {
+  from { transform: translateY(-30px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* --- Scanline Effect --- */
+.mx-modal-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(var(--color-primary-rgb), 0.03) 50%,
+    transparent 100%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  animation: scanline 8s linear infinite;
+  z-index: 10;
+}
+
+@keyframes scanline {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100%; }
+}
+
+/* --- Header & Close --- */
+.mx-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 1px solid rgba(var(--color-primary-rgb), 0.5);
+  color: var(--color-primary);
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 20;
+}
+
+.mx-modal-close:hover {
+  background: var(--color-primary);
+  color: black;
+  box-shadow: 0 0 15px var(--color-primary);
+  transform: rotate(90deg);
+}
+
+.mx-modal-title {
+  font-family: "Orbitron", monospace;
+  font-size: 2rem;
+  text-align: center;
+  margin: 0 0 2rem 0;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px var(--color-primary);
+}
+
+/* --- Common Form Elements --- */
+.mx-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.mx-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mx-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(var(--color-primary-rgb), 0.8);
+}
+
+.mx-input-wrapper {
+  position: relative;
+}
+
+.mx-input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.4);
+  color: var(--color-primary);
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.mx-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.3), inset 0 0 10px rgba(var(--color-primary-rgb), 0.1);
+}
+
+.mx-input.error {
+  border-color: var(--color-error-pink);
+  box-shadow: 0 0 10px rgba(var(--color-error-pink-rgb), 0.2);
+}
+
+.mx-input.success {
+  border-color: var(--color-primary);
+}
+
+/* --- Modal Content Area --- */
+.mx-modal-content {
+  flex: 1;
+  min-height: 0;
+  margin-top: 1.5rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 0.5rem;
+  position: relative;
+}
+
+/* Custom Scrollbar for Content */
+.mx-modal-content::-webkit-scrollbar {
+  width: 4px;
+}
+.mx-modal-content::-webkit-scrollbar-track {
+  background: rgba(0, 255, 136, 0.05);
+}
+.mx-modal-content::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  box-shadow: 0 0 5px var(--color-primary);
+}
+
+/* --- Tabbed Panels (Used in Admin) --- */
+.mx-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.1);
+}
+
+.mx-tab {
+  background: none;
+  border: none;
+  color: rgba(0, 255, 136, 0.5);
+  font-family: var(--font-primary);
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  padding: 0.5rem 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.mx-tab.active {
+  color: var(--color-primary);
+  text-shadow: 0 0 8px var(--color-primary);
+}
+
+.mx-tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--color-primary);
+  box-shadow: 0 0 10px var(--color-primary);
+}
+
+.mx-tab-panel {
+  display: none;
+}
+
+.mx-tab-panel.active {
+  display: block;
+  animation: mxFadeIn 0.3s ease;
+}
+
+@keyframes mxFadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Feedback and State --- */
+.mx-status-msg {
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.mx-status-msg.loading { color: var(--color-primary); opacity: 0.7; }
+.mx-status-msg.error { color: var(--color-error-pink); }
+.mx-status-msg.success { color: var(--color-primary); }
+
+.mx-btn {
+  width: 100%;
+  padding: 1rem;
+  background: transparent;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  font-family: "Orbitron", monospace;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.mx-btn:hover {
+  background: var(--color-primary);
+  color: black;
+  box-shadow: 0 0 25px var(--color-primary);
+}
+
+.mx-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mx-error-message {
+  font-size: 0.75rem;
+  color: var(--color-error-pink);
+  min-height: 1.2rem;
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+  margin-top: 0.2rem;
+}
+
+.mx-error-message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Password Toggle */
+.mx-pw-toggle {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(var(--color-primary-rgb), 0.6);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.mx-pw-toggle:hover {
+  color: var(--color-primary);
+}
+
+/* --- Strength Meter --- */
+.mx-strength-meter {
+  display: flex;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.mx-strength-bar {
+  flex: 1;
+  height: 4px;
+  background: rgba(var(--color-primary-rgb), 0.2);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.mx-strength-bar.active.weak {
+  background: var(--color-error-pink);
+  box-shadow: 0 0 5px var(--color-error-pink);
+}
+
+.mx-strength-bar.active.medium {
+  background: var(--color-warning);
+  box-shadow: 0 0 5px var(--color-warning);
+}
+
+.mx-strength-bar.active.strong {
+  background: var(--color-primary);
+  box-shadow: 0 0 5px var(--color-primary);
+}
+
+/* --- Hover Glow Effect --- */
+.mx-hoverglow {
+  transition: all 0.3s ease;
+}
+
+.mx-hoverglow:hover {
+  box-shadow: 0 0 30px rgba(var(--color-primary-rgb), 0.4);
+  border-color: var(--color-primary);
+  transform: scale(1.05) translateZ(0);
+  z-index: 10;
+}
+
+@keyframes glitchShake {
+  0%, 100% { transform: translateY(0) scale(1); }
+  25% { transform: translateX(-5px) scale(1.01); }
+  50% { transform: translateX(5px) scale(0.99); }
+  75% { transform: translateX(-3px) scale(1.01); }
+}
+
+/* Landscape Mode Adjustments (Mobile Landscape) */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .mx-modal-overlay {
+    padding: 0.5rem;
+    align-items: center; /* Center vertically if possible */
+  }
+  
+  .mx-modal-container {
+    padding: 1.2rem 1.5rem;
+    width: 95%;
+    max-width: 600px;
+    max-height: 95vh;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Strictly contain the content area */
+  }
+  
+  .mx-modal-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 2px;
+  }
+  
+  .mx-modal-close {
+    top: 0.3rem;
+    right: 0.3rem;
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+  }
+  
+  .mx-modal-content {
+    margin-top: 0.3rem;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto !important; /* Force scrollbar on content area */
+    padding-right: 0.2rem;
+  }
+
+  .mx-form {
+    gap: 0.6rem;
+  }
+
+  .mx-btn {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+  
+  /* Reduction for common elements to save space */
+  .mx-form-group { gap: 0.3rem; }
+  .mx-label { font-size: 0.7rem; }
+  .mx-input { padding: 0.5rem 0.8rem; }
+}

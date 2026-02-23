@@ -679,19 +679,12 @@ class HologramCarousel {
   }
 }
 
-// Auto-initialize if DOM is ready
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    if (document.querySelector(".holo-carousel-wrapper")) {
-      window.hologramCarousel = new HologramCarousel({
-        dataUrl: "../resources/jsons/carousel-data.json",
-      });
-    }
-  });
-} else {
+function initHologramCarousel() {
   if (document.querySelector(".holo-carousel-wrapper")) {
     window.hologramCarousel = new HologramCarousel({
       dataUrl: "../resources/jsons/carousel-data.json",
     });
   }
 }
+
+window.initHologramCarousel = initHologramCarousel;
