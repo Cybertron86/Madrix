@@ -19,7 +19,27 @@ const MODAL_HTML = `
             Cybertron Systems<br>
             Rheinstraße 102<br>
             76185 Karlsruhe<br>
-          `;
+            Germany
+          </p>
+
+          <h3 class="footer-modal-h3">Contact</h3>
+          <p>
+            Phone: +49 1575 2605349<br>
+            Email: <a href="mailto:contact@cybertron.sys" class="footer-link">contact@cybertron.sys</a>
+          </p>
+
+          <h3 class="footer-modal-h3">Responsible for content according to § 55 Abs. 2 RStV</h3>
+          <p>
+            Benjamin Tron<br>
+            Rheinstraße 102<br>
+            76185 Karlsruhe
+          </p>
+          
+          <p><em>This is a private portfolio project.</em></p>
+        </div>
+      </div>
+    </div>
+  `;
 
 // Inject HTML once and wire up close/keyboard/overlay-click via ModalManager
 function createImpressumModal() {
