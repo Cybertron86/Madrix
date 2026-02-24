@@ -1,6 +1,6 @@
 /**
  * matrix-eye-ultimate.js
- * 
+ *
  * Defines the UltimateMatrixEye class - a complex, multi-layered visual component
  * featured in the Holo Carousel. Combines CSS animations, dynamic Matrix rain,
  * and procedural "looking around" behaviors to simulate a sentient AI eye.
@@ -153,17 +153,18 @@ class UltimateMatrixEye {
 
   /**
    * Generates a vertical string of random Matrix-style characters.
-   * 
+   *
    * @param {number} length - Number of characters to generate.
    * @returns {string} - Line-broken character stream.
    */
   generateMatrixCode(length) {
     // Mixture of binary (logic) and Katakana (aesthetic)
-    const chars = "01010110アイウエオカキクケコサシスセソタチツテトナニヌネハヒフヘホマミムメモヤユヨラリルレロワヲン";
+    const chars =
+      "01010110アイウエオカキクケコサシスセソタチツテトナニヌネハヒフヘホマミムメモヤユヨラリルレロワヲン";
     const charsLength = chars.length;
     let code = "";
     for (let i = 0; i < length; i++) {
-        code += chars[Math.floor(Math.random() * charsLength)] + "\n";
+      code += chars[Math.floor(Math.random() * charsLength)] + "\n";
     }
     return code;
   }
@@ -202,40 +203,66 @@ class UltimateMatrixEye {
       const actions = [
         // Directional snaps
         { x: -30, y: 0, duration: 150 }, // SNAP left
-        { x: 30, y: 0, duration: 150 },  // SNAP right
-        { x: 0, y: 0, duration: 200 },   // SNAP center
-        { x: -25, y: -12, duration: 180 }, 
+        { x: 30, y: 0, duration: 150 }, // SNAP right
+        { x: 0, y: 0, duration: 200 }, // SNAP center
+        { x: -25, y: -12, duration: 180 },
         { x: 25, y: -12, duration: 180 },
 
         // Complex sequences (linked transforms)
         { x: -30, y: 0, duration: 100, then: { x: 30, y: 0, duration: 100 } },
         { x: 30, y: 0, duration: 100, then: { x: -30, y: 0, duration: 100 } },
-        
+
         // Triple snap chains
         {
-          x: -30, y: 0, duration: 90,
-          then: { x: 0, y: 0, duration: 90, final: { x: 30, y: 0, duration: 90 } },
+          x: -30,
+          y: 0,
+          duration: 90,
+          then: {
+            x: 0,
+            y: 0,
+            duration: 90,
+            final: { x: 30, y: 0, duration: 90 },
+          },
         },
-        
+
         // Micro-jitter stare
         {
-          x: -2, y: 0, duration: 80,
-          then: { x: 2, y: 0, duration: 80, final: { x: 0, y: 0, duration: 80 } },
-        }
+          x: -2,
+          y: 0,
+          duration: 80,
+          then: {
+            x: 2,
+            y: 0,
+            duration: 80,
+            final: { x: 0, y: 0, duration: 80 },
+          },
+        },
       ];
 
       const randomAction = actions[Math.floor(Math.random() * actions.length)];
 
       // Execute sequence
-      this.moveEyeFast(randomAction.x, randomAction.y, randomAction.duration || 150);
+      this.moveEyeFast(
+        randomAction.x,
+        randomAction.y,
+        randomAction.duration || 150,
+      );
 
       if (randomAction.then) {
         setTimeout(() => {
-          this.moveEyeFast(randomAction.then.x, randomAction.then.y, randomAction.then.duration || 150);
+          this.moveEyeFast(
+            randomAction.then.x,
+            randomAction.then.y,
+            randomAction.then.duration || 150,
+          );
 
           if (randomAction.final) {
             setTimeout(() => {
-              this.moveEyeFast(randomAction.final.x, randomAction.final.y, randomAction.final.duration || 150);
+              this.moveEyeFast(
+                randomAction.final.x,
+                randomAction.final.y,
+                randomAction.final.duration || 150,
+              );
             }, randomAction.then.duration || 150);
           }
         }, randomAction.duration || 150);
@@ -254,8 +281,15 @@ class UltimateMatrixEye {
    */
   startFocusChanges() {
     const changeFocus = () => {
-      const focusStates = ["focused", "normal", "unfocused", "normal", "focused"];
-      const randomState = focusStates[Math.floor(Math.random() * focusStates.length)];
+      const focusStates = [
+        "focused",
+        "normal",
+        "unfocused",
+        "normal",
+        "focused",
+      ];
+      const randomState =
+        focusStates[Math.floor(Math.random() * focusStates.length)];
 
       this.setFocus(randomState);
 
@@ -286,20 +320,23 @@ class UltimateMatrixEye {
             this.eyeElement.style.filter = "";
             this.isGlitching = false;
           }, 80);
-        } 
+        }
         // 2. Geometric Jitter
         else if (glitchType > 0.4) {
           const origTransform = this.eyeElement.style.transform;
-          this.eyeElement.style.transform = "translate(-50%, -50%) translate(3px, -2px)";
+          this.eyeElement.style.transform =
+            "translate(-50%, -50%) translate(3px, -2px)";
 
           setTimeout(() => {
-            this.eyeElement.style.transform = "translate(-50%, -50%) translate(-2px, 1px)";
+            this.eyeElement.style.transform =
+              "translate(-50%, -50%) translate(-2px, 1px)";
             setTimeout(() => {
-              this.eyeElement.style.transform = origTransform || "translate(-50%, -50%)";
+              this.eyeElement.style.transform =
+                origTransform || "translate(-50%, -50%)";
               this.isGlitching = false;
             }, 60);
           }, 60);
-        } 
+        }
         // 3. Brightness/Contrast Flicker
         else {
           this.eyeElement.style.filter = "brightness(1.5) contrast(1.3)";
@@ -326,7 +363,7 @@ class UltimateMatrixEye {
 
   /**
    * Rapidly moves the iris to a target coordinate.
-   * 
+   *
    * @param {number} x - Horizontal offset in pixels.
    * @param {number} y - Vertical offset in pixels.
    * @param {number} duration - Transition speed in ms.
@@ -345,7 +382,7 @@ class UltimateMatrixEye {
 
   /**
    * Updates the eye's class and scale based on focus state.
-   * 
+   *
    * @param {'focused'|'normal'|'unfocused'} state - The target focus depth.
    */
   setFocus(state) {
@@ -395,3 +432,5 @@ class UltimateMatrixEye {
     }
   }
 }
+
+export default UltimateMatrixEye;

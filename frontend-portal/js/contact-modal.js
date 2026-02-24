@@ -3,12 +3,13 @@
  * Lazy-initialised on first open; exposes initContactTrigger globally
  * so it can be called after the DOM is ready.
  */
-(function () {
-  "use strict";
+import { ModalManager, showToast } from "./security-utils.js";
 
-  let contactModal = null;
+("use strict");
 
-  const MODAL_HTML = `
+let contactModal = null;
+
+const MODAL_HTML = `
     <div id="contactOverlay" class="mx-modal-overlay">
       <div class="mx-modal-container contact-modal-custom">
         <button class="mx-modal-close" id="contactCloseBtn" aria-label="Close Contact Modal">×</button>
@@ -35,41 +36,42 @@
     </div>
   `;
 
-  // Inject HTML once and wire up close/keyboard/overlay-click via ModalManager
-  function createContactModal() {
-    if (contactModal) return;
-    document.body.insertAdjacentHTML("beforeend", MODAL_HTML);
-    contactModal = document.getElementById("contactOverlay");
-    window.SecurityUtils.ModalManager.setup(contactModal, closeContactModal);
+// Inject HTML once and wire up close/keyboard/overlay-click via ModalManager
+function createContactModal() {
+  if (contactModal) return;
+  document.body.insertAdjacentHTML("beforeend", MODAL_HTML);
+  contactModal = document.getElementById("contactOverlay");
+  ModalManager.setup(contactModal, closeContactModal);
 
-    // Form submission is simulated — no real API call yet
-    const submitBtn = contactModal.querySelector("#contact-submit-btn");
-    submitBtn.addEventListener("click", () => {
-      if (window.showToast) window.showToast("Message transmission simulated. End of line.", "success");
-      else alert("Message transmission simulated. End of line.");
-      closeContactModal();
-    });
-  }
+  // Form submission is simulated — no real API call yet
+  const submitBtn = contactModal.querySelector("#contact-submit-btn");
+  submitBtn.addEventListener("click", () => {
+    if (typeof showToast === "function")
+      showToast("Message transmission simulated. End of line.", "success");
+    else alert("Message transmission simulated. End of line.");
+    closeContactModal();
+  });
+}
 
-  function openContactModal(e) {
-    if (e) e.preventDefault();
-    createContactModal();
-    contactModal.classList.add("active");
-    document.body.style.overflow = "hidden"; // prevent background scroll
-  }
+function openContactModal(e) {
+  if (e) e.preventDefault();
+  createContactModal();
+  contactModal.classList.add("active");
+  document.body.style.overflow = "hidden"; // prevent background scroll
+}
 
-  function closeContactModal() {
-    if (!contactModal) return;
-    contactModal.classList.remove("active");
-    document.body.style.overflow = "";
-  }
+function closeContactModal() {
+  if (!contactModal) return;
+  contactModal.classList.remove("active");
+  document.body.style.overflow = "";
+}
 
-  window.openContactModal = openContactModal;
+// Export and keep window fallback for migration
 
-  // Bind the footer link; called after DOM is ready
-  function initContactTrigger() {
-    const contactBtn = document.getElementById("footer-btn-contact");
-    if (contactBtn) contactBtn.addEventListener("click", openContactModal);
-  }
-  window.initContactTrigger = initContactTrigger;
-})();
+export { openContactModal };
+
+// Bind the footer link; called after DOM is ready
+export function initContactTrigger() {
+  const contactBtn = document.getElementById("footer-btn-contact");
+  if (contactBtn) contactBtn.addEventListener("click", openContactModal);
+}

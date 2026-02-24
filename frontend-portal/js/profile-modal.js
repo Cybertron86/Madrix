@@ -1,36 +1,43 @@
 /**
  * profile-modal.js
- * 
+ *
  * Logic for the User Profile Management interface.
  * Handles username changes, secure password updates with strength detection,
  * and account deletion workflows.
- * 
+ *
  * Integrates with SecurityUtils for validation and CSRF protection.
  */
-(function() {
-  "use strict";
+import {
+  ModalManager,
+  validatePassword,
+  validateUsername,
+  fetchCsrfToken,
+} from "./security-utils.js";
+import { updateAuthButton } from "./auth-state.js";
 
-  // ====================================================================================================================================
-  //  CONSTANTS & CONFIG
-  // ====================================================================================================================================
+("use strict");
 
-  /** @type {RegExp} Valid characters for usernames. */
-  const USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
-  const USERNAME_MAX = 32;
+// ====================================================================================================================================
+//  CONSTANTS & CONFIG
+// ====================================================================================================================================
 
-  /**
-   * Simple sanitization for username inputs.
-   * @param {string} value 
-   */
-  function sanitizeUsername(value) {
-    return String(value).trim().slice(0, USERNAME_MAX);
-  }
+/** @type {RegExp} Valid characters for usernames. */
+const USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
+const USERNAME_MAX = 32;
 
-  // ====================================================================================================================================
-  //  UI TEMPLATES
-  // ====================================================================================================================================
+/**
+ * Simple sanitization for username inputs.
+ * @param {string} value
+ */
+function sanitizeUsername(value) {
+  return String(value).trim().slice(0, USERNAME_MAX);
+}
 
-  const MODAL_HTML = `
+// ====================================================================================================================================
+//  UI TEMPLATES
+// ====================================================================================================================================
+
+const MODAL_HTML = `
     <div id="profileOverlay" class="mx-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="profile-title">
       <div class="mx-modal-container profile-modal-custom">
 
@@ -139,382 +146,404 @@
     </div>
   `;
 
-  // ====================================================================================================================================
-  //  MODULE STATE
-  // ====================================================================================================================================
+// ====================================================================================================================================
+//  MODULE STATE
+// ====================================================================================================================================
 
-  let injected = false;
-  let submitLock = {}; // Prevents double submissions
+let injected = false;
+let submitLock = {}; // Prevents double submissions
 
-  // ====================================================================================================================================
-  //  UI FEEDBACK HELPERS
-  // ====================================================================================================================================
+// ====================================================================================================================================
+//  UI FEEDBACK HELPERS
+// ====================================================================================================================================
 
-  /**
-   * Sets the visual feedback for an input group.
-   * @param {HTMLElement} el - Feedback element.
-   * @param {string} message - Message to display.
-   * @param {'error'|'success'|'loading'} type - Feedback type.
-   */
-  function setFeedback(el, message, type) {
-    el.textContent = message;
-    el.className = "mx-feedback " + type;
+/**
+ * Sets the visual feedback for an input group.
+ * @param {HTMLElement} el - Feedback element.
+ * @param {string} message - Message to display.
+ * @param {'error'|'success'|'loading'} type - Feedback type.
+ */
+function setFeedback(el, message, type) {
+  el.textContent = message;
+  el.className = "mx-feedback " + type;
+}
+
+/**
+ * Clears feedback text and classes.
+ */
+function clearFeedback(el) {
+  el.textContent = "";
+  el.className = "mx-feedback";
+}
+
+/**
+ * Updates the visual border state of an input.
+ */
+function setInputState(input, state) {
+  input.classList.remove("error", "success");
+  if (state === "error") input.classList.add("error");
+  if (state === "success") input.classList.add("success");
+}
+
+// ====================================================================================================================================
+//  VALIDATION LOGIC
+// ====================================================================================================================================
+
+/**
+ * Wraps SecurityUtils password validation.
+ */
+function validateNewPassword(pwInput, bars, feedbackEl) {
+  return validatePassword(pwInput, feedbackEl, bars);
+}
+
+/**
+ * Checks if password confirmation matches.
+ */
+function validatePasswordMatch(pwInput, confirmInput, feedbackEl) {
+  setInputState(confirmInput, null);
+  if (confirmInput.value === "") return false;
+
+  if (pwInput.value !== confirmInput.value) {
+    setInputState(confirmInput, "error");
+    setFeedback(feedbackEl, "▸ Passwords do not match.", "error");
+    return false;
   }
 
-  /**
-   * Clears feedback text and classes.
-   */
-  function clearFeedback(el) {
-    el.textContent = "";
-    el.className = "mx-feedback";
-  }
+  setInputState(confirmInput, "success");
+  return true;
+}
 
-  /**
-   * Updates the visual border state of an input.
-   */
-  function setInputState(input, state) {
-    input.classList.remove("error", "success");
-    if (state === "error") input.classList.add("error");
-    if (state === "success") input.classList.add("success");
-  }
+// ====================================================================================================================================
+//  MODAL LIFECYCLE
+// ====================================================================================================================================
 
-  // ====================================================================================================================================
-  //  VALIDATION LOGIC
-  // ====================================================================================================================================
+/**
+ * Injects structural HTML if not present.
+ */
+function injectModal() {
+  if (injected) return;
+  document.body.insertAdjacentHTML("beforeend", MODAL_HTML);
+  bindLocalEvents();
+  injected = true;
+}
 
-  /**
-   * Wraps SecurityUtils password validation.
-   */
-  function validateNewPassword(pwInput, bars, feedbackEl) {
-    return window.SecurityUtils?.validatePassword(pwInput, feedbackEl, bars);
-  }
+/**
+ * Opens the profile modal with focus management.
+ */
+function openModal() {
+  injectModal();
+  const overlay = document.getElementById("profileOverlay");
+  ModalManager.open(overlay, "active", "#profileNewUsername");
+}
 
-  /**
-   * Checks if password confirmation matches.
-   */
-  function validatePasswordMatch(pwInput, confirmInput, feedbackEl) {
-    setInputState(confirmInput, null);
-    if (confirmInput.value === "") return false;
+/**
+ * Closes the profile modal and triggers cleanup.
+ */
+function closeModal() {
+  const overlay = document.getElementById("profileOverlay");
+  if (!overlay) return;
+  ModalManager.close(overlay, "active");
+  setTimeout(resetModalState, 350);
+}
 
-    if (pwInput.value !== confirmInput.value) {
-      setInputState(confirmInput, "error");
-      setFeedback(feedbackEl, "▸ Passwords do not match.", "error");
-      return false;
+/**
+ * Resets all inputs and feedback fields to their default state.
+ */
+function resetModalState() {
+  const ids = [
+    "profileNewUsername",
+    "profileNewPassword",
+    "profileConfirmPassword",
+  ];
+  ids.forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.value = "";
+      setInputState(el, null);
     }
+  });
 
-    setInputState(confirmInput, "success");
-    return true;
-  }
+  const confirmPanel = document.getElementById("profileConfirmPanel");
+  if (confirmPanel) confirmPanel.classList.remove("visible");
 
-  // ====================================================================================================================================
-  //  MODAL LIFECYCLE
-  // ====================================================================================================================================
+  const deleteBtn = document.getElementById("profileDeleteBtn");
+  if (deleteBtn) deleteBtn.style.display = "";
 
-  /**
-   * Injects structural HTML if not present.
-   */
-  function injectModal() {
-    if (injected) return;
-    document.body.insertAdjacentHTML("beforeend", MODAL_HTML);
-    bindLocalEvents();
-    injected = true;
-  }
+  const bars = document.querySelectorAll(".mx-strength-bar");
+  bars.forEach((bar) => (bar.className = "mx-strength-bar"));
 
-  /**
-   * Opens the profile modal with focus management.
-   */
-  function openModal() {
-    injectModal();
-    const overlay = document.getElementById("profileOverlay");
-    window.SecurityUtils?.ModalManager?.open(overlay, "active", "#profileNewUsername");
-  }
+  [
+    "profileUsernameFeedback",
+    "profilePasswordFeedback",
+    "profileDeleteFeedback",
+  ].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) clearFeedback(el);
+  });
 
-  /**
-   * Closes the profile modal and triggers cleanup.
-   */
-  function closeModal() {
-    const overlay = document.getElementById("profileOverlay");
-    if (!overlay) return;
-    window.SecurityUtils?.ModalManager?.close(overlay, "active");
-    setTimeout(resetModalState, 350);
-  }
+  submitLock = {};
+}
 
-  /**
-   * Resets all inputs and feedback fields to their default state.
-   */
-  function resetModalState() {
-    const ids = ["profileNewUsername", "profileNewPassword", "profileConfirmPassword"];
-    ids.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) { el.value = ""; setInputState(el, null); }
-    });
+// ====================================================================================================================================
+//  EVENT BINDING
+// ====================================================================================================================================
 
-    const confirmPanel = document.getElementById("profileConfirmPanel");
-    if (confirmPanel) confirmPanel.classList.remove("visible");
+/**
+ * Sets up internal listeners for inputs and buttons.
+ */
+function bindLocalEvents() {
+  const overlay = document.getElementById("profileOverlay");
+  const closeBtn = document.getElementById("profileCloseBtn");
+  const saveUsernameBtn = document.getElementById("profileSaveUsernameBtn");
+  const savePasswordBtn = document.getElementById("profileSavePasswordBtn");
+  const deleteBtn = document.getElementById("profileDeleteBtn");
+  const confirmDeleteBtn = document.getElementById("profileConfirmDeleteBtn");
+  const cancelDeleteBtn = document.getElementById("profileCancelDeleteBtn");
+  const pwInput = document.getElementById("profileNewPassword");
+  const pwConfirm = document.getElementById("profileConfirmPassword");
+  const pwToggle1 = document.getElementById("profilePwToggle1");
+  const pwToggle2 = document.getElementById("profilePwToggle2");
+  const bars = document.querySelectorAll(".mx-strength-bar");
+  const feedbackPw = document.getElementById("profilePasswordFeedback");
 
-    const deleteBtn = document.getElementById("profileDeleteBtn");
-    if (deleteBtn) deleteBtn.style.display = "";
+  // Modal Manager Integration
+  ModalManager.setup(overlay, closeModal);
 
-    const bars = document.querySelectorAll(".mx-strength-bar");
-    bars.forEach(bar => bar.className = "mx-strength-bar");
+  // Header close
+  closeBtn.addEventListener("click", closeModal);
 
-    ["profileUsernameFeedback", "profilePasswordFeedback", "profileDeleteFeedback"].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) clearFeedback(el);
-    });
+  // Password Visibility Toggles
+  const togglePw = (input, btn) => {
+    const isVisible = input.type === "text";
+    input.type = isVisible ? "password" : "text";
+    btn.textContent = isVisible ? "👁️" : "🙈";
+    btn.setAttribute(
+      "aria-label",
+      isVisible ? "Show password" : "Hide password",
+    );
+    btn.setAttribute("aria-pressed", !isVisible);
+  };
 
-    submitLock = {};
-  }
+  pwToggle1.addEventListener("click", () => togglePw(pwInput, pwToggle1));
+  pwToggle2.addEventListener("click", () => togglePw(pwConfirm, pwToggle2));
 
-  // ====================================================================================================================================
-  //  EVENT BINDING
-  // ====================================================================================================================================
+  // Dynamic Validation Listeners
+  pwInput.addEventListener("input", () => {
+    validateNewPassword(pwInput, bars, feedbackPw);
+    if (pwConfirm.value) validatePasswordMatch(pwInput, pwConfirm, feedbackPw);
+  });
+  pwConfirm.addEventListener("input", () => {
+    validatePasswordMatch(pwInput, pwConfirm, feedbackPw);
+  });
 
-  /**
-   * Sets up internal listeners for inputs and buttons.
-   */
-  function bindLocalEvents() {
-    const overlay = document.getElementById("profileOverlay");
-    const closeBtn = document.getElementById("profileCloseBtn");
-    const saveUsernameBtn = document.getElementById("profileSaveUsernameBtn");
-    const savePasswordBtn = document.getElementById("profileSavePasswordBtn");
-    const deleteBtn = document.getElementById("profileDeleteBtn");
-    const confirmDeleteBtn = document.getElementById("profileConfirmDeleteBtn");
-    const cancelDeleteBtn = document.getElementById("profileCancelDeleteBtn");
-    const pwInput = document.getElementById("profileNewPassword");
-    const pwConfirm = document.getElementById("profileConfirmPassword");
-    const pwToggle1 = document.getElementById("profilePwToggle1");
-    const pwToggle2 = document.getElementById("profilePwToggle2");
-    const bars = document.querySelectorAll(".mx-strength-bar");
-    const feedbackPw = document.getElementById("profilePasswordFeedback");
-
-    // Modal Manager Integration
-    window.SecurityUtils?.ModalManager?.setup(overlay, closeModal);
-
-    // Header close
-    closeBtn.addEventListener("click", closeModal);
-
-    // Password Visibility Toggles
-    const togglePw = (input, btn) => {
-      const isVisible = input.type === "text";
-      input.type = isVisible ? "password" : "text";
-      btn.textContent = isVisible ? "👁️" : "🙈";
-      btn.setAttribute("aria-label", isVisible ? "Show password" : "Hide password");
-      btn.setAttribute("aria-pressed", !isVisible);
-    };
-
-    pwToggle1.addEventListener("click", () => togglePw(pwInput, pwToggle1));
-    pwToggle2.addEventListener("click", () => togglePw(pwConfirm, pwToggle2));
-
-    // Dynamic Validation Listeners
-    pwInput.addEventListener("input", () => {
-      validateNewPassword(pwInput, bars, feedbackPw);
-      if (pwConfirm.value) validatePasswordMatch(pwInput, pwConfirm, feedbackPw);
-    });
-    pwConfirm.addEventListener("input", () => {
-      validatePasswordMatch(pwInput, pwConfirm, feedbackPw);
-    });
-
-    // Submission Handlers
-    saveUsernameBtn.addEventListener("click", handleSaveUsername);
-    document.getElementById("profileNewUsername").addEventListener("keydown", e => {
+  // Submission Handlers
+  saveUsernameBtn.addEventListener("click", handleSaveUsername);
+  document
+    .getElementById("profileNewUsername")
+    .addEventListener("keydown", (e) => {
       if (e.key === "Enter") handleSaveUsername();
     });
 
-    savePasswordBtn.addEventListener("click", handleSavePassword);
-    pwConfirm.addEventListener("keydown", e => {
-      if (e.key === "Enter") handleSavePassword();
-    });
+  savePasswordBtn.addEventListener("click", handleSavePassword);
+  pwConfirm.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handleSavePassword();
+  });
 
-    // Account Deletion Workflow
-    deleteBtn.addEventListener("click", () => {
-      document.getElementById("profileConfirmPanel").classList.add("visible");
-      deleteBtn.style.display = "none";
-    });
+  // Account Deletion Workflow
+  deleteBtn.addEventListener("click", () => {
+    document.getElementById("profileConfirmPanel").classList.add("visible");
+    deleteBtn.style.display = "none";
+  });
 
-    cancelDeleteBtn.addEventListener("click", () => {
-      document.getElementById("profileConfirmPanel").classList.remove("visible");
-      document.getElementById("profileDeleteBtn").style.display = "";
-      clearFeedback(document.getElementById("profileDeleteFeedback"));
-    });
+  cancelDeleteBtn.addEventListener("click", () => {
+    document.getElementById("profileConfirmPanel").classList.remove("visible");
+    document.getElementById("profileDeleteBtn").style.display = "";
+    clearFeedback(document.getElementById("profileDeleteFeedback"));
+  });
 
-    confirmDeleteBtn.addEventListener("click", handleDeleteAccount);
+  confirmDeleteBtn.addEventListener("click", handleDeleteAccount);
+}
+
+// ====================================================================================================================================
+//  FORM ACTIONS (XHR)
+// ====================================================================================================================================
+
+/**
+ * Processes username update requests.
+ */
+async function handleSaveUsername() {
+  if (submitLock.username) return;
+
+  const input = document.getElementById("profileNewUsername");
+  const feedback = document.getElementById("profileUsernameFeedback");
+  const btn = document.getElementById("profileSaveUsernameBtn");
+  const raw = sanitizeUsername(input.value);
+
+  clearFeedback(feedback);
+  setInputState(input, null);
+
+  if (!raw) {
+    setInputState(input, "error");
+    setFeedback(feedback, "▸ Username required.", "error");
+    return;
   }
 
-  // ====================================================================================================================================
-  //  FORM ACTIONS (XHR)
-  // ====================================================================================================================================
+  if (!validateUsername(input, feedback)) return;
 
-  /**
-   * Processes username update requests.
-   */
-  async function handleSaveUsername() {
-    if (submitLock.username) return;
+  submitLock.username = true;
+  btn.disabled = true;
+  setFeedback(feedback, "▸ Verifying identity...", "loading");
 
-    const input = document.getElementById("profileNewUsername");
-    const feedback = document.getElementById("profileUsernameFeedback");
-    const btn = document.getElementById("profileSaveUsernameBtn");
-    const raw = sanitizeUsername(input.value);
+  try {
+    const csrf_token = await fetchCsrfToken();
+    const response = await fetch("/api/profile_update.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: raw, csrf_token }),
+      credentials: "same-origin",
+    });
 
-    clearFeedback(feedback);
-    setInputState(input, null);
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    const data = await response.json();
 
-    if (!raw) {
+    if (data.success) {
+      setInputState(input, "success");
+      setFeedback(feedback, "▸ System ID updated.", "success");
+      input.value = "";
+      document.dispatchEvent(
+        new CustomEvent("usernameChanged", { detail: { username: raw } }),
+      );
+    } else if (data.error === "username_taken") {
       setInputState(input, "error");
-      setFeedback(feedback, "▸ Username required.", "error");
-      return;
+      setFeedback(feedback, "▸ Identifier already in use.", "error");
+    } else {
+      setFeedback(feedback, "▸ Kernel rejection. Try again.", "error");
     }
-    
-    if (!window.SecurityUtils?.validateUsername(input, feedback)) return;
-
-    submitLock.username = true;
-    btn.disabled = true;
-    setFeedback(feedback, "▸ Verifying identity...", "loading");
-
-    try {
-      const csrf_token = await window.SecurityUtils.fetchCsrfToken();
-      const response = await fetch("/api/profile_update.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: raw, csrf_token }),
-        credentials: "same-origin",
-      });
-
-      if (!response.ok) throw new Error("HTTP " + response.status);
-      const data = await response.json();
-
-      if (data.success) {
-        setInputState(input, "success");
-        setFeedback(feedback, "▸ System ID updated.", "success");
-        input.value = "";
-        document.dispatchEvent(new CustomEvent("usernameChanged", { detail: { username: raw } }));
-      } else if (data.error === "username_taken") {
-        setInputState(input, "error");
-        setFeedback(feedback, "▸ Identifier already in use.", "error");
-      } else {
-        setFeedback(feedback, "▸ Kernel rejection. Try again.", "error");
-      }
-    } catch (err) {
-      setFeedback(feedback, "▸ Connection dropped.", "error");
-    } finally {
-      btn.disabled = false;
-      setTimeout(() => { submitLock.username = false; }, 1500);
-    }
+  } catch (err) {
+    setFeedback(feedback, "▸ Connection dropped.", "error");
+  } finally {
+    btn.disabled = false;
+    setTimeout(() => {
+      submitLock.username = false;
+    }, 1500);
   }
+}
 
-  /**
-   * Processes password update requests.
-   */
-  async function handleSavePassword() {
-    if (submitLock.password) return;
+/**
+ * Processes password update requests.
+ */
+async function handleSavePassword() {
+  if (submitLock.password) return;
 
-    const pwInput = document.getElementById("profileNewPassword");
-    const pwConfirm = document.getElementById("profileConfirmPassword");
-    const feedback = document.getElementById("profilePasswordFeedback");
-    const btn = document.getElementById("profileSavePasswordBtn");
-    const bars = document.querySelectorAll(".mx-strength-bar");
+  const pwInput = document.getElementById("profileNewPassword");
+  const pwConfirm = document.getElementById("profileConfirmPassword");
+  const feedback = document.getElementById("profilePasswordFeedback");
+  const btn = document.getElementById("profileSavePasswordBtn");
+  const bars = document.querySelectorAll(".mx-strength-bar");
 
-    clearFeedback(feedback);
+  clearFeedback(feedback);
 
-    if (!validateNewPassword(pwInput, bars, feedback)) return;
-    if (!validatePasswordMatch(pwInput, pwConfirm, feedback)) return;
+  if (!validateNewPassword(pwInput, bars, feedback)) return;
+  if (!validatePasswordMatch(pwInput, pwConfirm, feedback)) return;
 
-    submitLock.password = true;
-    btn.disabled = true;
-    setFeedback(feedback, "▸ Re-encrypting access keys...", "loading");
+  submitLock.password = true;
+  btn.disabled = true;
+  setFeedback(feedback, "▸ Re-encrypting access keys...", "loading");
 
-    try {
-      const csrf_token = await window.SecurityUtils.fetchCsrfToken();
-      const response = await fetch("/api/profile_update.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: pwInput.value, csrf_token }),
-        credentials: "same-origin",
-      });
+  try {
+    const csrf_token = await fetchCsrfToken();
+    const response = await fetch("/api/profile_update.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: pwInput.value, csrf_token }),
+      credentials: "same-origin",
+    });
 
-      if (!response.ok) throw new Error("HTTP " + response.status);
-      const data = await response.json();
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    const data = await response.json();
 
-      if (data.success) {
-        setFeedback(feedback, "▸ Uplink secure. Sessions purged.", "success");
-        pwInput.value = "";
-        pwConfirm.value = "";
-        setInputState(pwInput, null);
-        setInputState(pwConfirm, null);
-        bars.forEach(bar => bar.className = "mx-strength-bar");
-      } else {
-        setFeedback(feedback, "▸ Encryption failed.", "error");
-      }
-    } catch (err) {
-      setFeedback(feedback, "▸ Network failure.", "error");
-    } finally {
-      btn.disabled = false;
-      setTimeout(() => { submitLock.password = false; }, 1500);
+    if (data.success) {
+      setFeedback(feedback, "▸ Uplink secure. Sessions purged.", "success");
+      pwInput.value = "";
+      pwConfirm.value = "";
+      setInputState(pwInput, null);
+      setInputState(pwConfirm, null);
+      bars.forEach((bar) => (bar.className = "mx-strength-bar"));
+    } else {
+      setFeedback(feedback, "▸ Encryption failed.", "error");
     }
+  } catch (err) {
+    setFeedback(feedback, "▸ Network failure.", "error");
+  } finally {
+    btn.disabled = false;
+    setTimeout(() => {
+      submitLock.password = false;
+    }, 1500);
   }
+}
 
-  /**
-   * Processes account termination requests.
-   */
-  async function handleDeleteAccount() {
-    if (submitLock.delete) return;
+/**
+ * Processes account termination requests.
+ */
+async function handleDeleteAccount() {
+  if (submitLock.delete) return;
 
-    const feedback = document.getElementById("profileDeleteFeedback");
-    const confirmBtn = document.getElementById("profileConfirmDeleteBtn");
-    const cancelBtn = document.getElementById("profileCancelDeleteBtn");
+  const feedback = document.getElementById("profileDeleteFeedback");
+  const confirmBtn = document.getElementById("profileConfirmDeleteBtn");
+  const cancelBtn = document.getElementById("profileCancelDeleteBtn");
 
-    submitLock.delete = true;
-    confirmBtn.disabled = true;
-    cancelBtn.disabled = true;
-    setFeedback(feedback, "▸ Initiating self-destruct...", "loading");
+  submitLock.delete = true;
+  confirmBtn.disabled = true;
+  cancelBtn.disabled = true;
+  setFeedback(feedback, "▸ Initiating self-destruct...", "loading");
 
-    try {
-      const csrf_token = await window.SecurityUtils.fetchCsrfToken();
-      const response = await fetch("/api/profile_delete.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ csrf_token }),
-        credentials: "same-origin",
-      });
+  try {
+    const csrf_token = await fetchCsrfToken();
+    const response = await fetch("/api/profile_delete.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ csrf_token }),
+      credentials: "same-origin",
+    });
 
-      if (!response.ok) throw new Error("HTTP " + response.status);
-      const data = await response.json();
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    const data = await response.json();
 
-      if (data.deleted) {
-        setFeedback(feedback, "▸ Account purged. Connection lost.", "success");
-        setTimeout(() => {
-          closeModal();
-          onAccountDeleted();
-        }, 1800);
-      } else {
-        setFeedback(feedback, "▸ Deletion aborted.", "error");
-        confirmBtn.disabled = false;
-        cancelBtn.disabled = false;
-        submitLock.delete = false;
-      }
-    } catch (err) {
-      setFeedback(feedback, "▸ Uplink error.", "error");
+    if (data.deleted) {
+      setFeedback(feedback, "▸ Account purged. Connection lost.", "success");
+      setTimeout(() => {
+        closeModal();
+        onAccountDeleted();
+      }, 1800);
+    } else {
+      setFeedback(feedback, "▸ Deletion aborted.", "error");
       confirmBtn.disabled = false;
       cancelBtn.disabled = false;
       submitLock.delete = false;
     }
+  } catch (err) {
+    setFeedback(feedback, "▸ Uplink error.", "error");
+    confirmBtn.disabled = false;
+    cancelBtn.disabled = false;
+    submitLock.delete = false;
   }
+}
 
-  /**
-   * Cleanup logic after successful deletion.
-   */
-  function onAccountDeleted() {
-    if (typeof updateAuthButton === "function") {
-      updateAuthButton();
-    }
-    document.dispatchEvent(new CustomEvent("userLoggedOut", { detail: { reason: "account_deleted" } }));
+/**
+ * Cleanup logic after successful deletion.
+ */
+function onAccountDeleted() {
+  if (typeof updateAuthButton === "function") {
+    updateAuthButton();
   }
+  document.dispatchEvent(
+    new CustomEvent("userLoggedOut", { detail: { reason: "account_deleted" } }),
+  );
+}
 
-  // ====================================================================================================================================
-  //  EXPORTS
-  // ====================================================================================================================================
+// ====================================================================================================================================
+//  EXPORTS
+// ====================================================================================================================================
 
-  window.ProfileModal = { open: openModal, close: closeModal };
-  window.openProfileModal = openModal;
-
-})();
+// Export ESM API
+export { openModal as openProfileModal, closeModal as closeProfileModal };

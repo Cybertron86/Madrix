@@ -5,8 +5,6 @@
  * Includes browser-specific optimizations (Chrome/Brave vs Firefox/Edge) and 
  * Canvas-based memory caching for glitch slices.
  */
-(function() {
-  "use strict";
 
   // ====================================================================================================================================
   //  CANVAS SETUP & BROWSER DETECTION
@@ -213,6 +211,5 @@
   //  GLOBAL EXPORTS
   // ====================================================================================================================================
 
-  window.initMatrixRain = initMatrixRain;
 
-})();
+export { initMatrixRain }

@@ -1,37 +1,50 @@
 /**
  * footer-init.js
- * 
+ *
  * Manages the initialization of footer-related functionality.
  * Handles dynamic content (copyright year) and modal trigger bindings.
  */
-(function() {
-  "use strict";
 
-  // ====================================================================================================================================
-  //  FOOTER INITIALIZATION
-  // ====================================================================================================================================
+// ====================================================================================================================================
+//  FOOTER INITIALIZATION
+// ====================================================================================================================================
 
-  /**
-   * Initializes all footer elements.
-   * Sets the current year and attaches event listeners to legal and contact modal buttons.
-   */
-  function initFooter() {
-    // 1. Update Copyright Year (Auto-syncs with server-provided current time context)
-    const yearEl = document.getElementById("year");
-    if (yearEl) {
-      yearEl.textContent = new Date().getFullYear().toString();
-    }
-
-    // 2. Initialize Modal Triggers (Defined in respective modal modules)
-    if (typeof window.initImpressumTrigger === "function") window.initImpressumTrigger();
-    if (typeof window.initPrivacyTrigger === "function") window.initPrivacyTrigger();
-    if (typeof window.initContactTrigger === "function") window.initContactTrigger();
+/**
+ * Initializes all footer elements.
+ * Sets the current year and attaches event listeners to legal and contact modal buttons.
+ */
+async function initFooter() {
+  // 1. Update Copyright Year (Auto-syncs with server-provided current time context)
+  const yearEl = document.getElementById("year");
+  if (yearEl) {
+    yearEl.textContent = new Date().getFullYear().toString();
   }
 
-  // ====================================================================================================================================
-  //  GLOBAL EXPORTS
-  // ====================================================================================================================================
+  // 2. Initialize Modal Triggers (Defined in respective modal modules)
+  try {
+    const { initImpressumTrigger } = await import("./impressum-modal.js");
+    if (typeof initImpressumTrigger === "function") initImpressumTrigger();
+  } catch (e) {
+    console.warn("Could not load impressum modal trigger module:", e);
+  }
 
-  window.initFooter = initFooter;
+  try {
+    const { initPrivacyTrigger } = await import("./privacy-modal.js");
+    if (typeof initPrivacyTrigger === "function") initPrivacyTrigger();
+  } catch (e) {
+    console.warn("Could not load privacy modal trigger module:", e);
+  }
 
-})();
+  try {
+    const { initContactTrigger } = await import("./contact-modal.js");
+    if (typeof initContactTrigger === "function") initContactTrigger();
+  } catch (e) {
+    console.warn("Could not load contact modal trigger module:", e);
+  }
+}
+
+// ====================================================================================================================================
+//  GLOBAL EXPORTS
+// ====================================================================================================================================
+
+export { initFooter };

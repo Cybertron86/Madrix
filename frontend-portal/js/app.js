@@ -1,10 +1,21 @@
 /**
  * app.js
- * 
+ *
  * Main orchestration layer for the frontend application.
  * Coordinates initialization of background effects, navigation, sound, and auth state sync.
  */
-(function() {
+
+import { initPortal } from "./portal.js";
+import { initNavigation } from "./navigation.js";
+import { initAudio } from "./audio.js";
+import { initMatrixRain } from "./matrix-rain-background.js";
+import { initLuxBar } from "./lux-bar.js";
+import { initHologramCarousel } from "./hologram-carousel.js";
+import { initFooter } from "./footer-init.js";
+import { updateAuthButton } from "./auth-state.js";
+import UltimateMatrixEye from "./matrix-eye-ultimate.js"; // Import default class for direct instantiation
+
+(function () {
   "use strict";
 
   // ====================================================================================================================================
@@ -16,20 +27,24 @@
    * Ensures all modular components are initialized in the correct order.
    */
   document.addEventListener("DOMContentLoaded", async () => {
-    // 1. Core Component Initializations (Defined in separate modules)
-    if (typeof window.initPortal === "function") window.initPortal();
-    if (typeof window.initNavigation === "function") window.initNavigation();
-    if (typeof window.initAudio === "function") window.initAudio();
-    if (typeof window.initMatrixRain === "function") window.initMatrixRain();
-    if (typeof window.initLuxBar === "function") window.initLuxBar();
-    if (typeof window.initHologramCarousel === "function") window.initHologramCarousel();
-    
-    // 2. Footer Initialization (Shared logic for dynamic year and Modal triggers)
-    if (typeof window.initFooter === "function") window.initFooter();
-
-    // 3. Global Auth State Sync (Updates buttons and visibility based on session)
-    if (typeof window.updateAuthButton === "function") {
-      await window.updateAuthButton();
+    let matrixEyeInstance;
+    try {
+      const carouselWrapper = document.querySelector(".holo-carousel-wrapper");
+      const mountTarget = carouselWrapper || document.body;
+      matrixEyeInstance = new UltimateMatrixEye(mountTarget);
+      console.log("Matrix Eye Ultimate initialized successfully");
+    } catch (error) {
+      console.error("Failed to initialize Matrix Eye Ultimate:", error);
     }
+    initPortal();
+    initNavigation();
+    initAudio();
+    initMatrixRain();
+    initLuxBar();
+    initHologramCarousel();
+    initFooter();
+
+    await updateAuthButton();
+    console.log("All modules initialized");
   });
 })();

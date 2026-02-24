@@ -1,15 +1,14 @@
 /**
  * privacy-modal.js
- * 
+ *
  * Lazy-initialised on first open; exposes openPrivacyModal globally
  * so other modules (e.g. cookie banner) can trigger it directly.
  */
-(function () {
-  "use strict";
+import { ModalManager } from "./security-utils.js";
 
-  let privacyModal = null;
+let privacyModal = null;
 
-  const MODAL_HTML = `
+const MODAL_HTML = `
     <div id="privacyOverlay" class="mx-modal-overlay">
       <div class="mx-modal-container footer-modal-custom">
         <button class="mx-modal-close" id="privacyCloseBtn" aria-label="Close Privacy Policy">×</button>
@@ -34,34 +33,32 @@
     </div>
   `;
 
-  // Inject HTML once and wire up close/keyboard/overlay-click via ModalManager
-  function createPrivacyModal() {
-    if (privacyModal) return;
-    document.body.insertAdjacentHTML("beforeend", MODAL_HTML);
-    privacyModal = document.getElementById("privacyOverlay");
-    window.SecurityUtils.ModalManager.setup(privacyModal, closePrivacyModal);
-  }
+// Inject HTML once and wire up close/keyboard/overlay-click via ModalManager
+function createPrivacyModal() {
+  if (privacyModal) return;
+  document.body.insertAdjacentHTML("beforeend", MODAL_HTML);
+  privacyModal = document.getElementById("privacyOverlay");
+  ModalManager.setup(privacyModal, closePrivacyModal);
+}
 
-  function openPrivacyModal(e) {
-    if (e) e.preventDefault();
-    createPrivacyModal();
-    privacyModal.classList.add("active");
-    document.body.style.overflow = "hidden"; // prevent background scroll
-  }
+function openPrivacyModal(e) {
+  if (e) e.preventDefault();
+  createPrivacyModal();
+  privacyModal.classList.add("active");
+  document.body.style.overflow = "hidden"; // prevent background scroll
+}
 
-  function closePrivacyModal() {
-    if (!privacyModal) return;
-    privacyModal.classList.remove("active");
-    document.body.style.overflow = "";
-  }
+function closePrivacyModal() {
+  if (!privacyModal) return;
+  privacyModal.classList.remove("active");
+  document.body.style.overflow = "";
+}
 
-  // Expose open so other modules (e.g. cookie banner) can trigger it
-  window.openPrivacyModal = openPrivacyModal;
+// Expose open so other modules (e.g. cookie banner) can trigger it
+// Export the modal opener and trigger initializer
+export { openPrivacyModal };
 
-  // Bind the footer link; called after DOM is ready
-  function initPrivacyTrigger() {
-    const privacyBtn = document.getElementById("footer-btn-privacy");
-    if (privacyBtn) privacyBtn.addEventListener("click", openPrivacyModal);
-  }
-  window.initPrivacyTrigger = initPrivacyTrigger;
-})();
+export function initPrivacyTrigger() {
+  const privacyBtn = document.getElementById("footer-btn-privacy");
+  if (privacyBtn) privacyBtn.addEventListener("click", openPrivacyModal);
+}

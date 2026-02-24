@@ -4,8 +4,7 @@
  * Manages background music and ambient glitch sound effects.
  * Handles audio context unlocking (browser policy compliance) and user controls.
  */
-(function() {
-  "use strict";
+
 
   // ====================================================================================================================================
   //  STATE & ASSETS
@@ -154,14 +153,7 @@
       }
     });
 
-    // Expose control function to portal.js
-    window.startAllSounds = startAllSounds;
   }
 
-  // ====================================================================================================================================
-  //  GLOBAL EXPORTS
-  // ====================================================================================================================================
-
-  window.initAudio = initAudio;
-
-})();
+export { startAllSounds }
+export { initAudio }

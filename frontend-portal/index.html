@@ -4,25 +4,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#00ff00" />
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <title>Benjamin Tron's World | Madrix Cybertron Systems</title>
-    <meta name="description" content="Welcome to the world of Benjamin Tron. Explore cutting-edge digital experiences, project galleries, and the Cybertron Systems ecosystem." />
-    <meta name="keywords" content="Benjamin Tron, Madrix, Cybertron Systems, Portfolio, Web Development, Matrix Theme" />
+    <meta
+      name="description"
+      content="Welcome to the world of Benjamin Tron. Explore cutting-edge digital experiences, project galleries, and the Cybertron Systems ecosystem."
+    />
+    <meta
+      name="keywords"
+      content="Benjamin Tron, Madrix, Cybertron Systems, Portfolio, Web Development, Matrix Theme"
+    />
     <meta name="author" content="Benjamin Tron" />
     <meta name="robots" content="index, follow" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Benjamin Tron's World | Madrix Cybertron Systems" />
-    <meta property="og:description" content="Explore the immersive world of Benjamin Tron and Cybertron Systems." />
+    <meta
+      property="og:title"
+      content="Benjamin Tron's World | Madrix Cybertron Systems"
+    />
+    <meta
+      property="og:description"
+      content="Explore the immersive world of Benjamin Tron and Cybertron Systems."
+    />
     <meta property="og:image" content="resources/images/og-image.jpg" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="Benjamin Tron's World | Madrix Cybertron Systems" />
-    <meta property="twitter:description" content="Explore the immersive world of Benjamin Tron and Cybertron Systems." />
+    <meta
+      property="twitter:title"
+      content="Benjamin Tron's World | Madrix Cybertron Systems"
+    />
+    <meta
+      property="twitter:description"
+      content="Explore the immersive world of Benjamin Tron and Cybertron Systems."
+    />
 
     <link rel="canonical" href="https://madrix.cybertron-systems.com/" />
     <link rel="stylesheet" href="css/variables.css" />
@@ -61,25 +79,62 @@
     </div>
 
     <!-- Navbar with Homelink, Login and Menu -->
-    <section id="navigationbar" class="navigationbar" role="navigation" aria-label="Main Navigation">
+    <section
+      id="navigationbar"
+      class="navigationbar"
+      role="navigation"
+      aria-label="Main Navigation"
+    >
       <a class="nav-home" href="/">MADRIX</a>
 
       <div class="nav-auth">
-        <button id="btn_menu" class="nav-menu" aria-label="Open Menu" aria-haspopup="true" aria-expanded="false">☰</button>
+        <button
+          id="btn_menu"
+          class="nav-menu"
+          aria-label="Open Menu"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          ☰
+        </button>
         <button id="btn_login" class="nav-login">LOGIN</button>
       </div>
 
       <!-- Dropdown Menu -->
-      <div id="dropdown_menu" class="dropdown-menu" role="menu" aria-labelledby="btn_menu">
-        <button class="dropdown-item" data-action="about" role="menuitem">About me</button>
-        <button class="dropdown-item" data-action="gallery" role="menuitem">Gallery</button>
-        <button class="dropdown-item" data-action="profile" role="menuitem">Profile</button>
-        <button class="dropdown-item" data-action="admin" id="adminMenuItem" style="display:none" role="menuitem">Admin</button>
+      <div
+        id="dropdown_menu"
+        class="dropdown-menu"
+        role="menu"
+        aria-labelledby="btn_menu"
+      >
+        <button class="dropdown-item" data-action="about" role="menuitem">
+          About me
+        </button>
+        <button class="dropdown-item" data-action="gallery" role="menuitem">
+          Gallery
+        </button>
+        <button class="dropdown-item" data-action="profile" role="menuitem">
+          Profile
+        </button>
+        <button
+          class="dropdown-item"
+          data-action="admin"
+          id="adminMenuItem"
+          style="display: none"
+          role="menuitem"
+        >
+          Admin
+        </button>
       </div>
     </section>
 
     <!-- Intro Overlay (removed after "YES" Button click) -->
-    <div id="portalOverlay" role="dialog" aria-modal="true" aria-labelledby="portalQuestion">
+    <div
+      id="portalOverlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="portalQuestion"
+    >
       <div
         class="portalContent glitchEffect"
         data-text="Are you really sure you want to enter the world of Benjamin Tron?"
@@ -88,7 +143,9 @@
           Are you really sure you want to enter the world of Benjamin Tron?
         </p>
         <div class="portalButtons">
-          <button id="yesBtn" aria-label="Yes, enter the world"><span class="btnText">YES</span></button>
+          <button id="yesBtn" aria-label="Yes, enter the world">
+            <span class="btnText">YES</span>
+          </button>
           <button id="noBtn" aria-label="No, stay away">NO</button>
         </div>
         <p class="portalWarning">
@@ -128,33 +185,26 @@
         <p class="footer-copy">© <span id="year"></span> Cybertron Systems</p>
         <nav class="footer-nav" aria-label="Legal Navigation">
           <ul>
-            <li><button id="footer-btn-impressum" class="footer-link-btn">Legal Notice</button></li>
-            <li><button id="footer-btn-privacy" class="footer-link-btn">Data privacy</button></li>
-            <li><button id="footer-btn-contact" class="footer-link-btn">Contact</button></li>
+            <li>
+              <button id="footer-btn-impressum" class="footer-link-btn">
+                Legal Notice
+              </button>
+            </li>
+            <li>
+              <button id="footer-btn-privacy" class="footer-link-btn">
+                Data privacy
+              </button>
+            </li>
+            <li>
+              <button id="footer-btn-contact" class="footer-link-btn">
+                Contact
+              </button>
+            </li>
           </ul>
         </nav>
       </div>
     </footer>
 
-    <script src="js/security-utils.js" defer></script>
-    <script src="js/login-modal.js" defer></script>
-    <script src="js/register-modal.js" defer></script>
-    <script src="js/aboutme-modal.js" defer></script>
-    <script src="js/gallery-modal.js" defer></script>
-    <script src="js/profile-modal.js" defer></script>
-    <script src="js/admin-modal.js" defer></script>
-    <script src="js/matrix-rain-background.js" defer></script>
-    <script src="js/hologram-carousel.js" defer></script>
-    <script src="js/matrix-eye-ultimate.js" defer></script>
-    <script src="js/lux-bar.js" defer></script>
-    <script src="js/impressum-modal.js" defer></script>
-    <script src="js/privacy-modal.js" defer></script>
-    <script src="js/contact-modal.js" defer></script>
-    <script src="js/audio.js" defer></script>
-    <script src="js/portal.js" defer></script>
-    <script src="js/navigation.js" defer></script>
-    <script src="js/auth-state.js" defer></script>
-    <script src="js/footer-init.js" defer></script>
     <script type="module" src="js/app.js"></script>
   </body>
 </html>

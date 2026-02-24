@@ -4,8 +4,6 @@
  * Logic for the "Luxurious Gloss" sparkle effect on the header bar.
  * Triggers periodically with a randomized interval to create a premium feel.
  */
-(function() {
-  "use strict";
 
   // ====================================================================================================================================
   //  GLOSS EFFECT INITIALIZATION
@@ -37,10 +35,4 @@
     }, Math.floor(Math.random() * 6000) + 9000);
   }
 
-  // ====================================================================================================================================
-  //  GLOBAL EXPORTS
-  // ====================================================================================================================================
-
-  window.initLuxBar = initLuxBar;
-
-})();
+export { initLuxBar }

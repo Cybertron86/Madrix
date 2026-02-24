@@ -13,7 +13,7 @@
 
 /**
  * Escapes HTML special characters in a string to prevent XSS attacks.
- * 
+ *
  * @param {string} str - The raw input string to escape.
  * @returns {string} - The safely escaped HTML string.
  */
@@ -25,7 +25,7 @@ function escapeHtml(str) {
 
 /**
  * Fetches a fresh CSRF token from the backend for use in POST/PUT/DELETE requests.
- * 
+ *
  * @returns {Promise<string>} - A promise that resolves to the CSRF token string.
  * @throws {Error} - Rethrows errors if the server response is invalid or missing the token.
  */
@@ -53,7 +53,7 @@ async function fetchCsrfToken() {
 
 /**
  * Displays a non-intrusive toast notification to the user.
- * 
+ *
  * @param {string} message  - The localized message to display.
  * @param {'success'|'info'|'error'} type - The visual variant (controls CSS class).
  * @param {number} duration - Auto-dismiss delay in milliseconds (default: 3500).
@@ -104,14 +104,14 @@ const VAL_RULES = {
 
 /**
  * Validates a username input field against strict alphanumeric and length rules.
- * 
+ *
  * @param {HTMLInputElement} input - The input element containing the username.
  * @param {HTMLElement} errorDiv - The display element for validation errors.
  * @returns {boolean} - True if the username is valid, false otherwise.
  */
 function validateUsername(input, errorDiv) {
   const value = input.value.trim();
-  
+
   // Clear previous validation states
   input.classList.remove("error", "success");
   errorDiv.classList.remove("show");
@@ -119,17 +119,29 @@ function validateUsername(input, errorDiv) {
   if (value === "") return false;
 
   if (value.length < VAL_RULES.username_min) {
-    showError(input, errorDiv, `Username must be at least ${VAL_RULES.username_min} characters`);
+    showError(
+      input,
+      errorDiv,
+      `Username must be at least ${VAL_RULES.username_min} characters`,
+    );
     return false;
   }
 
   if (value.length > VAL_RULES.username_max) {
-    showError(input, errorDiv, `Username must not exceed ${VAL_RULES.username_max} characters`);
+    showError(
+      input,
+      errorDiv,
+      `Username must not exceed ${VAL_RULES.username_max} characters`,
+    );
     return false;
   }
 
   if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
-    showError(input, errorDiv, "Only letters, numbers, hyphens and underscores allowed");
+    showError(
+      input,
+      errorDiv,
+      "Only letters, numbers, hyphens and underscores allowed",
+    );
     return false;
   }
 
@@ -139,14 +151,14 @@ function validateUsername(input, errorDiv) {
 
 /**
  * Validates password complexity requirements and updates strength indicators.
- * 
+ *
  * Complexity rules:
  * - Minimum 12 characters
  * - At least one uppercase letter
  * - At least one lowercase letter
  * - At least one digit
  * - At least one special character
- * 
+ *
  * @param {HTMLInputElement} input - The input element containing the password.
  * @param {HTMLElement} errorDiv - The display element for validation errors.
  * @param {NodeListOf<Element>} strengthBars - Optional list of bars for visual strength feedback.
@@ -159,35 +171,53 @@ function validatePassword(input, errorDiv, strengthBars = null) {
   input.classList.remove("error", "success");
   if (errorDiv) errorDiv.classList.remove("show");
   if (strengthBars) {
-    strengthBars.forEach(bar => bar.classList.remove("active", "weak", "medium", "strong"));
+    strengthBars.forEach((bar) =>
+      bar.classList.remove("active", "weak", "medium", "strong"),
+    );
   }
 
   if (value === "") return false;
 
   // 1. Minimum Length Check
   if (value.length < VAL_RULES.password_min) {
-    showError(input, errorDiv, `Password must be at least ${VAL_RULES.password_min} characters`);
+    showError(
+      input,
+      errorDiv,
+      `Password must be at least ${VAL_RULES.password_min} characters`,
+    );
     updateStrength(strengthBars, 1, "weak");
     return false;
   }
 
   // 2. Maximum Length Check
   if (value.length > VAL_RULES.password_max) {
-    showError(input, errorDiv, `Password must not exceed ${VAL_RULES.password_max} characters`);
+    showError(
+      input,
+      errorDiv,
+      `Password must not exceed ${VAL_RULES.password_max} characters`,
+    );
     updateStrength(strengthBars, 1, "weak");
     return false;
   }
 
   // 3. Uppercase Presence
   if (!/[A-Z]/.test(value)) {
-    showError(input, errorDiv, "Password must contain at least one uppercase letter");
+    showError(
+      input,
+      errorDiv,
+      "Password must contain at least one uppercase letter",
+    );
     updateStrength(strengthBars, 1, "weak");
     return false;
   }
 
   // 4. Lowercase Presence
   if (!/[a-z]/.test(value)) {
-    showError(input, errorDiv, "Password must contain at least one lowercase letter");
+    showError(
+      input,
+      errorDiv,
+      "Password must contain at least one lowercase letter",
+    );
     updateStrength(strengthBars, 2, "weak");
     return false;
   }
@@ -201,7 +231,11 @@ function validatePassword(input, errorDiv, strengthBars = null) {
 
   // 6. Special Character Presence
   if (!/[!@#$%^&*()\-_=+\[\]{};:'",.<>?\/\\|`~]/.test(value)) {
-    showError(input, errorDiv, "Password must contain at least one special character");
+    showError(
+      input,
+      errorDiv,
+      "Password must contain at least one special character",
+    );
     updateStrength(strengthBars, 3, "medium");
     return false;
   }
@@ -214,7 +248,7 @@ function validatePassword(input, errorDiv, strengthBars = null) {
 
 /**
  * Helper: Applies error styling and message to an input field.
- * 
+ *
  * @param {HTMLInputElement} input - Target input element.
  * @param {HTMLElement} errorDiv - Target error message container.
  * @param {string} msg - The error message to display.
@@ -229,7 +263,7 @@ function showError(input, errorDiv, msg) {
 
 /**
  * Helper: Updates visual strength bar UI.
- * 
+ *
  * @param {NodeListOf<Element>} bars - List of bar elements.
  * @param {number} count - How many bars to activate.
  * @param {string} level - CSS class defining the strength color (weak, medium, strong).
@@ -251,14 +285,17 @@ function updateStrength(bars, count, level) {
 const ModalManager = {
   /**
    * Orchestrates standard modal listeners (Close button, ESC key, Click-outside).
-   * 
+   *
    * @param {HTMLElement|string} overlayOrId - The modal overlay element or its ID.
    * @param {Function} closeFn - The callback function to invoke for closing.
    * @param {string} activeClass - The class toggled for visibility (default: 'active').
    * @returns {Function} - A cleanup function to remove global listeners.
    */
   setup(overlayOrId, closeFn, activeClass = "active") {
-    const overlay = typeof overlayOrId === "string" ? document.getElementById(overlayOrId) : overlayOrId;
+    const overlay =
+      typeof overlayOrId === "string"
+        ? document.getElementById(overlayOrId)
+        : overlayOrId;
     if (!overlay) return;
 
     // Locate and bind the internal close button
@@ -288,7 +325,7 @@ const ModalManager = {
 
   /**
    * Opens a modal and sets initial focus for accessibility.
-   * 
+   *
    * @param {HTMLElement} overlay - Modal overlay element.
    * @param {string} activeClass - Visibility class.
    * @param {string|null} focusSelector - Optional CSS selector to auto-focus.
@@ -306,29 +343,36 @@ const ModalManager = {
 
   /**
    * Closes a modal by removing its visibility class.
-   * 
+   *
    * @param {HTMLElement} overlay - Modal overlay element.
    * @param {string} activeClass - Visibility class.
    */
   close(overlay, activeClass = "active") {
     if (!overlay) return;
     overlay.classList.remove(activeClass);
-  }
+  },
 };
 
 // ====================================================================================================================================
 //  GLOBAL EXPORTS
 // ====================================================================================================================================
 
-window.SecurityUtils = {
+// ====================================================================================================================================
+//  MODULE EXPORTS
+// ====================================================================================================================================
+
+// Named exports for ES module consumers
+export {
   escapeHtml,
   fetchCsrfToken,
   validateUsername,
   validatePassword,
   showError,
   showToast,
-  ModalManager
+  ModalManager,
 };
 
-// Legacy shorthand support
-window.showToast = showToast;
+// NOTE: We intentionally do not rely on attaching to `window` here. Consumers
+// should import the required helpers using ES module imports. Keep the code
+// compatible with legacy callers by optionally attaching a helper object to
+// `window` only when explicitly requested elsewhere during a migration.
