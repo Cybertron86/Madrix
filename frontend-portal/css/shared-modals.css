@@ -8,15 +8,17 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 20000;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
+  transition:
+    opacity 0.4s ease,
+    visibility 0.4s ease;
   padding: 1rem;
   overflow-y: auto; /* Fallback for very short screens */
 }
@@ -36,7 +38,7 @@
   flex-direction: column;
   background: rgba(0, 0, 0, 0.95);
   border: 2px solid var(--color-primary);
-  box-shadow: 
+  box-shadow:
     0 0 30px rgba(var(--color-primary-rgb), 0.4),
     inset 0 0 30px rgba(var(--color-primary-rgb), 0.1);
   padding: 3rem 2.5rem;
@@ -49,8 +51,14 @@
 
 /* --- Animations --- */
 @keyframes modalSlideIn {
-  from { transform: translateY(-30px) scale(0.95); opacity: 0; }
-  to { transform: translateY(0) scale(1); opacity: 1; }
+  from {
+    transform: translateY(-30px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }
 
 /* --- Scanline Effect --- */
@@ -71,8 +79,12 @@
 }
 
 @keyframes scanline {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 100%; }
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100%;
+  }
 }
 
 /* --- Header & Close --- */
@@ -150,7 +162,9 @@
 
 .mx-input:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.3), inset 0 0 10px rgba(var(--color-primary-rgb), 0.1);
+  box-shadow:
+    0 0 15px rgba(var(--color-primary-rgb), 0.3),
+    inset 0 0 10px rgba(var(--color-primary-rgb), 0.1);
 }
 
 .mx-input.error {
@@ -232,8 +246,14 @@
 }
 
 @keyframes mxFadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* --- Feedback and State --- */
@@ -244,9 +264,16 @@
   text-align: center;
 }
 
-.mx-status-msg.loading { color: var(--color-primary); opacity: 0.7; }
-.mx-status-msg.error { color: var(--color-error-pink); }
-.mx-status-msg.success { color: var(--color-primary); }
+.mx-status-msg.loading {
+  color: var(--color-primary);
+  opacity: 0.7;
+}
+.mx-status-msg.error {
+  color: var(--color-error-pink);
+}
+.mx-status-msg.success {
+  color: var(--color-primary);
+}
 
 .mx-btn {
   width: 100%;
@@ -352,10 +379,19 @@
 }
 
 @keyframes glitchShake {
-  0%, 100% { transform: translateY(0) scale(1); }
-  25% { transform: translateX(-5px) scale(1.01); }
-  50% { transform: translateX(5px) scale(0.99); }
-  75% { transform: translateX(-3px) scale(1.01); }
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  25% {
+    transform: translateX(-5px) scale(1.01);
+  }
+  50% {
+    transform: translateX(5px) scale(0.99);
+  }
+  75% {
+    transform: translateX(-3px) scale(1.01);
+  }
 }
 
 /* Landscape Mode Adjustments (Mobile Landscape) */
@@ -364,7 +400,7 @@
     padding: 0.5rem;
     align-items: center; /* Center vertically if possible */
   }
-  
+
   .mx-modal-container {
     padding: 1.2rem 1.5rem;
     width: 95%;
@@ -375,13 +411,13 @@
     flex-direction: column;
     overflow: hidden; /* Strictly contain the content area */
   }
-  
+
   .mx-modal-title {
     font-size: 1.1rem;
     margin-bottom: 0.5rem;
     letter-spacing: 2px;
   }
-  
+
   .mx-modal-close {
     top: 0.3rem;
     right: 0.3rem;
@@ -389,7 +425,7 @@
     height: 28px;
     font-size: 1rem;
   }
-  
+
   .mx-modal-content {
     margin-top: 0.3rem;
     flex: 1;
@@ -406,9 +442,15 @@
     padding: 0.5rem;
     font-size: 0.85rem;
   }
-  
+
   /* Reduction for common elements to save space */
-  .mx-form-group { gap: 0.3rem; }
-  .mx-label { font-size: 0.7rem; }
-  .mx-input { padding: 0.5rem 0.8rem; }
+  .mx-form-group {
+    gap: 0.3rem;
+  }
+  .mx-label {
+    font-size: 0.7rem;
+  }
+  .mx-input {
+    padding: 0.5rem 0.8rem;
+  }
 }

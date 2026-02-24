@@ -50,7 +50,6 @@
 
 .admin-table-wrap {
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .admin-table {
@@ -146,12 +145,22 @@
 
 /* --- Responsive Adjustments --- */
 @media (max-width: 700px) {
-  .admin-modal-custom { max-width: 100%; }
-  .admin-table { font-size: 0.6rem; }
-  .admin-table td { max-width: 150px; }
+  .admin-modal-custom {
+    max-width: 100%;
+  }
+  .admin-table {
+    font-size: 0.6rem;
+  }
+  .admin-table td {
+    max-width: 150px;
+  }
 }
 
 @media (max-width: 480px) {
-  .admin-modal-custom { margin-top: 0.5rem; }
-  .admin-table td { max-width: 100px; }
+  .admin-modal-custom {
+    margin-top: 0.5rem;
+  }
+  .admin-table td {
+    max-width: 100px;
+  }
 }

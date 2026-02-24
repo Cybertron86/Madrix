@@ -27,7 +27,6 @@ import UltimateMatrixEye from "./matrix-eye-ultimate.js"; // Import default clas
    * Ensures all modular components are initialized in the correct order.
    */
   document.addEventListener("DOMContentLoaded", async () => {
-    let matrixEyeInstance;
     try {
       const carouselWrapper = document.querySelector(".holo-carousel-wrapper");
       const mountTarget = carouselWrapper || document.body;
