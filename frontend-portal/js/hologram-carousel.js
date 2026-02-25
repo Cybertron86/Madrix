@@ -303,10 +303,11 @@ class HologramCarousel {
       this.isDragging = true;
   }
   handleMouseUp(e) {
-    if (this.isDragging) {
+    if (this.isDragging && this.dragStartX !== 0) {
       const delta = e.clientX - this.dragStartX;
       if (Math.abs(delta) > 50) delta > 0 ? this.prev() : this.next();
     }
+    this.isDragging = false;
     this.dragStartX = 0;
     this.resumeAutoPlay();
   }
@@ -315,8 +316,11 @@ class HologramCarousel {
     this.pauseAutoPlay();
   }
   handleTouchEnd(e) {
-    const delta = e.changedTouches[0].clientX - this.touchStartX;
-    if (Math.abs(delta) > 40) delta > 0 ? this.prev() : this.next();
+    if (this.touchStartX !== 0) {
+      const delta = e.changedTouches[0].clientX - this.touchStartX;
+      if (Math.abs(delta) > 40) delta > 0 ? this.prev() : this.next();
+    }
+    this.touchStartX = 0;
     this.resumeAutoPlay();
   }
 

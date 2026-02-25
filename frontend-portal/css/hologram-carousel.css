@@ -93,7 +93,8 @@
 }
 
 @keyframes holo-carousel-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
     transform: translate(-50%, -50%) scale(1);
   }
@@ -118,9 +119,21 @@
   border-radius: 50%;
   border: 2px solid rgba(var(--color-primary-rgb), 0.4);
   background:
-    radial-gradient(circle at 30% 30%, rgba(var(--color-primary-rgb), 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 70% 60%, rgba(var(--color-ice-blue-rgb), 0.1) 0%, transparent 40%),
-    radial-gradient(circle at center, transparent 0%, rgba(var(--color-primary-rgb), 0.03) 100%);
+    radial-gradient(
+      circle at 30% 30%,
+      rgba(var(--color-primary-rgb), 0.15) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 70% 60%,
+      rgba(var(--color-ice-blue-rgb), 0.1) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at center,
+      transparent 0%,
+      rgba(var(--color-primary-rgb), 0.03) 100%
+    );
   box-shadow:
     inset 0 0 120px rgba(var(--color-primary-rgb), 0.25),
     0 0 60px rgba(var(--color-primary-rgb), 0.3);
@@ -130,13 +143,29 @@
 }
 
 @keyframes holo-carousel-neural-pulse {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; filter: brightness(1); }
-  50% { transform: translate(-50%, -50%) scale(1.01); opacity: 0.9; filter: brightness(1.2); }
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+    filter: brightness(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.01);
+    opacity: 0.9;
+    filter: brightness(1.2);
+  }
 }
 
 @keyframes holo-carousel-sphere-float {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-  50% { transform: translate(-50%, -50%) scale(1.02); opacity: 0.8; }
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.02);
+    opacity: 0.8;
+  }
 }
 
 /* --- Neural Nodes Pattern --- */
@@ -150,12 +179,36 @@
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background-image:
-    radial-gradient(circle, rgba(var(--color-primary-rgb), 0.8) 2px, transparent 2px),
-    radial-gradient(circle, rgba(var(--color-ice-blue-rgb), 0.6) 2px, transparent 2px),
-    radial-gradient(circle, rgba(var(--color-primary-rgb), 0.8) 2px, transparent 2px),
-    radial-gradient(circle, rgba(var(--color-ice-blue-rgb), 0.6) 2px, transparent 2px);
-  background-size: 150px 150px, 180px 180px, 200px 200px, 220px 220px;
-  background-position: 0 0, 40px 60px, 80px 20px, 120px 100px;
+    radial-gradient(
+      circle,
+      rgba(var(--color-primary-rgb), 0.8) 2px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle,
+      rgba(var(--color-ice-blue-rgb), 0.6) 2px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle,
+      rgba(var(--color-primary-rgb), 0.8) 2px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle,
+      rgba(var(--color-ice-blue-rgb), 0.6) 2px,
+      transparent 2px
+    );
+  background-size:
+    150px 150px,
+    180px 180px,
+    200px 200px,
+    220px 220px;
+  background-position:
+    0 0,
+    40px 60px,
+    80px 20px,
+    120px 100px;
   pointer-events: none;
   z-index: -1;
   opacity: 0.4;
@@ -163,8 +216,20 @@
 }
 
 @keyframes holo-carousel-neural-drift {
-  0% { background-position: 0 0, 40px 60px, 80px 20px, 120px 100px; }
-  100% { background-position: 150px 150px, 190px 210px, 230px 170px, 270px 250px; }
+  0% {
+    background-position:
+      0 0,
+      40px 60px,
+      80px 20px,
+      120px 100px;
+  }
+  100% {
+    background-position:
+      150px 150px,
+      190px 210px,
+      230px 170px,
+      270px 250px;
+  }
 }
 
 /* --- Neural Connection Lines --- */
@@ -178,23 +243,63 @@
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background-image:
-    linear-gradient(45deg, transparent 48%, rgba(var(--color-primary-rgb), 0.2) 49%, rgba(var(--color-primary-rgb), 0.2) 51%, transparent 52%),
-    linear-gradient(-45deg, transparent 48%, rgba(var(--color-ice-blue-rgb), 0.15) 49%, rgba(var(--color-ice-blue-rgb), 0.15) 51%, transparent 52%),
-    linear-gradient(90deg, transparent 48%, rgba(var(--color-primary-rgb), 0.1) 49%, rgba(var(--color-primary-rgb), 0.1) 51%, transparent 52%),
-    linear-gradient(0deg, transparent 48%, rgba(var(--color-ice-blue-rgb), 0.1) 49%, rgba(var(--color-ice-blue-rgb), 0.1) 51%, transparent 52%);
-  background-size: 800px 800px, 800px 800px, 800px 800px, 800px 800px;
+    linear-gradient(
+      45deg,
+      transparent 48%,
+      rgba(var(--color-primary-rgb), 0.2) 49%,
+      rgba(var(--color-primary-rgb), 0.2) 51%,
+      transparent 52%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 48%,
+      rgba(var(--color-ice-blue-rgb), 0.15) 49%,
+      rgba(var(--color-ice-blue-rgb), 0.15) 51%,
+      transparent 52%
+    ),
+    linear-gradient(
+      90deg,
+      transparent 48%,
+      rgba(var(--color-primary-rgb), 0.1) 49%,
+      rgba(var(--color-primary-rgb), 0.1) 51%,
+      transparent 52%
+    ),
+    linear-gradient(
+      0deg,
+      transparent 48%,
+      rgba(var(--color-ice-blue-rgb), 0.1) 49%,
+      rgba(var(--color-ice-blue-rgb), 0.1) 51%,
+      transparent 52%
+    );
+  background-size:
+    800px 800px,
+    800px 800px,
+    800px 800px,
+    800px 800px;
   background-position: center;
   pointer-events: none;
   z-index: -1;
   opacity: 0.5;
   animation: holo-carousel-neural-lines-pulse 4s ease-in-out infinite;
-  -webkit-mask-image: radial-gradient(circle, black 0%, black 70%, transparent 100%);
+  -webkit-mask-image: radial-gradient(
+    circle,
+    black 0%,
+    black 70%,
+    transparent 100%
+  );
   mask-image: radial-gradient(circle, black 0%, black 70%, transparent 100%);
 }
 
 @keyframes holo-carousel-neural-lines-pulse {
-  0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
-  50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.01); }
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1.01);
+  }
 }
 
 /* --- Energy pulse rings --- */
@@ -447,7 +552,9 @@
   justify-content: center;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
+  transition:
+    opacity 0.4s ease,
+    visibility 0.4s ease;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
@@ -472,7 +579,9 @@
   overflow-y: auto;
   transform: scale(0.8) rotateX(10deg);
   opacity: 0;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+  transition:
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s ease;
 }
 
 .holo-carousel-overlay.holo-carousel-active .holo-carousel-content {
@@ -496,7 +605,7 @@
     rgba(0, 0, 0, 0.1) 3px
   );
   pointer-events: none;
-  z-index: 1;
+  z-index: -1;
 }
 
 .holo-carousel-close {
@@ -541,16 +650,29 @@
   margin: 0 0 20px 0;
   text-transform: uppercase;
   letter-spacing: 3px;
-  text-shadow: 0 0 10px var(--holo-carousel-matrix-green), 0 0 20px var(--holo-carousel-matrix-green);
+  text-shadow:
+    0 0 10px var(--holo-carousel-matrix-green),
+    0 0 20px var(--holo-carousel-matrix-green);
   animation: holo-carousel-flicker 3s infinite;
 }
 
 @keyframes holo-carousel-flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.95; }
-  51% { opacity: 1; }
-  52% { opacity: 0.98; }
-  55% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.95;
+  }
+  51% {
+    opacity: 1;
+  }
+  52% {
+    opacity: 0.98;
+  }
+  55% {
+    opacity: 1;
+  }
 }
 
 .holo-carousel-content-date {
@@ -613,9 +735,19 @@
 
 /* --- Connection Lines & Rings --- */
 @keyframes holo-carousel-neural-ring-expand {
-  0% { width: 400px; height: 400px; opacity: 0; }
-  20% { opacity: 0.6; }
-  100% { width: 1000px; height: 1000px; opacity: 0; }
+  0% {
+    width: 400px;
+    height: 400px;
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  100% {
+    width: 1000px;
+    height: 1000px;
+    opacity: 0;
+  }
 }
 
 .holo-carousel-glitch-rgb-split::after {
@@ -656,17 +788,33 @@
    ========================================= */
 
 @keyframes holo-carousel-glitch-rgb {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-  100% { transform: translate(0); }
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
 }
 
 @keyframes holo-carousel-glitch-scanline {
-  0% { background-position: 0 0; }
-  100% { background-position: 0 100%; }
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100%;
+  }
 }
 
 .holo-carousel-glitch-active .holo-carousel-image-wrapper::before {
