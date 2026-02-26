@@ -18,7 +18,7 @@ import { openModal as openAdminModal } from "./admin-modal.js";
  * Initializes the primary navigation menu.
  * Sets up click listeners for the menu toggle and dropdown items.
  */
-function initNavigation() {
+async function initNavigation() {
   const menuBtn = document.getElementById("btn_menu");
   const dropdownMenu = document.getElementById("dropdown_menu");
 

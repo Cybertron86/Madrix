@@ -12,7 +12,7 @@
   /**
    * Initializes the header sparkle/gloss animation cycle.
    */
-  function initLuxBar() {
+  async function initLuxBar() {
     const sparkle = document.querySelector(".lux-sparkle");
     if (!sparkle) return;
 

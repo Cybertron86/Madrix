@@ -30,18 +30,18 @@ import UltimateMatrixEye from "./matrix-eye-ultimate.js"; // Import default clas
     try {
       const carouselWrapper = document.querySelector(".holo-carousel-wrapper");
       const mountTarget = carouselWrapper || document.body;
-      matrixEyeInstance = new UltimateMatrixEye(mountTarget);
+      const matrixEyeInstance = new UltimateMatrixEye(mountTarget);
       console.log("Matrix Eye Ultimate initialized successfully");
     } catch (error) {
       console.error("Failed to initialize Matrix Eye Ultimate:", error);
     }
-    initPortal();
-    initNavigation();
-    initAudio();
-    initMatrixRain();
-    initLuxBar();
-    initHologramCarousel();
-    initFooter();
+    await initPortal();
+    await initNavigation();
+    await initAudio();
+    await initMatrixRain();
+    await initLuxBar();
+    await initHologramCarousel();
+    await initFooter();
 
     await updateAuthButton();
     console.log("All modules initialized");

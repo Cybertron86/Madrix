@@ -123,7 +123,7 @@
   /**
    * Main audio initialization. Attaches controls and unlock listeners.
    */
-  function initAudio() {
+  async function initAudio() {
     const ambientBtn = document.getElementById("ambientBtn");
     const soundBtn = document.getElementById("soundBtn");
 

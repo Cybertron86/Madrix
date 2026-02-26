@@ -71,7 +71,7 @@ function closeContactModal() {
 export { openContactModal };
 
 // Bind the footer link; called after DOM is ready
-export function initContactTrigger() {
+export async function initContactTrigger() {
   const contactBtn = document.getElementById("footer-btn-contact");
   if (contactBtn) contactBtn.addEventListener("click", openContactModal);
 }

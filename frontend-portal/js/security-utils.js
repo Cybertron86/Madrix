@@ -353,9 +353,6 @@ const ModalManager = {
   },
 };
 
-// ====================================================================================================================================
-//  GLOBAL EXPORTS
-// ====================================================================================================================================
 
 // ====================================================================================================================================
 //  MODULE EXPORTS
@@ -372,7 +369,4 @@ export {
   ModalManager,
 };
 
-// NOTE: We intentionally do not rely on attaching to `window` here. Consumers
-// should import the required helpers using ES module imports. Keep the code
-// compatible with legacy callers by optionally attaching a helper object to
-// `window` only when explicitly requested elsewhere during a migration.
+

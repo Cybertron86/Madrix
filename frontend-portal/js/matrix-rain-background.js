@@ -5,7 +5,6 @@
  * Optimized with decoupled loops: 
  * - Smooth 60FPS+ fading for liquid trails.
  * - Classic 30FPS logic for the "steppy" Matrix look.
- * Includes dynamic resolution scaling for lag-free performance on large/zoomed screens.
  */
 
 // ====================================================================================================================================
@@ -68,8 +67,7 @@ function initMatrix() {
   if (!canvas) return;
   
   // Calculate required columns based on visual width
-  const visualWidth = window.innerWidth;
-  const newColumns = Math.ceil(visualWidth / fontSize) + 1;
+  const newColumns = Math.ceil(canvas.width / fontSize) + 1;
   
   if (newColumns > columns) {
     // START SEQUENCE: New columns start at top (position 1) for the
@@ -102,7 +100,7 @@ function triggerAnalogGlitch() {
 // ====================================================================================================================================
 
 let lastLogicTime = 0;
-const logicInterval = 1000 / 30; // 30 FPS logic for "steppy" movement
+const logicInterval = 1000 / 30; // 30 FPS for "steppy" movement
 
 function drawMatrix(timestamp) {
 
@@ -162,25 +160,13 @@ function drawMatrix(timestamp) {
 //  RESILIENCE & INIT
 // ====================================================================================================================================
 
+// resizeCanvas() — fix height scaling when width is capped
 function resizeCanvas() {
   if (!canvas) return;
-  
-  // PERFORMANCE: For massive resolutions (4K+),cap the internal canvas 
-  // and use CSS scaling to keep fill-rate lag-free.
-  const maxWidth = 2560;
-  
-  let w = window.innerWidth;
-  let h = window.innerHeight;
-  
-  if (w > maxWidth) {
-    const scale = maxWidth / w;
-    w = maxWidth;
-    h = h * scale;
-  }
-  
-  canvas.width = w;
-  canvas.height = h;
-  
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
   initMatrix();
 }
 
@@ -193,7 +179,7 @@ function triggerShake() {
   setTimeout(triggerShake, 10000 + Math.random() * 15000);
 }
 
-function initMatrixRain() {
+async function initMatrixRain() {
   if (!canvas || !ctx) return;
   createAtlas();
   resizeCanvas();

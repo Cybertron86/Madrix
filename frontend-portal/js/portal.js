@@ -14,7 +14,7 @@
  */
 import { startAllSounds } from "./audio.js";
 
-function initPortal() {
+async function initPortal() {
   const portalOverlay = document.getElementById("portalOverlay");
   const mainContent = document.getElementById("mainContent");
   const yesBtn = document.getElementById("yesBtn");

@@ -58,7 +58,7 @@ function closePrivacyModal() {
 // Export the modal opener and trigger initializer
 export { openPrivacyModal };
 
-export function initPrivacyTrigger() {
+export async function initPrivacyTrigger() {
   const privacyBtn = document.getElementById("footer-btn-privacy");
   if (privacyBtn) privacyBtn.addEventListener("click", openPrivacyModal);
 }

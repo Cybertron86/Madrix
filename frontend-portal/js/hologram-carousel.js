@@ -565,7 +565,7 @@ class HologramCarousel {
 /**
  * Main factory function to initialize the carousel on the portal page.
  */
-function initHologramCarousel() {
+async function initHologramCarousel() {
   if (document.querySelector(".holo-carousel-wrapper")) {
     hologramCarouselInstance = new HologramCarousel({
       dataUrl: "../resources/jsons/carousel-data.json",
@@ -574,7 +574,7 @@ function initHologramCarousel() {
 }
 // Module-scoped reference to the active carousel instance
 let hologramCarouselInstance = null;
-function getHologramCarousel() {
+async function getHologramCarousel() {
   return hologramCarouselInstance;
 }
 

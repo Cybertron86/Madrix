@@ -23,21 +23,21 @@ async function initFooter() {
   // 2. Initialize Modal Triggers (Defined in respective modal modules)
   try {
     const { initImpressumTrigger } = await import("./impressum-modal.js");
-    if (typeof initImpressumTrigger === "function") initImpressumTrigger();
+    if (typeof initImpressumTrigger === "function") await initImpressumTrigger();
   } catch (e) {
     console.warn("Could not load impressum modal trigger module:", e);
   }
 
   try {
     const { initPrivacyTrigger } = await import("./privacy-modal.js");
-    if (typeof initPrivacyTrigger === "function") initPrivacyTrigger();
+    if (typeof initPrivacyTrigger === "function") await initPrivacyTrigger();
   } catch (e) {
     console.warn("Could not load privacy modal trigger module:", e);
   }
 
   try {
     const { initContactTrigger } = await import("./contact-modal.js");
-    if (typeof initContactTrigger === "function") initContactTrigger();
+    if (typeof initContactTrigger === "function") await initContactTrigger();
   } catch (e) {
     console.warn("Could not load contact modal trigger module:", e);
   }
@@ -47,4 +47,4 @@ async function initFooter() {
 //  GLOBAL EXPORTS
 // ====================================================================================================================================
 
-export { initFooter };
+export  { initFooter };

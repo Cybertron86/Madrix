@@ -65,7 +65,7 @@ function closeImpressumModal() {
 // Export the modal opener and trigger initializer
 export { openImpressumModal };
 
-export function initImpressumTrigger() {
+export async function initImpressumTrigger() {
   const impressumBtn = document.getElementById("footer-btn-impressum");
   if (impressumBtn) impressumBtn.addEventListener("click", openImpressumModal);
 }

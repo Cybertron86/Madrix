@@ -210,7 +210,7 @@
     80px 20px,
     120px 100px;
   pointer-events: none;
-  z-index: -1;
+  z-index: -2;
   opacity: 0.4;
   animation: holo-carousel-neural-drift 20s linear infinite;
 }
@@ -278,7 +278,7 @@
     800px 800px;
   background-position: center;
   pointer-events: none;
-  z-index: -1;
+  z-index: -2;
   opacity: 0.5;
   animation: holo-carousel-neural-lines-pulse 4s ease-in-out infinite;
   -webkit-mask-image: radial-gradient(
