@@ -20,7 +20,7 @@ body {
   padding: 0;
 }
 
-/* --- Global Scrollbar Styling (Matrix Theme) --- */
+/* --- Global Scrollbar Styling --- */
 *::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -70,7 +70,7 @@ body {
   --color-error-red-rgb: 255, 68, 68;
   --color-warning: #ffaa00;        /* Warnings and special roles */
   --color-warning-rgb: 255, 170, 0;
-  --color-ice-blue: #00d4ff;       /* Tron-style secondary accent */
+  --color-ice-blue: #00d4ff;       /* Tron-Blue-style secondary accent */
   --color-ice-blue-rgb: 0, 212, 255;
 
   /* =========================================

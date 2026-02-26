@@ -8,7 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// Admin-only access
+// ==========================
+// Admin Auth Check
+// ==========================
 if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
     http_response_code(403);
     echo json_encode(['error' => 'Forbidden']);

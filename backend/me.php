@@ -4,7 +4,7 @@ require_once __DIR__ . '/config/bootstrap.php';
 header('Content-Type: application/json');
 
 // ==========================
-// Admin Auth Check
+// Admin Auth Check - Must be implemented for production
 // ==========================
 /*
 if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {

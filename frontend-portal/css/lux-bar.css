@@ -1,6 +1,6 @@
 /* ==========================================================================
-   LUX PROGRESS BAR
-   High-end loading bar animation at the top of the screen.
+   LUX BAR
+   Loading bar animation at the top of the screen.
    ========================================================================== */
 
 /* --- Primary Bar Container --- */
@@ -76,7 +76,7 @@
    ANIMATIONS
    ========================================= */
 
-/* --- Sanft gleitender Glanzeffekt --- */
+/* --- smooth sliding shine effect --- */
 @keyframes luxShine {
   0% {
     right: -70%;

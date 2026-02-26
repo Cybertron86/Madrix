@@ -15,15 +15,9 @@
  *
  * Why bootstrap.php owns session startup:
  *   Session settings configured via ini_set() and session_name() are only
- *   effective if called BEFORE session_start(). Since every endpoint includes
+ *   effective if called BEFORE session_start(). Every endpoint includes
  *   this file first, centralising session startup here guarantees the correct
  *   order regardless of which endpoint is called.
- *
- *   Previously, database.php called session_set_cookie_params() and
- *   session_start() — which meant any ini_set() calls in the endpoint scripts
- *   ran BEFORE bootstrap was included (to try to beat the session start), but
- *   were then silently overridden by database.php's session_set_cookie_params().
- *   That race condition is eliminated by this design.
  */
 
 require_once __DIR__ . '/database.php';

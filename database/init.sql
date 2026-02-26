@@ -100,6 +100,7 @@ CREATE TABLE rate_limits (
 
 
 -- =========================================
+-- !!!Remove this comment for production!!!
 -- DEFAULT ADMIN USER
 -- Username: admin
 -- Password: Admin123Pass!

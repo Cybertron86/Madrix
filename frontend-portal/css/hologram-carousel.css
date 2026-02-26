@@ -912,7 +912,7 @@
     padding: 6px;
   }
 
-  /* Touch-freundlicher Bereich für besseres Targeting */
+  /* Touch-friendly section for better targeting */
   .holo-carousel-close::before {
     content: "";
     position: absolute;
