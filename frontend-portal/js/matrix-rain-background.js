@@ -14,8 +14,7 @@
 const canvas = document.getElementById("matrixGlitch");
 let ctx = null;
 if (canvas) {
-  // Use alpha: false for faster opaque blending
-  ctx = canvas.getContext("2d", { alpha: false });
+  ctx = canvas.getContext("2d");
 }
 
 // ====================================================================================================================================
@@ -105,6 +104,7 @@ const logicInterval = 1000 / 30; // 30 FPS for "steppy" movement
 function drawMatrix(timestamp) {
 
   // This produces long, visible character chains..
+    ctx.globalCompositeOperation = "source-over";
   ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 

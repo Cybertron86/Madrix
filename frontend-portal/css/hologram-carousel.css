@@ -210,8 +210,9 @@
     80px 20px,
     120px 100px;
   pointer-events: none;
-  z-index: -2;
+  z-index: -1;
   opacity: 0.4;
+  will-change: transform;
   animation: holo-carousel-neural-drift 20s linear infinite;
 }
 
@@ -278,8 +279,9 @@
     800px 800px;
   background-position: center;
   pointer-events: none;
-  z-index: -2;
+  z-index: -10;
   opacity: 0.5;
+  will-change: transform;
   animation: holo-carousel-neural-lines-pulse 4s ease-in-out infinite;
   -webkit-mask-image: radial-gradient(
     circle,
@@ -912,7 +914,7 @@
     padding: 6px;
   }
 
-  /* Touch-friendly section for better targeting */
+  /* Touch-freundlicher Bereich für besseres Targeting */
   .holo-carousel-close::before {
     content: "";
     position: absolute;

@@ -34,6 +34,9 @@
     "resources/sounds/light-switch-on-or-off-sfx.mp3",
     "resources/sounds/electric-chippy-fx-clicky-error.mp3",
     "resources/sounds/crash-synthetic-obscure-chip.mp3",
+    "resources/sounds/digital-glitchy-noise-359.mp3",
+    "resources/sounds/glitch-fx-short.mp3",
+    "resources/sounds/short-glitch-fx_140bpm_A_minor.mp3"
   ];
 
   const ambientPool = ambientSources.map((src) => {

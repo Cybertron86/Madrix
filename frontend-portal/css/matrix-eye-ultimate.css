@@ -24,6 +24,7 @@
   transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: -1;
+  will-change: transform; /* Force dedicated render layer to prevent clipping during sphere rotation */
   filter: drop-shadow(0 0 50px var(--eye-color-main));
   animation: holo-eye-main-glitch 8s ease-in-out infinite;
 }
