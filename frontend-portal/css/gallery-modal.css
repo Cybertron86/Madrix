@@ -6,8 +6,8 @@
 /* --- Custom Modal Adjustments --- */
 .gallery-modal-custom {
   max-width: 1400px;
-  max-height: 85vh;
-  margin-top: 13vh;
+  max-height: 90vh;
+  margin-top: 5vh;
   margin-bottom: 4vh;
 }
 
