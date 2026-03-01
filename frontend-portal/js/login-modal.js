@@ -1,8 +1,8 @@
 /**
  * login-modal.js
  *
- * Lazy-initialised on first open; exposes openLoginModal and closeLoginModal
- * globally so other modules (e.g. register modal) can trigger them directly.
+ * Lazy-initialised on first open; exposes openLoginModal and closeLoginModal.
+ * 
  */
 import {
   ModalManager,
@@ -123,27 +123,12 @@ function createLoginModal() {
   });
 }
 
-export function openLoginModal() {
-  createLoginModal();
-  ModalManager.open(loginModal, "active", "#login-username");
-}
-
-export function closeLoginModal() {
-  if (!loginModal) return;
-  ModalManager.close(loginModal, "active");
-  // Reset form and clear visual validation state on every close
-  const form = loginModal.querySelector("#loginForm");
-  if (form) {
-    form.reset();
-    clearAllErrors();
-  }
-}
 
 // Removes all red/green borders, error texts, and any lingering clear handlers
 function clearAllErrors() {
   const inputs = loginModal.querySelectorAll(".mx-input");
   const errors = loginModal.querySelectorAll(".mx-error-message");
-
+  
   inputs.forEach((input) => {
     input.classList.remove("error", "success");
     if (input._clearHandler) {
@@ -161,15 +146,15 @@ function clearAllErrors() {
 function attachClearOnAnyInput() {
   const usernameInput = loginModal.querySelector("#login-username");
   const passwordInput = loginModal.querySelector("#login-password");
-
+  
   const handler = () => clearAllErrors();
-
+  
   // Remove stale handlers before attaching fresh ones to avoid duplicates
   if (usernameInput._clearHandler)
     usernameInput.removeEventListener("input", usernameInput._clearHandler);
   if (passwordInput._clearHandler)
     passwordInput.removeEventListener("input", passwordInput._clearHandler);
-
+  
   usernameInput._clearHandler = handler;
   passwordInput._clearHandler = handler;
   usernameInput.addEventListener("input", usernameInput._clearHandler);
@@ -178,17 +163,17 @@ function attachClearOnAnyInput() {
 
 async function handleLoginSubmit(e) {
   e.preventDefault();
-
+  
   const usernameInput = loginModal.querySelector("#login-username");
   const passwordInput = loginModal.querySelector("#login-password");
   const usernameError = loginModal.querySelector('[data-error="username"]');
-
+  
   clearAllErrors();
-
+  
   // Mark both fields red if either is empty — single error message covers both
   const usernameEmpty = !usernameInput.value.trim();
   const passwordEmpty = !passwordInput.value;
-
+  
   if (usernameEmpty || passwordEmpty) {
     if (usernameEmpty) usernameInput.classList.add("error");
     if (passwordEmpty) passwordInput.classList.add("error");
@@ -200,7 +185,7 @@ async function handleLoginSubmit(e) {
     attachClearOnAnyInput();
     return;
   }
-
+  
   try {
     const csrfToken = await fetchCsrfToken();
     const response = await fetch("/api/login.php", {
@@ -215,9 +200,9 @@ async function handleLoginSubmit(e) {
         device: navigator.userAgent,
       }),
     });
-
+    
     const data = await response.json();
-
+    
     if (!response.ok) {
       // Map HTTP status to a user-facing message; fall back to the API's own error string
       let message = "Login failed";
@@ -228,18 +213,18 @@ async function handleLoginSubmit(e) {
       } else {
         message = data.error || "Login failed";
       }
-
+      
       usernameInput.classList.add("error");
       passwordInput.classList.add("error");
       showError(usernameInput, usernameError, message);
       attachClearOnAnyInput();
       return;
     }
-
+    
     closeLoginModal();
     if (typeof updateAuthButton === "function") await updateAuthButton();
-
-    // Prefer module-local showToast but fall back to window for compatibility
+    
+    // Prefer module-local showToast
     if (typeof showToast === "function") {
       const username = data.user?.username ?? usernameInput.value.trim();
       showToast(`Welcome back, ${username}!`, "success");
@@ -249,5 +234,25 @@ async function handleLoginSubmit(e) {
     usernameInput.classList.add("error");
     showError(usernameInput, usernameError, "Server not reachable");
     attachClearOnAnyInput();
+  }
+}
+
+// ====================================================================================================================================
+//  EXPORTS
+// ====================================================================================================================================
+
+export function openLoginModal() {
+  createLoginModal();
+  ModalManager.open(loginModal, "active", "#login-username");
+}
+
+export function closeLoginModal() {
+  if (!loginModal) return;
+  ModalManager.close(loginModal, "active");
+  // Reset form and clear visual validation state on every close
+  const form = loginModal.querySelector("#loginForm");
+  if (form) {
+    form.reset();
+    clearAllErrors();
   }
 }

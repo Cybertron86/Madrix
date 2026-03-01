@@ -14,7 +14,7 @@
   let ambientEnabled = localStorage.getItem("ambientEnabled") !== "false";
   let audioUnlocked = false;
 
-  // Intro VO and SFX
+  // Intro SFX
   const introSound0 = new Audio("resources/sounds/glitch-effect_88bpm.mp3");
   const introSound1 = new Audio("resources/sounds/sisters-and-brothers_C_major.mp3");
   const introSound3 = new Audio("resources/sounds/welcome-to-my-world.mp3");
@@ -101,7 +101,7 @@
   }
 
   /**
-   * Browser Workaround: Unlocks audio context on first user interaction.
+   *  Unlocks audio context on first user interaction.
    */
   function unlockAudioOnce() {
     if (audioUnlocked) return;
@@ -122,12 +122,14 @@
   // ====================================================================================================================================
   //  INITIALIZATION & CONTROLS
   // ====================================================================================================================================
+  // ambientBtn control is overall deactivated and hidden under the soundBtn. 
+  // If you want to activate it, uncomment the lines below and the ambientBtn variable.
 
   /**
    * Main audio initialization. Attaches controls and unlock listeners.
    */
   async function initAudio() {
-    const ambientBtn = document.getElementById("ambientBtn");
+    // const ambientBtn = document.getElementById("ambientBtn");
     const soundBtn = document.getElementById("soundBtn");
 
     // Bind interaction triggers for audio unlock
@@ -142,6 +144,7 @@
       musicEnabled = !musicEnabled;
     });
 
+    /*
     // Toggle Ambient SFX
     ambientBtn?.addEventListener("click", () => {
       ambientEnabled = !ambientEnabled;
@@ -155,8 +158,13 @@
         clearTimeout(ambientTimeout);
       }
     });
-
+    */
   }
 
-export { startAllSounds }
-export { initAudio }
+
+  // ====================================================================================================================================
+  //  EXPORTS
+  // ====================================================================================================================================
+
+  export { startAllSounds }
+  export { initAudio }

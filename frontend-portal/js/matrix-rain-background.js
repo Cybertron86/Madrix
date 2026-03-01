@@ -1,7 +1,7 @@
 /**
  * matrix-rain-background.js
  * 
- * High-performance Matrix "Digital Rain" background.
+ * Matrix "Digital Rain" background.
  * Optimized with decoupled loops: 
  * - Smooth 60FPS+ fading for liquid trails.
  * - Classic 30FPS logic for the "steppy" Matrix look.
@@ -95,7 +95,7 @@ function triggerAnalogGlitch() {
 }
 
 // ====================================================================================================================================
-//  RENDER LOOP (Decoupled Smoothness)
+//  RENDER LOOP
 // ====================================================================================================================================
 
 let lastLogicTime = 0;
@@ -186,5 +186,9 @@ async function initMatrixRain() {
   requestAnimationFrame(drawMatrix);
   triggerShake();
 }
+
+// ====================================================================================================================================
+//  EXPORTS
+// ====================================================================================================================================
 
 export { initMatrixRain };

@@ -545,5 +545,4 @@ function onAccountDeleted() {
 //  EXPORTS
 // ====================================================================================================================================
 
-// Export ESM API
 export { openModal as openProfileModal, closeModal as closeProfileModal };

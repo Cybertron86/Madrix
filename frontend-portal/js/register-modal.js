@@ -1,8 +1,7 @@
 /**
  * register-modal.js
  *
- * Lazy-initialised on first open; exposes openRegisterModal and closeRegisterModal
- * globally so other modules (e.g. login modal) can trigger them directly.
+ * Lazy-initialised on first open; exposes openRegisterModal and closeRegisterModal.
  */
 import {
   ModalManager,
@@ -285,7 +284,7 @@ async function handleRegisterSubmit(e) {
 
     closeRegisterModal();
     if (typeof updateAuthButton === "function") updateAuthButton();
-    // prefer module-local showToast but fall back to window for compatibility
+    // prefer module-local showToast
     if (typeof showToast === "function")
       showToast(`Registration successful. Welcome ${username}!`, "success");
   } catch (err) {

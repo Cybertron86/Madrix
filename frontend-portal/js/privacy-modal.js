@@ -1,8 +1,7 @@
 /**
  * privacy-modal.js
  *
- * Lazy-initialised on first open; exposes openPrivacyModal globally
- * so other modules (e.g. cookie banner) can trigger it directly.
+ * Lazy-initialised on first open; exposes openPrivacyModal.
  */
 import { ModalManager } from "./security-utils.js";
 
@@ -54,11 +53,14 @@ function closePrivacyModal() {
   document.body.style.overflow = "";
 }
 
-// Expose open so other modules (e.g. cookie banner) can trigger it
-// Export the modal opener and trigger initializer
-export { openPrivacyModal };
+
+// ====================================================================================================================================
+//  EXPORTS
+// ====================================================================================================================================
 
 export async function initPrivacyTrigger() {
   const privacyBtn = document.getElementById("footer-btn-privacy");
   if (privacyBtn) privacyBtn.addEventListener("click", openPrivacyModal);
 }
+
+export  { openPrivacyModal };

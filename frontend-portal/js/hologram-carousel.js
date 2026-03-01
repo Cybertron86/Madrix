@@ -1,7 +1,7 @@
 /**
  * hologram-carousel.js
  *
- * Implements a high-end 3D "Holographic" carousel.
+ * Implements a 3D "Holographic" carousel.
  * Features spherical item positioning, momentum-based rotation,
  * randomized visual glitches, and integration with the UltimateMatrixEye.
  */
@@ -119,7 +119,7 @@ class HologramCarousel {
       id: i + 1,
       title: `Project ${i + 1}`,
       description: "Secure data node containing encrypted project blueprints.",
-      date: "2024.01.01",
+      date: "2026.01.01",
       githubUrl: "#",
       mainImage: `https://picsum.photos/800/600?random=${i + 1}`,
       additionalImages: [
@@ -559,7 +559,7 @@ class HologramCarousel {
 }
 
 // ====================================================================================================================================
-//  GLOBAL INITIALIZATION
+//  INITIALIZATION
 // ====================================================================================================================================
 
 /**
@@ -575,7 +575,11 @@ async function initHologramCarousel() {
 // Module-scoped reference to the active carousel instance
 let hologramCarouselInstance = null;
 async function getHologramCarousel() {
-  return hologramCarouselInstance;
+  return await hologramCarouselInstance;
 }
+
+// ====================================================================================================================================
+//  EXPORTS
+// ====================================================================================================================================
 
 export { initHologramCarousel, getHologramCarousel };

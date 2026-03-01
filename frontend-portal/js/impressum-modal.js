@@ -1,6 +1,6 @@
 /**
  * Legal Notice (Impressum) modal.
- * Lazy-initialised on first open; exposes initImpressumTrigger globally
+ * Lazy-initialised on first open; exposes initImpressumTrigger.
  * so it can be called after the DOM is ready.
  */
 import { ModalManager } from "./security-utils.js";
@@ -62,10 +62,15 @@ function closeImpressumModal() {
   document.body.style.overflow = "";
 }
 
+// ====================================================================================================================================
+//  EXPORTS
+// ====================================================================================================================================
+
 // Export the modal opener and trigger initializer
-export { openImpressumModal };
 
 export async function initImpressumTrigger() {
   const impressumBtn = document.getElementById("footer-btn-impressum");
   if (impressumBtn) impressumBtn.addEventListener("click", openImpressumModal);
 }
+
+export { openImpressumModal };
