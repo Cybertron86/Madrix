@@ -1,10 +1,13 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1)
+;
 
 require_once __DIR__ . '/utils.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS')
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
     exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     Response::json(['error' => 'Method not allowed'], 405);
@@ -36,8 +39,8 @@ Security::checkRateLimit('login', 10, 900, $pdo);
 // ==========================
 // Input Extraction
 // ==========================
-$username = trim((string) ($data['username'] ?? ''));
-$password = (string) ($data['password'] ?? '');
+$username = trim((string)($data['username'] ?? ''));
+$password = (string)($data['password'] ?? '');
 $remember = !empty($data['remember']);
 
 // Basic validation to fail fast
@@ -104,7 +107,8 @@ try {
         ]
     ]);
 
-} catch (PDOException $e) {
+}
+catch (PDOException $e) {
     error_log('[login.php] ' . $e->getMessage());
     Response::json(['error' => 'Internal server error'], 500);
 }

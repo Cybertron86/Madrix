@@ -1,5 +1,6 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1)
+;
 
 /**
  * csrf-token.php
@@ -20,6 +21,11 @@ header('Content-Type: application/json');
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header("Content-Security-Policy: default-src 'none'");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     http_response_code(405);
