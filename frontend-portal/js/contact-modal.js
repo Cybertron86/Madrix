@@ -72,12 +72,10 @@ function closeContactModal() {
 //  EXPORTS
 // ====================================================================================================================================
 
-// Export and keep window fallback for migration
-
-export { openContactModal };
-
 // Bind the footer link; called after DOM is ready
 export async function initContactTrigger() {
   const contactBtn = document.getElementById("footer-btn-contact");
   if (contactBtn) contactBtn.addEventListener("click", openContactModal);
 }
+
+export { openContactModal };

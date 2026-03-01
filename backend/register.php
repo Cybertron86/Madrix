@@ -16,8 +16,10 @@ declare(strict_types = 1)
 
 require_once __DIR__ . '/utils.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS')
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
     exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     Response::json(['error' => 'Method not allowed'], 405);
