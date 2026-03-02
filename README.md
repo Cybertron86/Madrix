@@ -21,6 +21,7 @@ Welcome to the **Madrix Portal**, a high-performance web experience inspired by 
 *   **Frontend**: Vanilla JavaScript (ES6+), Modern CSS3 (Grid, Flexbox, Variables)
 *   **Infrastructure**: Docker, Nginx
 *   **Security**: CSRF protection, APCu-backed Rate Limiting, PDO prepared statements.
+*   **Github version**
 
 ---
 
