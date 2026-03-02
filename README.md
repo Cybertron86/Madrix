@@ -101,6 +101,9 @@ curl -b cookies.txt -c cookies.txt -X POST http://localhost/api/login.php \
 -- List all users
 curl -b cookies.txt http://localhost/api/users.php
 
+-- List all tokens
+curl -b cookies.txt http://localhost/api/tokens.php
+
 -- Delete a user by ID
 curl -b cookies.txt -X DELETE "http://localhost/api/users.php?id=123"
 ```
