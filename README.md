@@ -47,7 +47,7 @@ You can interact with the database directly through the MariaDB container.
 
 ### Access SQL Shell
 ```bash
-docker exec -it mariadb mariadb -u appuser -paddpassword appdb
+docker exec -it mariadb mariadb -u appuser -papppassword appdb
 ```
 
 ### Useful SQL Commands
