@@ -12,11 +12,11 @@ const MODAL_HTML = `
       <div class="mx-modal-container footer-modal-custom">
         <button class="mx-modal-close" id="impressumCloseBtn" aria-label="Close Legal Notice">×</button>
         <h2 class="mx-modal-title">LEGAL NOTICE</h2>
-        <div class="mx-modal-content">
+        <div class="mx-modal-content">  
           <h3 class="footer-modal-h3">Information according to § 5 TMG</h3>
           <p>
             <strong>Benjamin Tron</strong><br>
-            Cybertron Systems<br>
+            Cybertronix Systemz<br>
             Rheinstraße 102<br>
             76185 Karlsruhe<br>
             Germany
