@@ -22,8 +22,8 @@ class HologramCarousel {
       autoPlayDelay: options.autoPlayDelay || 15000,
       autoPlayMinInterval: options.autoPlayMinInterval || 10000,
       autoPlayMaxInterval: options.autoPlayMaxInterval || 20000,
-      glitchMinInterval: options.glitchMinInterval || 10000,
-      glitchMaxInterval: options.glitchMaxInterval || 20000,
+      glitchMinInterval: options.glitchMinInterval || 6000,
+      glitchMaxInterval: options.glitchMaxInterval || 12000,
       glitchDuration: options.glitchDuration || 600,
       transitionDuration: options.transitionDuration || 600,
       ...options,
@@ -190,6 +190,12 @@ class HologramCarousel {
     img.draggable = false;
 
     imageWrapper.appendChild(img);
+
+    // Scanline on the image — clipped + rounded by image-wrapper's overflow:hidden & border-radius
+    const scanlineImg = document.createElement("div");
+    scanlineImg.className = "holo-carousel-scanline";
+    imageWrapper.appendChild(scanlineImg);
+
     inner.appendChild(imageWrapper);
 
     // Reflection Layer
@@ -199,7 +205,13 @@ class HologramCarousel {
     reflectionImg.className = "holo-carousel-reflection-image";
     reflection.appendChild(reflectionImg);
 
+    // Scanline on the reflection — clipped + rounded by reflection's overflow:hidden & border-radius
+    const scanlineRef = document.createElement("div");
+    scanlineRef.className = "holo-carousel-scanline";
+    reflection.appendChild(scanlineRef);
+
     inner.appendChild(reflection);
+
     itemDiv.appendChild(inner);
 
     return itemDiv;
@@ -439,33 +451,210 @@ class HologramCarousel {
 
   applyRandomGlitch() {
     const items = this.sphere.querySelectorAll(".holo-carousel-item");
-    const type = ["rgb-split", "scanline", "pixelate", "brightness"][
-      Math.floor(Math.random() * 4)
+
+    // Full effect catalogue
+    const allTypes = [
+      // Original
+      "rgb-split", "scanline", "pixelate", "brightness",
+      // Prev batch
+      "ghost", "error-screen", "wave", "hologram-flicker", "static", "plasma",
+      // Eye-reveal
+      "venetian", "pixel-dissolve", "slice-tear", "vortex",
+      "scan-wipe", "rain-wash", "corrupt-blocks", "edge-erosion", "iris", "data-bleed",
     ];
 
+    // Per-effect cleanup durations (must match CSS animation lengths)
+    const effectDurations = {
+      "rgb-split":        600,
+      "scanline":         600,
+      "pixelate":         600,
+      "brightness":       600,
+      "ghost":            900,
+      "wave":             700,
+      "hologram-flicker": 700,
+      "static":           600,
+      "plasma":           750,
+      // Eye-reveal — durations match their keyframe lengths
+      "venetian":         1200,
+      "pixel-dissolve":   1300,
+      "slice-tear":       1000,
+      "vortex":           1500,
+      "scan-wipe":        1400,
+      "rain-wash":        1600,
+      "corrupt-blocks":   1500,
+      "edge-erosion":     1700,
+      "iris":             1300,
+      "data-bleed":       2100,
+    };
+
+    const type = allTypes[Math.floor(Math.random() * allTypes.length)];
+
+    // Heavy / long effects hit only a random subset so not all cards reveal at once
+    const heavyEffects = [
+      "error-screen", "plasma", "hologram-flicker", "wave",
+      "vortex", "iris", "data-bleed", "edge-erosion",
+      "venetian", "pixel-dissolve", "slice-tear", "rain-wash",
+      "corrupt-blocks", "scan-wipe",
+    ];
+    const isHeavy = heavyEffects.includes(type);
+
     items.forEach((item) => {
+      if (isHeavy && Math.random() < 0.4) return;
+
       const wrapper = item.querySelector(".holo-carousel-image-wrapper");
       const img = item.querySelector(".holo-carousel-image");
+      const duration = effectDurations[type] || this.config.glitchDuration;
 
-      // Apply class based on randomized selection
-      if (type === "rgb-split")
-        wrapper.classList.add("holo-carousel-glitch-rgb-split");
-      if (type === "scanline")
-        item.classList.add("holo-carousel-glitch-active");
-      if (type === "pixelate") img.classList.add("holo-carousel-pixelate");
-      if (type === "brightness")
-        img.classList.add("holo-carousel-brightness-glitch");
+      // ── Apply ─────────────────────────────────────────────────────────
+      switch (type) {
+        case "rgb-split":
+          wrapper.classList.add("holo-carousel-glitch-rgb-split");
+          break;
+        case "scanline":
+          item.classList.add("holo-carousel-glitch-active");
+          break;
+        case "pixelate":
+          img.classList.add("holo-carousel-pixelate");
+          break;
+        case "brightness":
+          img.classList.add("holo-carousel-brightness-glitch");
+          break;
+        case "ghost":
+          item.classList.add("holo-carousel-ghost");
+          break;
+        case "error-screen":
+          this.applyErrorScreen(item, wrapper);
+          return;
+        case "wave":
+          item.classList.add("holo-carousel-wave");
+          break;
+        case "hologram-flicker":
+          item.classList.add("holo-carousel-hologram-flicker");
+          break;
+        case "static":
+          item.classList.add("holo-carousel-static");
+          break;
+        case "plasma":
+          item.classList.add("holo-carousel-plasma");
+          break;
+        case "venetian":
+          item.classList.add("holo-carousel-venetian");
+          break;
+        case "pixel-dissolve":
+          item.classList.add("holo-carousel-pixel-dissolve");
+          break;
+        case "slice-tear":
+          item.classList.add("holo-carousel-slice-tear");
+          break;
+        case "vortex":
+          item.classList.add("holo-carousel-vortex");
+          break;
+        case "scan-wipe":
+          this.applyScanWipe(item, wrapper, duration);
+          return;
+        case "rain-wash":
+          item.classList.add("holo-carousel-rain-wash");
+          break;
+        case "corrupt-blocks":
+          item.classList.add("holo-carousel-corrupt-blocks");
+          break;
+        case "edge-erosion":
+          item.classList.add("holo-carousel-edge-erosion");
+          break;
+        case "iris":
+          item.classList.add("holo-carousel-iris");
+          break;
+        case "data-bleed":
+          item.classList.add("holo-carousel-data-bleed");
+          break;
+      }
 
-      // Flash timeout
+      // ── Cleanup after exact animation duration ─────────────────────────
       setTimeout(() => {
         wrapper.classList.remove("holo-carousel-glitch-rgb-split");
-        item.classList.remove("holo-carousel-glitch-active");
+        item.classList.remove(
+          "holo-carousel-glitch-active",
+          "holo-carousel-ghost",
+          "holo-carousel-wave",
+          "holo-carousel-hologram-flicker",
+          "holo-carousel-static",
+          "holo-carousel-plasma",
+          "holo-carousel-venetian",
+          "holo-carousel-pixel-dissolve",
+          "holo-carousel-slice-tear",
+          "holo-carousel-vortex",
+          "holo-carousel-rain-wash",
+          "holo-carousel-corrupt-blocks",
+          "holo-carousel-edge-erosion",
+          "holo-carousel-iris",
+          "holo-carousel-data-bleed",
+        );
         img.classList.remove(
           "holo-carousel-pixelate",
           "holo-carousel-brightness-glitch",
         );
-      }, this.config.glitchDuration);
+      }, duration);
     });
+  }
+
+  /**
+   * Scan-wipe reveal: injects an animated glowing line that sweeps the image
+   * transparent from top to bottom, fully revealing the eye, then restores.
+   */
+  applyScanWipe(item, wrapper, duration = 1400) {
+    const line = document.createElement("div");
+    line.className = "holo-carousel-scan-wipe-line";
+    wrapper.appendChild(line);
+    item.classList.add("holo-carousel-scan-wipe");
+
+    setTimeout(() => {
+      item.classList.remove("holo-carousel-scan-wipe");
+      if (line.parentNode) line.parentNode.removeChild(line);
+    }, duration);
+  }
+
+  /**
+   * Injects a red error message overlay into the image card,
+   * blacks out the image, then auto-removes after glitchDuration.
+   *
+   * @param {HTMLElement} item    - The carousel item element.
+   * @param {HTMLElement} wrapper - The image-wrapper inside the item.
+   */
+  applyErrorScreen(item, wrapper) {
+    const errorMessages = [
+      "SYSTEM BREACH DETECTED",
+      "MEMORY CORRUPTION ERROR",
+      "CRITICAL FAILURE: SEGFAULT",
+      "NEURAL LINK SEVERED",
+      "DATA STREAM CORRUPTED",
+      "FIREWALL BREACHED",
+      "UNAUTHORIZED ACCESS",
+      "KERNEL PANIC: NULL PTR DEREF",
+      "BUFFER OVERFLOW: STACK DUMP",
+      "ENCRYPTION KEY INVALID",
+    ];
+
+    const code = `ERR_0x${Math.floor(Math.random() * 0xffff)
+      .toString(16)
+      .toUpperCase()
+      .padStart(4, "0")}`;
+    const msg = errorMessages[Math.floor(Math.random() * errorMessages.length)];
+
+    const overlay = document.createElement("div");
+    overlay.className = "holo-carousel-error-overlay";
+    overlay.innerHTML = `
+      <span class="holo-carousel-error-code">${code}</span>
+      <span class="holo-carousel-error-msg">${msg}</span>
+      <span class="holo-carousel-error-blink">■ ■ ■</span>
+    `;
+
+    wrapper.appendChild(overlay);
+    item.classList.add("holo-carousel-error-screen");
+
+    setTimeout(() => {
+      item.classList.remove("holo-carousel-error-screen");
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }, this.config.glitchDuration);
   }
 
   // ====================================================================================================================================
