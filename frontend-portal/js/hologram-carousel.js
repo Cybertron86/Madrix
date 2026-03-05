@@ -19,10 +19,10 @@ class HologramCarousel {
     this.config = {
       dataUrl: options.dataUrl || "./carousel-data.json",
       containerSelector: options.containerSelector || ".holo-carousel-wrapper",
-      autoPlayMinInterval: options.autoPlayMinInterval || 6000,
-      autoPlayMaxInterval: options.autoPlayMaxInterval || 11000,
-      glitchMinInterval: options.glitchMinInterval || 2000,
-      glitchMaxInterval: options.glitchMaxInterval || 5000,
+      autoPlayMinInterval: options.autoPlayMinInterval || 5000,
+      autoPlayMaxInterval: options.autoPlayMaxInterval || 8000,
+      glitchMinInterval: options.glitchMinInterval || 1000,
+      glitchMaxInterval: options.glitchMaxInterval || 3000,
       glitchDuration: options.glitchDuration || 600,
       transitionDuration: options.transitionDuration || 600,
       ...options,
@@ -42,6 +42,7 @@ class HologramCarousel {
     this.isDragging = false;
     this.dragStartX = 0;
     this.dragDistance = 0;
+    this.isHovered = false; 
 
     // 3. Component References
     this.container = null;
@@ -276,42 +277,60 @@ class HologramCarousel {
    * Attaches mouse, touch, and keyboard listeners to the carousel.
    */
   setupEvents() {
-    const allItems = this.sphere.querySelectorAll(".holo-carousel-item");
+  const allItems = this.sphere.querySelectorAll(".holo-carousel-item");
 
-    // Card Clicks
-    allItems.forEach((item, index) => {
-      item.addEventListener("click", () => {
-        if (!this.isDragging) {
-          if (index === this.currentIndex) this.openOverlay(index);
-          else this.goTo(index);
-        }
-      });
+  allItems.forEach((item, index) => {
+    item.addEventListener("click", () => {
+      if (!this.isDragging) {
+        if (index === this.currentIndex) this.openOverlay(index);
+        else this.goTo(index);
+      }
     });
+  });
 
-    // Drag/Touch Handlers
-    this.container.addEventListener("mousedown", (e) =>
-      this.handleMouseDown(e),
-    );
-    this.container.addEventListener("mousemove", (e) =>
-      this.handleMouseMove(e),
-    );
-    window.addEventListener("mouseup", (e) => this.handleMouseUp(e));
+  this.container.addEventListener("mousedown", (e) => this.handleMouseDown(e));
+  this.container.addEventListener("mousemove", (e) => this.handleMouseMove(e));
+  window.addEventListener("mouseup", (e) => this.handleMouseUp(e));
 
-    this.container.addEventListener(
-      "touchstart",
-      (e) => this.handleTouchStart(e),
-      { passive: true },
-    );
-    this.container.addEventListener("touchend", (e) => this.handleTouchEnd(e), {
-      passive: true,
-    });
+  this.container.addEventListener("touchstart", (e) => this.handleTouchStart(e), { passive: true });
+  this.container.addEventListener("touchend",   (e) => this.handleTouchEnd(e),   { passive: true });
 
-    // Keyboard & Pause
-    this.container.addEventListener("mouseenter", () => this.pauseAutoPlay());
-    this.container.addEventListener("mouseleave", () => this.resumeAutoPlay());
+   this.container.addEventListener("mouseenter", () => {
+    this.isHovered = true;        // track it
+    
+  });
 
-    document.addEventListener("keydown", (e) => this.handleKeydown(e));
+  this.container.addEventListener("mouseleave", () => {
+    this.isHovered = false;       // track it
+    this.resumeAutoPlay();
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      this.pauseAutoPlay();
+    } else {
+      this.resumeAutoPlay();      // now safe — checks isHovered below
+    }
+  });
+
+  document.addEventListener("keydown", (e) => this.handleKeydown(e));
+}
+
+resumeAutoPlay() {
+  // Only reschedule if nothing is blocking it
+  if (
+    !this.isHovered &&
+    !this.overlay.classList.contains("holo-carousel-active")
+  ) {
+    this.resetAutoPlay();
   }
+}
+
+startAutoPlay() {
+  // Short initial delay so autoplay is visible immediately on load.
+  // After the first slide, resetAutoPlay() takes over with the 15-25s range.
+  this.autoPlayTimeout = setTimeout(() => this.navigate(1), 3000);
+}
 
   /** @param {KeyboardEvent} e */
   handleKeydown(e) {
@@ -334,26 +353,31 @@ class HologramCarousel {
       this.isDragging = true;
   }
   handleMouseUp(e) {
-    if (this.isDragging && this.dragStartX !== 0) {
-      const delta = e.clientX - this.dragStartX;
-      if (Math.abs(delta) > 50) delta > 0 ? this.prev() : this.next();
-    }
-    this.isDragging = false;
-    this.dragStartX = 0;
-    this.resumeAutoPlay();
+  if (this.isDragging && this.dragStartX !== 0) {
+    const delta = e.clientX - this.dragStartX;
+    if (Math.abs(delta) > 50) delta > 0 ? this.prev() : this.next();
   }
+  this.isDragging = false;
+  this.dragStartX = 0;
+
+  // Force reschedule regardless of hover state —
+  // user just interacted, autoplay must always restart after manual input
+  resetAutoPlay();
+}
   handleTouchStart(e) {
     this.touchStartX = e.touches[0].clientX;
     this.pauseAutoPlay();
   }
   handleTouchEnd(e) {
-    if (this.touchStartX !== 0) {
-      const delta = e.changedTouches[0].clientX - this.touchStartX;
-      if (Math.abs(delta) > 40) delta > 0 ? this.prev() : this.next();
-    }
-    this.touchStartX = 0;
-    this.resumeAutoPlay();
+  if (this.touchStartX !== 0) {
+    const delta = e.changedTouches[0].clientX - this.touchStartX;
+    if (Math.abs(delta) > 40) delta > 0 ? this.prev() : this.next();
   }
+  this.touchStartX = 0;
+
+  // Same fix for touch
+  this.resetAutoPlay();
+}
 
   // ====================================================================================================================================
   //  ROTATION & POSITIONING ENGINE
@@ -364,26 +388,27 @@ class HologramCarousel {
    *
    * @param {-1|1} direction - Rotation direction.
    */
-  navigate(direction) {
-    if (this.isAnimating) {
-        this.resetAutoPlay(); // ✅ Keep the chain alive even when skipping
-        return;
-    }
-    this.isAnimating = true;
-
-    this.virtualIndex -= direction;
-    const total = this.items.length;
-    this.currentIndex = (this.currentIndex - direction + total) % total;
-
-    this.sphere.classList.add("holo-carousel-transitioning");
-    this.updatePositions();
-
-    setTimeout(() => {
-        this.sphere.classList.remove("holo-carousel-transitioning");
-        this.isAnimating = false;
-    }, this.config.transitionDuration);
-
+ navigate(direction) {
+  // BUG 1 FIX: always reschedule even when skipping — never orphan the chain
+  if (this.isAnimating) {
     this.resetAutoPlay();
+    return;
+  }
+  this.isAnimating = true;
+
+  this.virtualIndex -= direction;
+  const total = this.items.length;
+  this.currentIndex = (this.currentIndex - direction + total) % total;
+
+  this.sphere.classList.add("holo-carousel-transitioning");
+  this.updatePositions();
+
+  setTimeout(() => {
+    this.sphere.classList.remove("holo-carousel-transitioning");
+    this.isAnimating = false;
+  }, this.config.transitionDuration);
+
+  this.resetAutoPlay();
 }
 
   /**
@@ -771,9 +796,14 @@ class HologramCarousel {
   }
 
   goTo(index) {
-    if (index >= 0 && index < this.items.length)
-      this.navigate(index - this.currentIndex);
-  }
+  if (index < 0 || index >= this.items.length) return;
+  if (index === this.currentIndex) return;
+
+  const total = this.items.length;
+  const forward  = (index - this.currentIndex + total) % total;
+  const backward = (this.currentIndex - index + total) % total;
+  this.navigate(forward <= backward ? -1 : 1);
+}
   next() {
     this.navigate(-1);
   }
