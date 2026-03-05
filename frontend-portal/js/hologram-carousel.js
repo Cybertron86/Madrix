@@ -19,11 +19,10 @@ class HologramCarousel {
     this.config = {
       dataUrl: options.dataUrl || "./carousel-data.json",
       containerSelector: options.containerSelector || ".holo-carousel-wrapper",
-      autoPlayDelay: options.autoPlayDelay || 15000,
-      autoPlayMinInterval: options.autoPlayMinInterval || 10000,
-      autoPlayMaxInterval: options.autoPlayMaxInterval || 20000,
-      glitchMinInterval: options.glitchMinInterval || 6000,
-      glitchMaxInterval: options.glitchMaxInterval || 12000,
+      autoPlayMinInterval: options.autoPlayMinInterval || 6000,
+      autoPlayMaxInterval: options.autoPlayMaxInterval || 11000,
+      glitchMinInterval: options.glitchMinInterval || 2000,
+      glitchMaxInterval: options.glitchMaxInterval || 5000,
       glitchDuration: options.glitchDuration || 600,
       transitionDuration: options.transitionDuration || 600,
       ...options,
@@ -47,8 +46,20 @@ class HologramCarousel {
     // 3. Component References
     this.container = null;
     this.sphere = null;
+    this.sphereFx = null; // Visible fx overlay for sphere glitch effects
     this.overlay = null;
     this.matrixEye = null;
+
+    /**
+     * Shared mutex between the card glitch loop and the sphere glitch loop.
+     * When true, whichever system acquired the lock is mid-animation;
+     * the other system will skip its current cycle and retry on its next timer tick.
+     *
+     * Only one visual "glitch layer" fires at a time, keeping sphere effects
+     * visually distinct from card effects and preventing them from fighting
+     * each other's CSS classes or filter stacks.
+     */
+    this._glitchLock = false;
 
     this.init();
   }
@@ -72,6 +83,7 @@ class HologramCarousel {
       this.setupEvents();
       this.startAutoPlay();
       this.startGlitchEffects();
+      this.startSphereGlitchEffects();
 
       console.log(
         `✅ Hologram Carousel initialized with ${this.items.length} projects`,
@@ -157,6 +169,13 @@ class HologramCarousel {
     });
 
     sphereContainer.appendChild(this.sphere);
+
+    // Inject visible fx overlay — this is what actually shows sphere glitch effects.
+    // The sphere itself is a transparent 3D container, so filters on it are invisible.
+    this.sphereFx = document.createElement("div");
+    this.sphereFx.className = "holo-carousel-sphere-fx";
+    sphereContainer.appendChild(this.sphereFx);
+
     this.container.appendChild(sphereContainer);
 
     // 3. Modal Overlay
@@ -346,12 +365,13 @@ class HologramCarousel {
    * @param {-1|1} direction - Rotation direction.
    */
   navigate(direction) {
-    if (this.isAnimating) return;
+    if (this.isAnimating) {
+        this.resetAutoPlay(); // ✅ Keep the chain alive even when skipping
+        return;
+    }
     this.isAnimating = true;
 
-    // Increment virtual index for continuous CSS rotation (prevents 359->0 snap)
     this.virtualIndex -= direction;
-
     const total = this.items.length;
     this.currentIndex = (this.currentIndex - direction + total) % total;
 
@@ -359,12 +379,12 @@ class HologramCarousel {
     this.updatePositions();
 
     setTimeout(() => {
-      this.sphere.classList.remove("holo-carousel-transitioning");
-      this.isAnimating = false;
+        this.sphere.classList.remove("holo-carousel-transitioning");
+        this.isAnimating = false;
     }, this.config.transitionDuration);
 
     this.resetAutoPlay();
-  }
+}
 
   /**
    * Calculates and applies 3D transforms for all items on the spherical surface.
@@ -434,6 +454,10 @@ class HologramCarousel {
 
   /**
    * Procedural glitch loop. Targets item textures randomly.
+   *
+   * Checks _glitchLock before firing — if the sphere glitch system is
+   * currently mid-animation, this cycle is skipped entirely. The next
+   * scheduled tick will try again.
    */
   startGlitchEffects() {
     const trigger = () => {
@@ -450,6 +474,9 @@ class HologramCarousel {
   }
 
   applyRandomGlitch() {
+    // Sphere glitch is active — skip this card-glitch cycle entirely.
+    if (this._glitchLock) return;
+
     const items = this.sphere.querySelectorAll(".holo-carousel-item");
 
     // Full effect catalogue
@@ -498,12 +525,23 @@ class HologramCarousel {
     ];
     const isHeavy = heavyEffects.includes(type);
 
-    items.forEach((item) => {
+    // Limit to max 2 cards affected per glitch fire (70% chance of just 1)
+    const allItemsArr = Array.from(items);
+    const maxAffected = Math.random() < 0.7 ? 1 : 2;
+    const shuffled = allItemsArr.sort(() => Math.random() - 0.5).slice(0, maxAffected);
+
+    // Determine the longest animation that will actually run this cycle,
+    // then hold the lock for exactly that duration.
+    let maxDuration = 0;
+
+    shuffled.forEach((item) => {
       if (isHeavy && Math.random() < 0.4) return;
 
       const wrapper = item.querySelector(".holo-carousel-image-wrapper");
       const img = item.querySelector(".holo-carousel-image");
       const duration = effectDurations[type] || this.config.glitchDuration;
+
+      if (duration > maxDuration) maxDuration = duration;
 
       // ── Apply ─────────────────────────────────────────────────────────
       switch (type) {
@@ -595,6 +633,13 @@ class HologramCarousel {
         );
       }, duration);
     });
+
+    // Acquire lock for the lifetime of the longest-running card effect.
+    // If nothing actually ran (all skipped by isHeavy check), don't lock.
+    if (maxDuration > 0) {
+      this._glitchLock = true;
+      setTimeout(() => { this._glitchLock = false; }, maxDuration);
+    }
   }
 
   /**
@@ -734,6 +779,71 @@ class HologramCarousel {
   }
   prev() {
     this.navigate(1);
+  }
+
+  // ====================================================================================================================================
+  //  SPHERE GLITCH EFFECTS
+  // ====================================================================================================================================
+
+  /**
+   * Fires randomised horizontal glitch effects on the injected .holo-carousel-sphere-fx
+   * overlay element — runs independently from the card glitch loop.
+   *
+   * Checks _glitchLock before firing — if a card glitch is currently
+   * mid-animation, this cycle is skipped entirely. The next scheduled
+   * tick will try again.
+   */
+  startSphereGlitchEffects() {
+    const EFFECTS = [
+      { cls: "sphere-glitch-band-tear",      duration: 1050 },
+      { cls: "sphere-glitch-grey-crush",     duration: 900  },
+      { cls: "sphere-glitch-red-bleed",      duration: 750  },
+      { cls: "sphere-glitch-blue-green",     duration: 550  },
+      { cls: "sphere-glitch-gamma-wave",     duration: 750  },
+      { cls: "sphere-glitch-alpha-dropout",  duration: 1450 },
+      { cls: "sphere-glitch-interlace",      duration: 650  },
+      { cls: "sphere-glitch-black-pulse",    duration: 1150 },
+      { cls: "sphere-glitch-chroma-shear",   duration: 900  },
+      { cls: "sphere-glitch-signal-dropout", duration: 1600 },
+    ];
+
+    const trigger = () => {
+      this.applySphereGlitch(EFFECTS);
+      setTimeout(trigger, this.getRandomInt(10000, 22000));
+    };
+
+    setTimeout(trigger, 9000); // let page fully render first
+  }
+
+  /**
+   * Picks a random sphere glitch, applies it to the sphereFx overlay,
+   * then removes the class once the animation completes.
+   *
+   * Acquires _glitchLock for the duration of the effect so the card
+   * glitch system stays idle while the sphere effect is running.
+   *
+   * @param {Array} effects
+   */
+  applySphereGlitch(effects) {
+    if (!this.sphereFx) return;
+    if (this.overlay?.classList.contains("holo-carousel-active")) return;
+
+    // Card glitch is active — skip this sphere-glitch cycle entirely.
+    if (this._glitchLock) return;
+
+    // Don't stack — only fire if no sphere glitch class currently active
+    if (this.sphereFx.className !== "holo-carousel-sphere-fx") return;
+
+    const effect = effects[Math.floor(Math.random() * effects.length)];
+
+    // Acquire the shared lock for the lifetime of this sphere effect.
+    this._glitchLock = true;
+    this.sphereFx.classList.add(effect.cls);
+
+    setTimeout(() => {
+      this.sphereFx.classList.remove(effect.cls);
+      this._glitchLock = false;
+    }, effect.duration + 100);
   }
 
   /**
