@@ -836,11 +836,11 @@ startAutoPlay() {
       { cls: "sphere-glitch-chroma-shear",   duration: 900  },
       { cls: "sphere-glitch-signal-dropout", duration: 1600 },
       { cls: "sphere-glitch-h-bars",         duration: 950  },
-      { cls: "sphere-glitch-v-bars",         duration: 800  },
-      { cls: "sphere-glitch-grey-static",    duration: 1250 },
-      { cls: "sphere-glitch-blackout-stutter", duration: 1350 },
-      { cls: "sphere-glitch-v-shear",        duration: 1000 },
-      { cls: "sphere-glitch-grey-strobe",    duration: 700  },
+{ cls: "sphere-glitch-v-bars",         duration: 800  },
+{ cls: "sphere-glitch-grey-static",    duration: 1250 },
+{ cls: "sphere-glitch-blackout-stutter", duration: 1350 },
+{ cls: "sphere-glitch-v-shear",        duration: 1000 },
+{ cls: "sphere-glitch-grey-strobe",    duration: 700  },
     ];
 
     const trigger = () => {
