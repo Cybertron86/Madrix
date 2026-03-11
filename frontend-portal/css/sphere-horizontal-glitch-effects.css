@@ -1,0 +1,647 @@
+/* ============================================================================================================================
+   SPHERE HORIZONTAL & VERTICAL GLITCH EFFECTS — OPTIMIZED v2
+   
+   CHANGES FROM v1:
+   - Reduced unrealistic brightness spikes (capped ~6x, was 14-18x)
+   - More black/grey moments for analog-hardware realism
+   - Added 6 new effects: h-bars, v-bars, grey-static, blackout-stutter,
+     v-shear, grey-strobe — all predominantly black/grey palette
+   - Vertical glitch axis now covered (translateX / skewX)
+   - Smoother decay tails on all existing effects
+   ============================================================================================================================ */
+
+.holo-carousel-sphere-fx {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 950px;
+  height: 950px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  border: 2px solid rgba(var(--color-primary-rgb), 0.4);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(var(--color-primary-rgb), 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 70% 60%, rgba(var(--color-ice-blue-rgb), 0.1) 0%, transparent 40%),
+    radial-gradient(circle at center, transparent 0%, rgba(var(--color-primary-rgb), 0.03) 100%);
+  box-shadow:
+    inset 0 0 120px rgba(var(--color-primary-rgb), 0.25),
+    0 0 60px rgba(var(--color-primary-rgb), 0.3);
+  opacity: 0;
+}
+
+@media (max-width: 768px) {
+  .holo-carousel-sphere-fx { width: 600px; height: 600px; }
+}
+@media (max-width: 480px) {
+  .holo-carousel-sphere-fx { width: 400px; height: 400px; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   ── EXISTING EFFECTS — OPTIMISED ──────────────────────────────────────────
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S1 — BAND TEAR  (black horizontal bars slice the sphere)
+   Realism fix: brightness capped at 6, added grey decay tail
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-band-tear {
+  animation: sfx-band-tear 1.0s steps(1) forwards;
+}
+
+@keyframes sfx-band-tear {
+  0%   { opacity: 1; filter: brightness(1); clip-path: ellipse(50% 50% at 50% 50%); transform: translate(-50%,-50%) translateY(0); }
+  7%   { filter: brightness(4) contrast(5) hue-rotate(0deg);
+         clip-path: polygon(0 0,100% 0,100% 17%,0 17%,0 22%,100% 22%,100% 100%,0 100%);
+         transform: translate(-50%,-50%) translateY(-6px); }
+  11%  { filter: brightness(0) saturate(0) contrast(1); clip-path: ellipse(50% 50% at 50% 50%); transform: translate(-50%,-50%) translateY(8px); }
+  15%  { filter: brightness(0.15) contrast(8) hue-rotate(-60deg);
+         clip-path: polygon(0 0,100% 0,100% 6%,0 6%,0 13%,100% 13%,100% 27%,0 27%,0 35%,100% 35%,100% 54%,0 54%,0 64%,100% 64%,100% 100%,0 100%);
+         transform: translate(-50%,-50%) translateY(4px); }
+  20%  { filter: brightness(0) saturate(0); clip-path: ellipse(50% 50% at 50% 50%); transform: translate(-50%,-50%) translateY(-10px); }
+  26%  { filter: brightness(0.05) saturate(0) contrast(6);
+         clip-path: polygon(0 0,100% 0,100% 41%,0 41%,0 46%,100% 46%,100% 77%,0 77%,0 82%,100% 82%,100% 100%,0 100%);
+         transform: translate(-50%,-50%) translateY(5px); }
+  32%  { filter: brightness(5) hue-rotate(280deg) saturate(3); clip-path: ellipse(50% 50% at 50% 50%); transform: translate(-50%,-50%) translateY(-5px); }
+  38%  { filter: brightness(0) saturate(0); opacity: 0.5;
+         clip-path: polygon(0 0,100% 0,100% 81%,0 81%,0 86%,100% 86%,100% 100%,0 100%); }
+  44%  { filter: brightness(0) saturate(0); opacity: 0.15; clip-path: ellipse(50% 50% at 50% 50%); }
+  49%  { opacity: 0.8; filter: brightness(4) hue-rotate(90deg) contrast(5); transform: translate(-50%,-50%) translateY(-10px); }
+  52%  { opacity: 0; filter: brightness(0); }
+  57%  { opacity: 0.5; filter: brightness(0.3) saturate(0); transform: translate(-50%,-50%) translateY(7px); }
+  63%  { opacity: 0.3; filter: brightness(0.15) saturate(0); transform: translate(-50%,-50%) translateY(3px); }
+  74%  { opacity: 0.55; filter: brightness(1.4) contrast(1.8); transform: translate(-50%,-50%) translateY(-2px); }
+  86%  { opacity: 0.72; filter: brightness(1.1); }
+  94%  { opacity: 0.85; filter: brightness(1.5) contrast(2) hue-rotate(15deg); }
+  100% { opacity: 0; filter: brightness(1); clip-path: ellipse(50% 50% at 50% 50%); transform: translate(-50%,-50%) translateY(0); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S2 — GREY CRUSH  (desaturation + dark/bright zone oscillation)
+   Realism fix: tight brightness range, no colour leaking, greyer decay
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-grey-crush {
+  animation: sfx-grey-crush 0.85s steps(1) forwards;
+}
+
+@keyframes sfx-grey-crush {
+  0%   { opacity: 1; filter: brightness(1) saturate(1); }
+  5%   { filter: brightness(0.04) saturate(0) contrast(12); }
+  10%  { filter: brightness(3) saturate(0) contrast(0.5); }
+  15%  { filter: brightness(0.05) saturate(0) contrast(10); }
+  20%  { filter: brightness(4) saturate(0) contrast(0.35); }
+  25%  { filter: brightness(0.03) saturate(0) contrast(14); }
+  30%  { filter: brightness(5) saturate(0) contrast(0.28) blur(0.5px); }
+  35%  { filter: brightness(0.05) saturate(0) contrast(11); }
+  40%  { filter: brightness(3.5) saturate(0) contrast(0.4); }
+  45%  { filter: brightness(0.07) saturate(0) contrast(9); }
+  50%  { filter: brightness(2.5) saturate(0) contrast(0.55); }
+  55%  { filter: brightness(0.1) saturate(0) contrast(7); }
+  60%  { filter: brightness(2) saturate(0) contrast(0.7); }
+  65%  { filter: brightness(0.18) saturate(0) contrast(5); }
+  72%  { filter: brightness(1.6) saturate(0.2) contrast(1.1); }
+  80%  { filter: brightness(0.55) saturate(0.35) contrast(1.4); }
+  88%  { filter: brightness(1.1) saturate(0.65) contrast(1.2); }
+  95%  { filter: brightness(0.9) saturate(0.85) contrast(1.05); }
+  100% { opacity: 0; filter: brightness(1) saturate(1); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S3 — RED BLEED  (crimson waves — toned for analog CRT feel)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-red-bleed {
+  border-color: rgba(255, 0, 85, 0.5) !important;
+  animation: sfx-red-bleed 0.7s steps(1) forwards;
+}
+
+@keyframes sfx-red-bleed {
+  0%   { opacity: 1; filter: brightness(1) hue-rotate(0deg); transform: translate(-50%,-50%) translateY(0); }
+  5%   { filter: brightness(5) saturate(8) hue-rotate(0deg) contrast(4); transform: translate(-50%,-50%) translateY(-4px); }
+  9%   { filter: brightness(0) saturate(0); transform: translate(-50%,-50%) translateY(6px); }
+  13%  { filter: brightness(0.2) saturate(0) contrast(10); transform: translate(-50%,-50%) translateY(-7px); }
+  17%  { filter: brightness(0.35) saturate(8) hue-rotate(-10deg) contrast(5); transform: translate(-50%,-50%) translateY(8px); }
+  21%  { opacity: 0.75; filter: brightness(0) saturate(0); transform: translate(-50%,-50%) translateY(-5px); }
+  25%  { filter: brightness(6) saturate(9) hue-rotate(0deg) contrast(3.5); transform: translate(-50%,-50%) translateY(5px); }
+  30%  { opacity: 0.5; filter: brightness(0) saturate(0); transform: translate(-50%,-50%) translateY(-8px); }
+  35%  { opacity: 0.65; filter: brightness(0.15) saturate(0); transform: translate(-50%,-50%) translateY(9px); }
+  40%  { opacity: 0.4; filter: brightness(0.2) saturate(8) hue-rotate(-5deg) contrast(4); transform: translate(-50%,-50%) translateY(-6px); }
+  45%  { opacity: 0.08; filter: brightness(0) saturate(0); transform: translate(-50%,-50%) translateY(0); }
+  49%  { opacity: 0.85; filter: brightness(5) saturate(9) hue-rotate(0deg) contrast(5); transform: translate(-50%,-50%) translateY(-11px); }
+  52%  { opacity: 0; filter: brightness(0); }
+  55%  { opacity: 0.55; filter: brightness(0.25) saturate(4) hue-rotate(-15deg); transform: translate(-50%,-50%) translateY(9px); }
+  58%  { opacity: 0; }
+  65%  { opacity: 0.35; filter: brightness(0.12) saturate(2) hue-rotate(-8deg); transform: translate(-50%,-50%) translateY(-3px); }
+  75%  { opacity: 0.6; filter: brightness(1.4) saturate(1.5) contrast(1.8); }
+  86%  { opacity: 0.78; filter: brightness(1.1) saturate(1.2); }
+  94%  { opacity: 0.9; filter: brightness(1.3) contrast(1.6) hue-rotate(-4deg); }
+  100% { opacity: 0; filter: brightness(1); transform: translate(-50%,-50%) translateY(0); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S4 — BLUE-GREEN SPLIT  (cyan & electric blue channels strobing)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-blue-green {
+  animation: sfx-blue-green 0.5s steps(1) forwards;
+}
+
+@keyframes sfx-blue-green {
+  0%   { opacity: 1; filter: brightness(1) hue-rotate(0deg) saturate(1); transform: translate(-50%,-50%) translateY(0); }
+  8%   { filter: brightness(3.5) saturate(6) hue-rotate(140deg) contrast(3.5); transform: translate(-50%,-50%) translateY(-6px); }
+  16%  { filter: brightness(0) saturate(0); transform: translate(-50%,-50%) translateY(6px); }
+  24%  { filter: brightness(0.1) saturate(0) contrast(10); transform: translate(-50%,-50%) translateY(0); }
+  32%  { filter: brightness(2) saturate(7) hue-rotate(160deg) contrast(2.5); transform: translate(-50%,-50%) translateY(-5px); }
+  40%  { filter: brightness(0) saturate(0); transform: translate(-50%,-50%) translateY(5px); }
+  48%  { filter: brightness(0.08) saturate(0) contrast(8); transform: translate(-50%,-50%) translateY(-3px); }
+  56%  { filter: brightness(2.5) saturate(6) hue-rotate(170deg) contrast(3); transform: translate(-50%,-50%) translateY(4px); }
+  64%  { filter: brightness(0) saturate(0); transform: translate(-50%,-50%) translateY(-4px); }
+  72%  { filter: brightness(0.12) saturate(0) contrast(6); transform: translate(-50%,-50%) translateY(0); }
+  80%  { filter: brightness(1.6) saturate(4) hue-rotate(150deg) contrast(2.5); transform: translate(-50%,-50%) translateY(-2px); }
+  90%  { filter: brightness(1.2) saturate(2) hue-rotate(100deg) contrast(1.8); }
+  100% { opacity: 0; filter: brightness(1) hue-rotate(0deg) saturate(1); transform: translate(-50%,-50%) translateY(0); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S5 — GAMMA WAVE  (cascading storm — more grey, less colour)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-gamma-wave {
+  animation: sfx-gamma-wave 0.7s steps(1) forwards;
+}
+
+@keyframes sfx-gamma-wave {
+  0%   { opacity: 1; filter: brightness(1) contrast(1) hue-rotate(0deg); }
+  5%   { filter: brightness(0.03) contrast(16) saturate(0); }
+  10%  { filter: brightness(5) contrast(0.3) saturate(3) hue-rotate(40deg); }
+  15%  { filter: brightness(0.04) contrast(14) saturate(0); }
+  20%  { filter: brightness(6) contrast(0.25) saturate(0); }
+  25%  { filter: brightness(0.03) contrast(18) saturate(0); }
+  30%  { filter: brightness(5) contrast(0.2) saturate(0) blur(0.5px); }
+  35%  { filter: brightness(0.04) contrast(15) hue-rotate(-70deg); }
+  40%  { filter: brightness(4.5) contrast(0.28) hue-rotate(260deg) saturate(4); }
+  45%  { filter: brightness(0.04) contrast(14) saturate(0); }
+  50%  { filter: brightness(0.08) contrast(0.3) saturate(0); }
+  55%  { filter: brightness(0.05) contrast(12) saturate(0) blur(0.4px); }
+  60%  { filter: brightness(4) contrast(0.36) hue-rotate(320deg) saturate(3); }
+  65%  { filter: brightness(0.08) contrast(10) saturate(0); }
+  70%  { filter: brightness(3) contrast(0.5) hue-rotate(80deg) saturate(2.5); }
+  76%  { filter: brightness(0.14) contrast(8) saturate(0); }
+  82%  { filter: brightness(2.2) contrast(0.6) hue-rotate(200deg) saturate(2); }
+  88%  { filter: brightness(0.22) contrast(5) saturate(0.4); }
+  94%  { filter: brightness(1.5) contrast(0.85) hue-rotate(25deg); }
+  100% { opacity: 0; filter: brightness(1) contrast(1) hue-rotate(0deg); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S6 — ALPHA DROPOUT  (opacity collapse with glow leaks — gentler)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-alpha-dropout {
+  animation: sfx-alpha-dropout 1.4s steps(1) forwards;
+}
+
+@keyframes sfx-alpha-dropout {
+  0%   { opacity: 1; filter: brightness(1); }
+  6%   { opacity: 0.6; filter: brightness(2.5) saturate(4) hue-rotate(60deg) drop-shadow(0 0 16px rgba(0,255,136,0.7)); }
+  10%  { opacity: 1; filter: brightness(0.1) saturate(0) contrast(10); }
+  14%  { opacity: 0.3; filter: brightness(0.14) saturate(0) contrast(6) drop-shadow(0 0 24px rgba(0,255,136,0.85)) drop-shadow(0 0 40px rgba(0,200,255,0.6)); }
+  19%  { opacity: 0.75; filter: brightness(4) saturate(5) hue-rotate(160deg); }
+  24%  { opacity: 0.12; filter: brightness(0.05) saturate(0) drop-shadow(0 0 32px rgba(0,255,136,0.9)); }
+  29%  { opacity: 0.8; filter: brightness(0.12) saturate(0) contrast(8); }
+  34%  { opacity: 0.08; filter: brightness(0.04) saturate(0) drop-shadow(0 0 40px rgba(0,200,255,0.9)); }
+  39%  { opacity: 0.55; filter: brightness(4.5) hue-rotate(240deg) saturate(5); }
+  44%  { opacity: 0.04; filter: brightness(0) saturate(0); }
+  49%  { opacity: 0.02; filter: brightness(0); }
+  52%  { opacity: 0.85; filter: brightness(5) hue-rotate(100deg) contrast(6) drop-shadow(0 0 24px rgba(0,255,136,0.9)); }
+  54%  { opacity: 0; filter: brightness(0); }
+  57%  { opacity: 0.55; filter: brightness(0.2) saturate(0) drop-shadow(0 0 20px rgba(0,200,255,0.75)); }
+  60%  { opacity: 0; }
+  67%  { opacity: 0.14; filter: brightness(0.28) saturate(0) drop-shadow(0 0 16px rgba(0,255,136,0.6)); }
+  77%  { opacity: 0.45; filter: brightness(2) hue-rotate(80deg) saturate(3); }
+  87%  { opacity: 0.7; filter: brightness(1.4) contrast(1.6); }
+  95%  { opacity: 0.88; filter: brightness(1.8) contrast(1.9) hue-rotate(18deg); }
+  100% { opacity: 0; filter: brightness(1); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S7 — INTERLACE CRASH  (coarse scanlines — more grey, less colour)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-interlace {
+  animation: sfx-interlace 0.6s steps(1) forwards;
+}
+
+@keyframes sfx-interlace {
+  0%   { opacity: 1; mask: none; -webkit-mask: none; filter: brightness(1); }
+  7%   { mask: repeating-linear-gradient(180deg,black 0 2px,transparent 2px 4px) 0 0/100% 8px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0 2px,transparent 2px 4px) 0 0/100% 8px;
+         filter: brightness(2.5) saturate(0) contrast(5); }
+  14%  { mask: repeating-linear-gradient(180deg,transparent 0 1px,black 1px 2px) 0 0/100% 4px;
+         -webkit-mask: repeating-linear-gradient(180deg,transparent 0 1px,black 1px 2px) 0 0/100% 4px;
+         filter: brightness(0.08) saturate(0) contrast(10); }
+  21%  { mask: repeating-linear-gradient(180deg,black 0 3px,transparent 3px 6px) 0 0/100% 12px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0 3px,transparent 3px 6px) 0 0/100% 12px;
+         filter: brightness(4.5) saturate(3) hue-rotate(160deg) contrast(3.5); }
+  28%  { mask: none; -webkit-mask: none; filter: brightness(0) saturate(0); }
+  35%  { mask: repeating-linear-gradient(180deg,black 0 1px,transparent 1px 8px) 0 0/100% 9px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0 1px,transparent 1px 8px) 0 0/100% 9px;
+         filter: brightness(0.04) saturate(0); }
+  42%  { mask: repeating-linear-gradient(180deg,transparent 0 2px,black 2px 3px) 0 0/100% 5px;
+         -webkit-mask: repeating-linear-gradient(180deg,transparent 0 2px,black 2px 3px) 0 0/100% 5px;
+         filter: brightness(4) saturate(4) hue-rotate(280deg) contrast(4); }
+  49%  { mask: none; -webkit-mask: none; filter: brightness(0) saturate(0); }
+  56%  { mask: repeating-linear-gradient(180deg,black 0 2px,transparent 2px 5px) 0 0/100% 7px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0 2px,transparent 2px 5px) 0 0/100% 7px;
+         filter: brightness(4) saturate(2.5) hue-rotate(80deg) contrast(3.5); }
+  63%  { mask: repeating-linear-gradient(180deg,transparent 0 1px,black 1px 3px) 0 0/100% 4px;
+         -webkit-mask: repeating-linear-gradient(180deg,transparent 0 1px,black 1px 3px) 0 0/100% 4px;
+         filter: brightness(0.12) saturate(0) contrast(7); }
+  70%  { mask: none; -webkit-mask: none; filter: brightness(2.5) hue-rotate(200deg) saturate(2.5) contrast(2.5); }
+  78%  { mask: repeating-linear-gradient(180deg,black 0 1px,transparent 1px 2px) 0 0/100% 3px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0 1px,transparent 1px 2px) 0 0/100% 3px;
+         filter: brightness(0.25) saturate(0) contrast(5); }
+  86%  { mask: none; -webkit-mask: none; filter: brightness(2) contrast(2.5) hue-rotate(35deg); }
+  93%  { filter: brightness(1.3) contrast(1.6); }
+  100% { opacity: 0; mask: none; -webkit-mask: none; filter: brightness(1); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S8 — BLACK PULSE WAVE  (blackouts with edge glows — tightened)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-black-pulse {
+  animation: sfx-black-pulse 1.1s steps(1) forwards;
+}
+
+@keyframes sfx-black-pulse {
+  0%   { opacity: 1; filter: brightness(1); }
+  5%   { filter: brightness(0) contrast(0); }
+  8%   { filter: brightness(4) saturate(5) hue-rotate(-10deg) contrast(5) drop-shadow(0 5px 12px rgba(255,0,85,0.85)); }
+  11%  { filter: brightness(0) contrast(0); }
+  15%  { filter: brightness(2) saturate(4) hue-rotate(160deg) contrast(4.5) drop-shadow(0 5px 10px rgba(0,200,255,0.75)); }
+  18%  { opacity: 0.8; filter: brightness(0) contrast(0); }
+  22%  { filter: brightness(5) saturate(5) hue-rotate(100deg) contrast(3.5) drop-shadow(0 4px 14px rgba(0,255,136,0.8)); }
+  26%  { opacity: 0.6; filter: brightness(0) contrast(0); }
+  30%  { filter: brightness(3) saturate(3.5) hue-rotate(-20deg) contrast(4) drop-shadow(0 6px 16px rgba(255,0,85,0.65)); }
+  34%  { opacity: 0.38; filter: brightness(0) contrast(0); }
+  38%  { filter: brightness(4.5) saturate(5) hue-rotate(200deg) contrast(5); }
+  42%  { opacity: 0.1; filter: brightness(0) contrast(0); }
+  46%  { opacity: 0.02; filter: brightness(0); }
+  49%  { opacity: 0.85; filter: brightness(5.5) saturate(5.5) hue-rotate(90deg) contrast(6); }
+  51%  { opacity: 0; filter: brightness(0); }
+  54%  { opacity: 0.6; filter: brightness(0.18) saturate(0); }
+  57%  { opacity: 0; }
+  64%  { opacity: 0.18; filter: brightness(0) contrast(0); }
+  69%  { opacity: 0.45; filter: brightness(2.8) saturate(3.5) hue-rotate(60deg) contrast(3.5) drop-shadow(0 4px 9px rgba(0,255,136,0.6)); }
+  77%  { opacity: 0.65; filter: brightness(1.6) saturate(1.8) contrast(1.8); }
+  85%  { opacity: 0.82; filter: brightness(1.3) contrast(1.5); }
+  93%  { opacity: 0.92; filter: brightness(1.6) contrast(1.8) hue-rotate(12deg); }
+  100% { opacity: 0; filter: brightness(1); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S9 — CHROMA SHEAR  (RGB channels shear — reduced skew for realism)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-chroma-shear {
+  animation: sfx-chroma-shear 0.85s steps(1) forwards;
+}
+
+@keyframes sfx-chroma-shear {
+  0%   { opacity: 1; filter: brightness(1) saturate(1) hue-rotate(0deg); transform: translate(-50%,-50%) translateY(0); }
+  6%   { filter: brightness(4) saturate(7) hue-rotate(0deg) contrast(4); transform: translate(-50%,-50%) skewY(-1deg) translateY(-4px); }
+  10%  { filter: brightness(0) saturate(0); transform: translate(-50%,-50%) translateY(7px); }
+  14%  { filter: brightness(0.2) saturate(7) hue-rotate(120deg) contrast(3.5); transform: translate(-50%,-50%) skewY(0.8deg) translateY(5px); }
+  19%  { filter: brightness(5) saturate(8) hue-rotate(240deg) contrast(4); transform: translate(-50%,-50%) skewY(-0.7deg) translateY(-5px); }
+  23%  { filter: brightness(0) saturate(0); transform: translate(-50%,-50%) translateY(8px); }
+  27%  { opacity: 0.68; filter: brightness(0.1) saturate(7) hue-rotate(-60deg) contrast(5); transform: translate(-50%,-50%) skewY(0.9deg) translateY(7px); }
+  32%  { opacity: 0.75; filter: brightness(5.5) saturate(7) hue-rotate(180deg) contrast(3.5); transform: translate(-50%,-50%) skewY(-0.8deg) translateY(-6px); }
+  37%  { opacity: 0.35; filter: brightness(0) saturate(0); transform: translate(-50%,-50%) translateY(4px); }
+  41%  { opacity: 0.62; filter: brightness(6) saturate(8) hue-rotate(300deg) contrast(4); transform: translate(-50%,-50%) skewY(-1deg) translateY(-8px); }
+  45%  { opacity: 0.06; filter: brightness(0) saturate(0); transform: translate(-50%,-50%) translateY(0); }
+  49%  { opacity: 0.02; filter: brightness(0); }
+  52%  { opacity: 0.85; filter: brightness(5.5) saturate(6) hue-rotate(90deg) contrast(6); transform: translate(-50%,-50%) translateY(-10px); }
+  54%  { opacity: 0; filter: brightness(0); }
+  57%  { opacity: 0.6; filter: brightness(0.2) saturate(0); transform: translate(-50%,-50%) translateY(8px); }
+  60%  { opacity: 0; }
+  65%  { opacity: 0.38; filter: brightness(0.12) saturate(0); transform: translate(-50%,-50%) translateY(-5px); }
+  73%  { opacity: 0.2; filter: brightness(0.45) saturate(2) hue-rotate(55deg); }
+  82%  { opacity: 0.55; filter: brightness(2) saturate(2.8) hue-rotate(28deg) contrast(1.8); }
+  91%  { opacity: 0.8; filter: brightness(1.4) saturate(1.3) contrast(1.4); }
+  97%  { opacity: 0.9; filter: brightness(1.6) contrast(1.8) hue-rotate(8deg); }
+  100% { opacity: 0; filter: brightness(1) saturate(1) hue-rotate(0deg); transform: translate(-50%,-50%) translateY(0); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S10 — SIGNAL DROPOUT  (bars collapse to blackout — cleaner re-burst)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-signal-dropout {
+  animation: sfx-signal-dropout 1.55s steps(1) forwards;
+}
+
+@keyframes sfx-signal-dropout {
+  0%   { opacity: 1; mask: none; -webkit-mask: none; filter: brightness(1); }
+  5%   { mask: repeating-linear-gradient(180deg,black 0% 97%,transparent 97% 100%) 0 0/100% 60px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0% 97%,transparent 97% 100%) 0 0/100% 60px;
+         filter: brightness(2.8) hue-rotate(80deg) contrast(4); }
+  10%  { mask: none; -webkit-mask: none; filter: brightness(0) saturate(0); }
+  14%  { mask: repeating-linear-gradient(180deg,black 0% 93%,transparent 93% 100%) 0 0/100% 40px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0% 93%,transparent 93% 100%) 0 0/100% 40px;
+         filter: brightness(0.2) saturate(0) contrast(8); }
+  19%  { opacity: 0.8; mask: repeating-linear-gradient(180deg,black 0% 86%,transparent 86% 100%) 0 0/100% 28px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0% 86%,transparent 86% 100%) 0 0/100% 28px;
+         filter: brightness(4) hue-rotate(200deg) contrast(5); }
+  24%  { mask: none; -webkit-mask: none; filter: brightness(0) saturate(0); }
+  29%  { opacity: 0.55; mask: repeating-linear-gradient(180deg,black 0% 73%,transparent 73% 100%) 0 0/100% 18px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0% 73%,transparent 73% 100%) 0 0/100% 18px;
+         filter: brightness(0.08) saturate(0); }
+  34%  { opacity: 0.44; mask: repeating-linear-gradient(180deg,black 0% 53%,transparent 53% 100%) 0 0/100% 12px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0% 53%,transparent 53% 100%) 0 0/100% 12px;
+         filter: brightness(4.5) hue-rotate(120deg) contrast(5); }
+  39%  { opacity: 0.24; mask: repeating-linear-gradient(180deg,black 0% 28%,transparent 28% 100%) 0 0/100% 7px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0% 28%,transparent 28% 100%) 0 0/100% 7px;
+         filter: brightness(0.04) saturate(0); }
+  44%  { opacity: 0.04; mask: repeating-linear-gradient(180deg,black 0% 7%,transparent 7% 100%) 0 0/100% 3px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0% 7%,transparent 7% 100%) 0 0/100% 3px;
+         filter: brightness(0) saturate(0); }
+  49%  { opacity: 0.02; mask: none; -webkit-mask: none; filter: brightness(0); }
+  52%  { opacity: 0.85; filter: brightness(5.5) hue-rotate(90deg) contrast(7); }
+  54%  { opacity: 0; filter: brightness(0); }
+  57%  { opacity: 0.65; filter: brightness(0.2) saturate(0); }
+  60%  { opacity: 0; }
+  64%  { opacity: 0.45; filter: brightness(0.12) saturate(0); }
+  67%  { opacity: 0; }
+  72%  { opacity: 0.3; mask: repeating-linear-gradient(180deg,black 0% 10%,transparent 10% 100%) 0 0/100% 4px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0% 10%,transparent 10% 100%) 0 0/100% 4px;
+         filter: brightness(2) hue-rotate(55deg); }
+  80%  { opacity: 0.62; mask: repeating-linear-gradient(180deg,black 0% 48%,transparent 48% 100%) 0 0/100% 14px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0% 48%,transparent 48% 100%) 0 0/100% 14px;
+         filter: brightness(1.7) contrast(1.8); }
+  88%  { opacity: 0.84; mask: repeating-linear-gradient(180deg,black 0% 86%,transparent 86% 100%) 0 0/100% 32px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0% 86%,transparent 86% 100%) 0 0/100% 32px;
+         filter: brightness(1.4) contrast(1.4); }
+  94%  { opacity: 0.92; mask: none; -webkit-mask: none; filter: brightness(1.6) contrast(1.8) hue-rotate(16deg); }
+  100% { opacity: 0; mask: none; -webkit-mask: none; filter: brightness(1); }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   ── NEW EFFECTS — BLACK & GREY HORIZONTAL / VERTICAL ─────────────────────
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S11 — H-BARS  (pure black/grey horizontal cuts, no colour)
+   Classic VHS head-clog aesthetic.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-h-bars {
+  animation: sfx-h-bars 0.9s steps(1) forwards;
+}
+
+@keyframes sfx-h-bars {
+  0%   { opacity: 1; filter: brightness(1) saturate(0); mask: none; -webkit-mask: none; transform: translate(-50%,-50%) translateY(0); }
+  6%   { filter: brightness(0) saturate(0);
+         mask: repeating-linear-gradient(180deg,black 0 12px,transparent 12px 14px) 0 0/100% 14px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0 12px,transparent 12px 14px) 0 0/100% 14px;
+         transform: translate(-50%,-50%) translateY(-8px); }
+  12%  { filter: brightness(0.35) saturate(0) contrast(8);
+         mask: repeating-linear-gradient(180deg,transparent 0 3px,black 3px 18px) 0 0/100% 21px;
+         -webkit-mask: repeating-linear-gradient(180deg,transparent 0 3px,black 3px 18px) 0 0/100% 21px;
+         transform: translate(-50%,-50%) translateY(10px); }
+  18%  { filter: brightness(0) saturate(0); mask: none; -webkit-mask: none; transform: translate(-50%,-50%) translateY(-5px); }
+  24%  { filter: brightness(0.55) saturate(0) contrast(5);
+         mask: repeating-linear-gradient(180deg,black 0 6px,transparent 6px 8px) 0 0/100% 8px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0 6px,transparent 6px 8px) 0 0/100% 8px;
+         transform: translate(-50%,-50%) translateY(7px); }
+  30%  { filter: brightness(0) saturate(0); mask: none; -webkit-mask: none; transform: translate(-50%,-50%) translateY(-10px); }
+  36%  { filter: brightness(0.2) saturate(0) contrast(10);
+         mask: repeating-linear-gradient(180deg,transparent 0 1px,black 1px 22px) 0 0/100% 23px;
+         -webkit-mask: repeating-linear-gradient(180deg,transparent 0 1px,black 1px 22px) 0 0/100% 23px;
+         transform: translate(-50%,-50%) translateY(9px); }
+  42%  { filter: brightness(0) saturate(0); mask: none; -webkit-mask: none; transform: translate(-50%,-50%) translateY(0); }
+  48%  { filter: brightness(0.45) saturate(0) contrast(6);
+         mask: repeating-linear-gradient(180deg,black 0 3px,transparent 3px 5px) 0 0/100% 5px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0 3px,transparent 3px 5px) 0 0/100% 5px;
+         transform: translate(-50%,-50%) translateY(-6px); }
+  52%  { opacity: 0.8; filter: brightness(0) saturate(0); mask: none; -webkit-mask: none; }
+  56%  { opacity: 0.55; filter: brightness(0.6) saturate(0) contrast(4);
+         mask: repeating-linear-gradient(180deg,black 0 8px,transparent 8px 10px) 0 0/100% 10px;
+         -webkit-mask: repeating-linear-gradient(180deg,black 0 8px,transparent 8px 10px) 0 0/100% 10px;
+         transform: translate(-50%,-50%) translateY(8px); }
+  60%  { opacity: 0.3; filter: brightness(0) saturate(0); mask: none; -webkit-mask: none; }
+  65%  { opacity: 0.18; filter: brightness(0.22) saturate(0); }
+  74%  { opacity: 0.42; filter: brightness(0.5) saturate(0); }
+  83%  { opacity: 0.6; filter: brightness(0.75) saturate(0); }
+  91%  { opacity: 0.78; filter: brightness(0.9) saturate(0.15); }
+  100% { opacity: 0; filter: brightness(1) saturate(0); mask: none; -webkit-mask: none; transform: translate(-50%,-50%) translateY(0); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S12 — V-BARS  (vertical black/grey column dropout — scan-out fault)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-v-bars {
+  animation: sfx-v-bars 0.75s steps(1) forwards;
+}
+
+@keyframes sfx-v-bars {
+  0%   { opacity: 1; filter: brightness(1) saturate(0); mask: none; -webkit-mask: none; transform: translate(-50%,-50%) translateX(0); }
+  6%   { filter: brightness(0) saturate(0);
+         mask: repeating-linear-gradient(90deg,black 0 10px,transparent 10px 12px) 0 0/12px 100%;
+         -webkit-mask: repeating-linear-gradient(90deg,black 0 10px,transparent 10px 12px) 0 0/12px 100%;
+         transform: translate(-50%,-50%) translateX(-7px); }
+  12%  { filter: brightness(0.3) saturate(0) contrast(7);
+         mask: repeating-linear-gradient(90deg,transparent 0 2px,black 2px 20px) 0 0/22px 100%;
+         -webkit-mask: repeating-linear-gradient(90deg,transparent 0 2px,black 2px 20px) 0 0/22px 100%;
+         transform: translate(-50%,-50%) translateX(9px); }
+  18%  { filter: brightness(0) saturate(0); mask: none; -webkit-mask: none; transform: translate(-50%,-50%) translateX(-4px); }
+  24%  { filter: brightness(0.5) saturate(0) contrast(4.5);
+         mask: repeating-linear-gradient(90deg,black 0 5px,transparent 5px 7px) 0 0/7px 100%;
+         -webkit-mask: repeating-linear-gradient(90deg,black 0 5px,transparent 5px 7px) 0 0/7px 100%;
+         transform: translate(-50%,-50%) translateX(6px); }
+  30%  { filter: brightness(0) saturate(0); mask: none; -webkit-mask: none; transform: translate(-50%,-50%) translateX(-9px); }
+  36%  { filter: brightness(0.18) saturate(0) contrast(9);
+         mask: repeating-linear-gradient(90deg,transparent 0 1px,black 1px 18px) 0 0/19px 100%;
+         -webkit-mask: repeating-linear-gradient(90deg,transparent 0 1px,black 1px 18px) 0 0/19px 100%;
+         transform: translate(-50%,-50%) translateX(8px); }
+  42%  { filter: brightness(0) saturate(0); mask: none; -webkit-mask: none; transform: translate(-50%,-50%) translateX(0); }
+  48%  { filter: brightness(0.4) saturate(0) contrast(5.5);
+         mask: repeating-linear-gradient(90deg,black 0 3px,transparent 3px 4px) 0 0/4px 100%;
+         -webkit-mask: repeating-linear-gradient(90deg,black 0 3px,transparent 3px 4px) 0 0/4px 100%;
+         transform: translate(-50%,-50%) translateX(-5px); }
+  54%  { opacity: 0.7; filter: brightness(0) saturate(0); mask: none; -webkit-mask: none; }
+  59%  { opacity: 0.45; filter: brightness(0.55) saturate(0) contrast(3.5);
+         mask: repeating-linear-gradient(90deg,black 0 7px,transparent 7px 9px) 0 0/9px 100%;
+         -webkit-mask: repeating-linear-gradient(90deg,black 0 7px,transparent 7px 9px) 0 0/9px 100%;
+         transform: translate(-50%,-50%) translateX(7px); }
+  64%  { opacity: 0.2; filter: brightness(0) saturate(0); mask: none; -webkit-mask: none; }
+  70%  { opacity: 0.14; filter: brightness(0.2) saturate(0); }
+  79%  { opacity: 0.38; filter: brightness(0.48) saturate(0); }
+  88%  { opacity: 0.62; filter: brightness(0.75) saturate(0.1); }
+  95%  { opacity: 0.8; filter: brightness(0.9) saturate(0.15); }
+  100% { opacity: 0; filter: brightness(1) saturate(0); mask: none; -webkit-mask: none; transform: translate(-50%,-50%) translateX(0); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S13 — GREY STATIC  (analogue noise field — random grey luminance blocks)
+   Mimics magnetic tape head contact loss.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-grey-static {
+  animation: sfx-grey-static 1.2s steps(1) forwards;
+}
+
+@keyframes sfx-grey-static {
+  0%   { opacity: 1; filter: brightness(0.8) saturate(0) contrast(1); }
+  4%   { filter: brightness(0.55) saturate(0) contrast(3.5) blur(0.3px); }
+  8%   { filter: brightness(1.2) saturate(0) contrast(6); }
+  12%  { filter: brightness(0.3) saturate(0) contrast(8); }
+  16%  { filter: brightness(0.9) saturate(0) contrast(4) blur(0.4px); }
+  20%  { filter: brightness(0.15) saturate(0) contrast(12); }
+  24%  { filter: brightness(1.4) saturate(0) contrast(2.5); }
+  28%  { filter: brightness(0.08) saturate(0) contrast(15); }
+  32%  { filter: brightness(0.7) saturate(0) contrast(5) blur(0.5px); }
+  36%  { filter: brightness(0.04) saturate(0) contrast(18); }
+  40%  { filter: brightness(1.1) saturate(0) contrast(3); }
+  44%  { filter: brightness(0.06) saturate(0) contrast(14); }
+  48%  { filter: brightness(0.55) saturate(0) contrast(6) blur(0.3px); }
+  52%  { filter: brightness(0.02) saturate(0) contrast(20); }
+  56%  { filter: brightness(0.85) saturate(0) contrast(4); }
+  60%  { filter: brightness(0.03) saturate(0) contrast(16); }
+  64%  { filter: brightness(0.5) saturate(0) contrast(5) blur(0.4px); }
+  68%  { filter: brightness(0.22) saturate(0) contrast(9); }
+  72%  { filter: brightness(0.65) saturate(0) contrast(4.5); }
+  76%  { filter: brightness(0.38) saturate(0) contrast(6); }
+  80%  { filter: brightness(0.55) saturate(0) contrast(4); }
+  84%  { filter: brightness(0.7) saturate(0.05) contrast(3); }
+  88%  { filter: brightness(0.8) saturate(0.1) contrast(2.5); }
+  93%  { filter: brightness(0.9) saturate(0.15) contrast(1.8); }
+  100% { opacity: 0; filter: brightness(1) saturate(0) contrast(1); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S14 — BLACKOUT STUTTER  (rapid full-black frames with grey smears)
+   Simulates power-drop / HDCP handshake failure.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-blackout-stutter {
+  animation: sfx-blackout-stutter 1.3s steps(1) forwards;
+}
+
+@keyframes sfx-blackout-stutter {
+  0%   { opacity: 1; filter: brightness(1) saturate(0); transform: translate(-50%,-50%) translateY(0); }
+  3%   { filter: brightness(0) contrast(0); transform: translate(-50%,-50%) translateY(-5px); }
+  6%   { filter: brightness(0.45) saturate(0) contrast(4); transform: translate(-50%,-50%) translateY(8px); }
+  9%   { filter: brightness(0) contrast(0); transform: translate(-50%,-50%) translateY(-9px); }
+  12%  { filter: brightness(0.65) saturate(0) contrast(3.5); transform: translate(-50%,-50%) translateY(6px); }
+  15%  { filter: brightness(0) contrast(0); transform: translate(-50%,-50%) translateY(-7px); }
+  18%  { filter: brightness(0.25) saturate(0) contrast(6); transform: translate(-50%,-50%) translateY(10px); }
+  21%  { filter: brightness(0) contrast(0); transform: translate(-50%,-50%) translateY(-4px); }
+  24%  { filter: brightness(0.8) saturate(0) contrast(2.5); transform: translate(-50%,-50%) translateY(5px); }
+  27%  { filter: brightness(0) contrast(0); transform: translate(-50%,-50%) translateY(-8px); }
+  30%  { filter: brightness(0.38) saturate(0) contrast(5); transform: translate(-50%,-50%) translateY(7px); }
+  33%  { filter: brightness(0) contrast(0); transform: translate(-50%,-50%) translateY(-6px); }
+  37%  { opacity: 0.85; filter: brightness(0.55) saturate(0) contrast(4); transform: translate(-50%,-50%) translateY(9px); }
+  41%  { opacity: 0.6; filter: brightness(0) contrast(0); transform: translate(-50%,-50%) translateY(0); }
+  45%  { opacity: 0.4; filter: brightness(0.72) saturate(0) contrast(3); transform: translate(-50%,-50%) translateY(-5px); }
+  49%  { opacity: 0.2; filter: brightness(0) contrast(0); }
+  53%  { opacity: 0.08; filter: brightness(0); }
+  57%  { opacity: 0.35; filter: brightness(0.48) saturate(0) contrast(2.5); transform: translate(-50%,-50%) translateY(4px); }
+  62%  { opacity: 0.18; filter: brightness(0) contrast(0); }
+  67%  { opacity: 0.28; filter: brightness(0.35) saturate(0); }
+  73%  { opacity: 0.45; filter: brightness(0.58) saturate(0) contrast(2); }
+  80%  { opacity: 0.62; filter: brightness(0.72) saturate(0.08) contrast(1.6); }
+  87%  { opacity: 0.78; filter: brightness(0.85) saturate(0.12) contrast(1.3); }
+  94%  { opacity: 0.9; filter: brightness(0.95) saturate(0.2) contrast(1.1); }
+  100% { opacity: 0; filter: brightness(1) saturate(0); transform: translate(-50%,-50%) translateY(0); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S15 — V-SHEAR  (vertical axis displacement — column-slip artefact)
+   Columns of the sphere shift up/down independently on the X axis.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-v-shear {
+  animation: sfx-v-shear 0.95s steps(1) forwards;
+}
+
+@keyframes sfx-v-shear {
+  0%   { opacity: 1; filter: brightness(0.9) saturate(0); transform: translate(-50%,-50%) skewX(0deg) translateX(0); }
+  5%   { filter: brightness(0) saturate(0); transform: translate(-50%,-50%) skewX(-2.5deg) translateX(-8px); }
+  10%  { filter: brightness(0.4) saturate(0) contrast(5); transform: translate(-50%,-50%) skewX(1.8deg) translateX(10px); }
+  15%  { filter: brightness(0) saturate(0); transform: translate(-50%,-50%) skewX(-1.2deg) translateX(-6px); }
+  20%  { filter: brightness(0.6) saturate(0) contrast(4); transform: translate(-50%,-50%) skewX(3deg) translateX(12px); }
+  25%  { filter: brightness(0) saturate(0); transform: translate(-50%,-50%) skewX(-2deg) translateX(-10px); }
+  30%  { filter: brightness(0.28) saturate(0) contrast(7); transform: translate(-50%,-50%) skewX(1.5deg) translateX(7px); }
+  35%  { filter: brightness(0) saturate(0); transform: translate(-50%,-50%) skewX(-0.8deg) translateX(-4px); }
+  40%  { filter: brightness(0.5) saturate(0) contrast(3.5); transform: translate(-50%,-50%) skewX(2.2deg) translateX(9px); }
+  45%  { filter: brightness(0) saturate(0); transform: translate(-50%,-50%) skewX(-1.6deg) translateX(-7px); }
+  50%  { opacity: 0.75; filter: brightness(0.35) saturate(0) contrast(6); transform: translate(-50%,-50%) skewX(1deg) translateX(5px); }
+  55%  { opacity: 0.45; filter: brightness(0) saturate(0); transform: translate(-50%,-50%) skewX(-0.6deg) translateX(-3px); }
+  60%  { opacity: 0.25; filter: brightness(0.22) saturate(0) contrast(4.5); transform: translate(-50%,-50%) skewX(0.8deg) translateX(4px); }
+  65%  { opacity: 0.12; filter: brightness(0) saturate(0); transform: translate(-50%,-50%) skewX(0deg) translateX(0); }
+  70%  { opacity: 0.2; filter: brightness(0.3) saturate(0) contrast(3); transform: translate(-50%,-50%) skewX(-0.5deg) translateX(-2px); }
+  77%  { opacity: 0.4; filter: brightness(0.5) saturate(0) contrast(2.5); }
+  84%  { opacity: 0.6; filter: brightness(0.7) saturate(0.08) contrast(1.8); }
+  91%  { opacity: 0.78; filter: brightness(0.85) saturate(0.12) contrast(1.4); }
+  97%  { opacity: 0.9; filter: brightness(0.95) saturate(0.2) contrast(1.1); }
+  100% { opacity: 0; filter: brightness(1) saturate(0); transform: translate(-50%,-50%) skewX(0deg) translateX(0); }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   S16 — GREY STROBE  (rapid grey-black alternation like fluorescent flicker)
+   High-frequency power-supply noise in monochrome.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.holo-carousel-sphere-fx.sphere-glitch-grey-strobe {
+  animation: sfx-grey-strobe 0.65s steps(1) forwards;
+}
+
+@keyframes sfx-grey-strobe {
+  0%   { opacity: 1; filter: brightness(0.9) saturate(0); }
+  4%   { filter: brightness(0) saturate(0) contrast(0); }
+  8%   { filter: brightness(0.7) saturate(0) contrast(2.5); }
+  12%  { filter: brightness(0) saturate(0) contrast(0); }
+  16%  { filter: brightness(0.5) saturate(0) contrast(4); }
+  20%  { filter: brightness(0) saturate(0) contrast(0); }
+  24%  { filter: brightness(0.85) saturate(0) contrast(1.8); }
+  28%  { filter: brightness(0) saturate(0) contrast(0); }
+  32%  { filter: brightness(0.4) saturate(0) contrast(5); }
+  36%  { filter: brightness(0) saturate(0) contrast(0); }
+  40%  { filter: brightness(0.65) saturate(0) contrast(3); }
+  44%  { filter: brightness(0) saturate(0) contrast(0); }
+  48%  { filter: brightness(0.3) saturate(0) contrast(6); }
+  52%  { opacity: 0.85; filter: brightness(0) saturate(0) contrast(0); }
+  56%  { opacity: 0.65; filter: brightness(0.55) saturate(0) contrast(3.5); }
+  60%  { opacity: 0.45; filter: brightness(0) saturate(0) contrast(0); }
+  64%  { opacity: 0.3; filter: brightness(0.45) saturate(0) contrast(4); }
+  68%  { opacity: 0.18; filter: brightness(0) saturate(0) contrast(0); }
+  72%  { opacity: 0.25; filter: brightness(0.38) saturate(0) contrast(3); }
+  78%  { opacity: 0.42; filter: brightness(0.55) saturate(0) contrast(2.5); }
+  84%  { opacity: 0.6; filter: brightness(0.7) saturate(0.06) contrast(1.8); }
+  91%  { opacity: 0.78; filter: brightness(0.82) saturate(0.1) contrast(1.4); }
+  97%  { opacity: 0.9; filter: brightness(0.95) saturate(0.18) contrast(1.1); }
+  100% { opacity: 0; filter: brightness(1) saturate(0); }
+}
